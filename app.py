@@ -14,7 +14,7 @@ import streamlit as st
 import components as C
 import nav
 from i18n import LANGS, is_rtl, t
-from modules import theory, theory_xai, theory_fair, theory_robust
+from modules import theory, theory_xai, theory_fair, theory_robust, theory_privacy
 from modules import (
     bias_variance,
     counterfactual,
@@ -25,6 +25,7 @@ from modules import (
 from modules import xai_loan, recourse_xai, cv_scanner, spurious
 from modules import fair_scales, fair_cda, fair_multiturn, fair_constitution
 from modules import rob_evasion, rob_tradeoff, rob_smoothing, rob_jailbreak
+from modules import pp_backdoor, pp_coin, pp_laplace, pp_leak
 from modules import pdf_export
 
 st.set_page_config(
@@ -37,7 +38,8 @@ st.set_page_config(
 # --- render registries, per section ---------------------------------------- #
 THEORY_RENDER = {"sec1": theory.SECTIONS, "sec2": theory_xai.SECTIONS_XAI,
                  "sec3": theory_fair.SECTIONS_FAIR,
-                 "sec4": theory_robust.SECTIONS_ROBUST}
+                 "sec4": theory_robust.SECTIONS_ROBUST,
+                 "sec5": theory_privacy.SECTIONS_PRIVACY}
 PRACTICE_RENDER = {
     "sec1": {
         "pr_bv": bias_variance.render,
@@ -64,12 +66,18 @@ PRACTICE_RENDER = {
         "prb_smoothing": rob_smoothing.render,
         "prb_jailbreak": rob_jailbreak.render,
     },
+    "sec5": {
+        "pp_backdoor": pp_backdoor.render,
+        "pp_coin": pp_coin.render,
+        "pp_laplace": pp_laplace.render,
+        "pp_leak": pp_leak.render,
+    },
 }
 
 MODE_KEYS = ["mode_theory", "mode_practice"]
 LANG_CODES = [c for c, _ in LANGS]
 NAME_OF = dict(LANGS)
-THEME_CODES = ["light", "dark", "colored"]
+THEME_CODES = ["light", "dark"]
 
 BOTPRESS_URL = (
     "https://cdn.botpress.cloud/webchat/v3.6/shareable.html?configUrl="
@@ -151,9 +159,12 @@ elif section == "sec2":
 elif section == "sec3":
     subtitle = t(lang, "masthead_subtitle_3")
     colophon = [t(lang, "colophon_1"), t(lang, "colophon_3b"), t(lang, "colophon_3")]
-else:
+elif section == "sec4":
     subtitle = t(lang, "masthead_subtitle_4")
     colophon = [t(lang, "colophon_1"), t(lang, "colophon_4b"), t(lang, "colophon_3")]
+else:
+    subtitle = t(lang, "masthead_subtitle_5")
+    colophon = [t(lang, "colophon_1"), t(lang, "colophon_5b"), t(lang, "colophon_3")]
 
 C.masthead(
     t(lang, "masthead_eyebrow"), t(lang, "masthead_title"), subtitle, colophon,

@@ -5,7 +5,7 @@ Only the *keys* live here (order matters); app.py maps them to render
 functions, and pdf_export.py maps them to i18n text. Keeping this in one place
 means the sidebar, the router and the PDF can never drift out of sync.
 """
-SECTIONS = ["sec1", "sec2", "sec3", "sec4"]
+SECTIONS = ["sec1", "sec2", "sec3", "sec4", "sec5"]
 
 THEORY = {
     "sec1": ["th_bv", "th_vc", "th_ib", "th_tl", "th_sam", "th_cz"],
@@ -15,6 +15,8 @@ THEORY = {
              "fair_fap", "fair_align"],
     "sec4": ["rob_intro", "rob_formulation", "rob_attacks", "rob_defense",
              "rob_certified", "rob_llm"],
+    "sec5": ["prv_poison", "prv_privacy", "prv_dp", "prv_noise",
+             "prv_fl", "prv_leak"],
 }
 
 PRACTICE = {
@@ -22,4 +24,5 @@ PRACTICE = {
     "sec2": ["px_loan", "px_recourse", "px_cv", "px_spurious"],
     "sec3": ["pf_scales", "pf_cda", "pf_multiturn", "pf_constitution"],
     "sec4": ["prb_evasion", "prb_tradeoff", "prb_smoothing", "prb_jailbreak"],
+    "sec5": ["pp_backdoor", "pp_coin", "pp_laplace", "pp_leak"],
 }

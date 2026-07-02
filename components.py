@@ -57,7 +57,16 @@ def chatbot(url: str, label: str = "Ask me", height: int = 520) -> None:
     st.markdown(
         f"""
         <details class="assistant-fab">
-          <summary>{_esc(label)}</summary>
+          <summary>
+            <span class="fab-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                   stroke-linejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z"/>
+              </svg>
+            </span>
+            <span class="fab-label">{_esc(label)}</span>
+          </summary>
           <div class="assistant-panel">
             <iframe src="{_esc(url)}" title="assistant"></iframe>
           </div>
@@ -126,6 +135,25 @@ def key_idea(html_text: str) -> None:
 
 def warn(html_text: str) -> None:
     st.markdown(f'<div class="warn">{html_text}</div>', unsafe_allow_html=True)
+
+
+def demo_intro(what: str, why: str, expect: str,
+               labels=("What this does", "Why it matters",
+                       "What to look for")) -> None:
+    """An explainer panel shown above a practice demo: what it does, why it
+    matters, and what the reader should watch for. All strings are plain text."""
+    l1, l2, l3 = labels
+    st.markdown(
+        '<div class="demo-intro">'
+        f'<div class="di-row"><span class="di-k">{_esc(l1)}</span>'
+        f'<span class="di-v">{_esc(what)}</span></div>'
+        f'<div class="di-row"><span class="di-k">{_esc(l2)}</span>'
+        f'<span class="di-v">{_esc(why)}</span></div>'
+        f'<div class="di-row"><span class="di-k">{_esc(l3)}</span>'
+        f'<span class="di-v">{_esc(expect)}</span></div>'
+        '</div>',
+        unsafe_allow_html=True,
+    )
 
 
 # --------------------------------------------------------------------------- #

@@ -58,10 +58,27 @@ randomized smoothing, and LLM prompt injection. Four interactive demos:
 - **LLM jailbreak game** — a transparent, rule-based prompt-injection simulation
   (explicitly not a live LLM).
 
+**V · Privacy, Poisoning & Federated Learning** — data-poisoning and backdoor
+trojans, privacy attacks (de-anonymization, membership inference), differential
+privacy (ε-DP), noise mechanisms (randomized response, Laplace), federated
+learning, and the gradient-leakage flaw. Four interactive demos:
+- **Backdoor Injection Lab** — a real poisoned CNN; toggle the trigger and watch
+  the prediction flip to the attacker's target while clean accuracy stays high.
+- **Randomized-Response Simulator** — the coin-flip DP protocol; individual
+  answers stay deniable while the aggregate rate is recovered.
+- **Laplace Privacy Dashboard** — a differentially-private salary histogram with
+  a live ε privacy-budget dial.
+- **Gradient-Leakage Simulator** — reconstruct a client's private image from the
+  shared gradient alone (DP-FL motivation).
+
+Every practice demo now opens with a plain-language explainer (what it does, why
+it matters, what to look for), and the theory plates are written as full
+explanations with diagrams rather than bullet points.
+
 ## What makes it rigorous
 - **No fake UI.** Every slider triggers genuine `numpy`/`scipy`/`scikit-learn`
   compute. The CNN is a real conv-net with im2col forward/backward.
-- **Verified.** 64 unit tests: exact SHAP additivity (residual ≈ 0), causal
+- **Verified.** 71 unit tests: exact SHAP additivity (residual ≈ 0), causal
   recourse strictly cheaper, CNN gradients correct to ~1e-10 vs finite
   differences, Grad-CAM localizes the object, and the shortcut model's Grad-CAM
   provably lands on the spurious band.
@@ -97,6 +114,6 @@ components.py     masthead, plates, readouts, chatbot embed
 plotting.py       one consistent academic Plotly grammar
 core/             all compute engines (+ from-scratch NumPy CNN)
 modules/          theory plates + interactive demos + pdf_export
-tests/            64 unit tests
+tests/            71 unit tests
 assets/           bundled Vazirmatn TTF (Arabic+Persian+Latin) for the PDF
 ```

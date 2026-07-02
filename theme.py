@@ -201,6 +201,18 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 .stButton > button { font-family: var(--mono); font-size: .82rem; letter-spacing: .02em; border: 1px solid var(--border); background: var(--btn); color: var(--text); border-radius: 4px; text-align: left; padding: 8px 12px; transition: none; }
 .stButton > button:hover { border-color: var(--text); background: var(--btn-hover); color: var(--text); }
 .stButton > button:focus { box-shadow: none; color: var(--text); }
+/* Download button (PDF) -- must match the theme, never a dark box */
+[data-testid="stDownloadButton"] > button,
+.stDownloadButton > button {
+  font-family: var(--mono); font-size: .82rem; letter-spacing: .02em;
+  border: 1px solid var(--border); background: var(--btn); color: var(--text);
+  border-radius: 4px; padding: 8px 12px; width: 100%; transition: none;
+}
+[data-testid="stDownloadButton"] > button:hover,
+.stDownloadButton > button:hover { border-color: var(--accent); background: var(--btn-hover); color: var(--text); }
+[data-testid="stDownloadButton"] > button:focus,
+[data-testid="stDownloadButton"] > button:active { box-shadow: none; color: var(--text); background: var(--btn); }
+[data-testid="stDownloadButton"] > button p { color: var(--text); }
 
 /* Widget labels + inputs (kept legible in every theme) */
 [data-testid="stWidgetLabel"] p { font-family: var(--mono); font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
@@ -228,23 +240,41 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 [data-testid="stSlider"] [role="slider"] { background: var(--accent); }
 
 /* ---- Floating "Ask me" assistant (bottom-right, pure CSS, no JS) ---- */
-.assistant-fab { position: fixed; right: 22px; bottom: 22px; z-index: 9999; }
+.assistant-fab { position: fixed; right: 26px; bottom: 26px; z-index: 99999; }
 .assistant-fab > summary {
   list-style: none; cursor: pointer; display: inline-flex; align-items: center;
-  gap: 8px; background: var(--accent); color: #fff; font-family: var(--mono);
-  font-size: .8rem; letter-spacing: .06em; padding: 12px 18px; border-radius: 999px;
-  box-shadow: 0 6px 20px rgba(0,0,0,.28); user-select: none; white-space: nowrap;
+  gap: 9px; background: var(--accent); color: #fff;
+  font-family: var(--sans); font-weight: 600; font-size: .86rem; letter-spacing: .01em;
+  padding: 13px 20px; border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(14,42,71,.30), 0 2px 6px rgba(0,0,0,.16);
+  user-select: none; white-space: nowrap;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.assistant-fab > summary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(14,42,71,.38), 0 3px 8px rgba(0,0,0,.20);
 }
 .assistant-fab > summary::-webkit-details-marker { display: none; }
-.assistant-fab > summary::before { content: "\1F4AC"; font-size: 1rem; }
-.assistant-fab[open] > summary { border-radius: 12px 12px 0 0; }
+.assistant-fab > summary::marker { content: ""; }
+.fab-icon { display: inline-flex; align-items: center; }
+.assistant-fab[open] > summary { border-radius: 999px; }
 .assistant-panel {
-  position: absolute; bottom: 52px; right: 0; width: min(380px, 92vw);
+  position: absolute; bottom: 60px; right: 0; width: min(380px, 92vw);
   height: min(560px, 70vh); background: var(--surface); border: 1px solid var(--border);
-  border-radius: 12px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,.35);
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 0 18px 50px rgba(0,0,0,.32); animation: fab-in .16s ease;
 }
+@keyframes fab-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .assistant-panel iframe { width: 100%; height: 100%; border: 0; display: block; }
 .assistant-frame { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--surface); }
+
+/* Demo explainer panel (above each practice demo) */
+.demo-intro { border: 1px solid var(--border); border-left: 3px solid var(--accent);
+  background: var(--surface2); border-radius: 6px; padding: 14px 16px; margin: 6px 0 18px 0; }
+.demo-intro .di-row { display: flex; gap: 12px; padding: 3px 0; align-items: baseline; }
+.demo-intro .di-k { flex: 0 0 148px; font-family: var(--mono); font-size: .68rem;
+  letter-spacing: .07em; text-transform: uppercase; color: var(--accent); padding-top: 2px; }
+.demo-intro .di-v { flex: 1; color: var(--text); font-size: .95rem; line-height: 1.5; }
 
 /* ---- Mobile responsiveness ---- */
 @media (max-width: 640px) {
@@ -268,6 +298,8 @@ def _rtl_css() -> str:
 [data-testid="stAppViewContainer"] { direction: rtl; }
 [data-testid="stMain"] { direction: rtl; text-align: right; }
 [data-testid="stSidebar"] { direction: rtl; border-right: none; border-left: 1px solid var(--border); }
+.assistant-fab { right: auto; left: 26px; }
+.assistant-panel { right: auto; left: 0; }
 [data-testid="stMarkdownContainer"], .stMarkdown, p, li, h1, h2, h3, h4 { text-align: right; }
 html, body, [data-testid="stAppViewContainer"], .stMarkdown,
 [data-testid="stMarkdownContainer"] p, p, li, span, div { font-family: var(--rtl-body); }
@@ -276,6 +308,7 @@ h1, h2, h3, h4, .masthead .title, .plate-title { font-family: var(--rtl-display)
 .masthead .colophon, .masthead .byline { flex-direction: row-reverse; }
 [data-testid="stVerticalBlockBorderWrapper"] { border-left: 1px solid var(--border) !important; border-right: 3px solid var(--text) !important; }
 .keyidea { border-left: none; border-right: 3px solid var(--good); }
+.demo-intro { border-left: 1px solid var(--border); border-right: 3px solid var(--accent); }
 .warn { border-left: none; border-right: 3px solid var(--accent); }
 .figure-caption { text-align: right; }
 .stButton > button { text-align: right; }

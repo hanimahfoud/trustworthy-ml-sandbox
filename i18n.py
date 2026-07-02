@@ -785,6 +785,12 @@ EN.update(EN4)
 FA.update(FA4)
 AR.update(AR4)
 
+# Merge Section V (Privacy) strings.
+from i18n_privacy import EN5, FA5, AR5  # noqa: E402
+EN.update(EN5)
+FA.update(FA5)
+AR.update(AR5)
+
 
 def t(lang: str, key: str) -> str:
     """Translate ``key`` into ``lang``, falling back to English then the key."""
