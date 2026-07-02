@@ -14,7 +14,7 @@ import streamlit as st
 import components as C
 import nav
 from i18n import LANGS, is_rtl, t
-from modules import theory, theory_xai, theory_fair
+from modules import theory, theory_xai, theory_fair, theory_robust
 from modules import (
     bias_variance,
     counterfactual,
@@ -24,6 +24,7 @@ from modules import (
 )
 from modules import xai_loan, recourse_xai, cv_scanner, spurious
 from modules import fair_scales, fair_cda, fair_multiturn, fair_constitution
+from modules import rob_evasion, rob_tradeoff, rob_smoothing, rob_jailbreak
 from modules import pdf_export
 
 st.set_page_config(
@@ -35,7 +36,8 @@ st.set_page_config(
 
 # --- render registries, per section ---------------------------------------- #
 THEORY_RENDER = {"sec1": theory.SECTIONS, "sec2": theory_xai.SECTIONS_XAI,
-                 "sec3": theory_fair.SECTIONS_FAIR}
+                 "sec3": theory_fair.SECTIONS_FAIR,
+                 "sec4": theory_robust.SECTIONS_ROBUST}
 PRACTICE_RENDER = {
     "sec1": {
         "pr_bv": bias_variance.render,
@@ -55,6 +57,12 @@ PRACTICE_RENDER = {
         "pf_cda": fair_cda.render,
         "pf_multiturn": fair_multiturn.render,
         "pf_constitution": fair_constitution.render,
+    },
+    "sec4": {
+        "prb_evasion": rob_evasion.render,
+        "prb_tradeoff": rob_tradeoff.render,
+        "prb_smoothing": rob_smoothing.render,
+        "prb_jailbreak": rob_jailbreak.render,
     },
 }
 
@@ -130,11 +138,8 @@ sb.download_button(
     file_name=f"TrustworthyML_{section}_{lang}.pdf", mime="application/pdf",
     use_container_width=True)
 
-# --- assistant (Botpress) ---
-sb.markdown(f'<div class="rail-label">{t(lang, "assistant_label")}</div>',
-            unsafe_allow_html=True)
-with sb.expander(t(lang, "assistant_label"), expanded=False):
-    C.chatbot(BOTPRESS_URL, height=520)
+# --- assistant (floating "Ask me" bubble, bottom-right) ---
+C.chatbot(BOTPRESS_URL, label=t(lang, "assistant_label"))
 
 # --- masthead (subtitle + colophon vary by section) ---
 if section == "sec1":
@@ -143,9 +148,12 @@ if section == "sec1":
 elif section == "sec2":
     subtitle = t(lang, "masthead_subtitle_2")
     colophon = [t(lang, "colophon_1"), t(lang, "colophon_2b"), t(lang, "colophon_3")]
-else:
+elif section == "sec3":
     subtitle = t(lang, "masthead_subtitle_3")
     colophon = [t(lang, "colophon_1"), t(lang, "colophon_3b"), t(lang, "colophon_3")]
+else:
+    subtitle = t(lang, "masthead_subtitle_4")
+    colophon = [t(lang, "colophon_1"), t(lang, "colophon_4b"), t(lang, "colophon_3")]
 
 C.masthead(
     t(lang, "masthead_eyebrow"), t(lang, "masthead_title"), subtitle, colophon,

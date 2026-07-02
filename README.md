@@ -46,10 +46,22 @@ AI). Four interactive demos:
 - **Implicit-bias simulator** and **Constitutional AI lab** — transparent,
   rule-based educational simulations (explicitly not live LLMs).
 
+**IV · Robustness & Security** — adversarial attacks (poisoning vs evasion),
+attack formulation and norms, evasion algorithms (FGSM, PGD, DeepFool, C&W),
+defenses and the accuracy/robustness trade-off, certified robustness by
+randomized smoothing, and LLM prompt injection. Four interactive demos:
+- **Evasion simulator** — real FGSM/PGD attacks on the NumPy CNN; raise epsilon
+  and watch the prediction flip while the image looks unchanged.
+- **Accuracy vs robustness** — standard vs adversarially-trained model, measured
+  live on clean data and under PGD.
+- **Randomized smoothing** — a real Cohen et al. certified L2 radius.
+- **LLM jailbreak game** — a transparent, rule-based prompt-injection simulation
+  (explicitly not a live LLM).
+
 ## What makes it rigorous
 - **No fake UI.** Every slider triggers genuine `numpy`/`scipy`/`scikit-learn`
   compute. The CNN is a real conv-net with im2col forward/backward.
-- **Verified.** 57 unit tests: exact SHAP additivity (residual ≈ 0), causal
+- **Verified.** 64 unit tests: exact SHAP additivity (residual ≈ 0), causal
   recourse strictly cheaper, CNN gradients correct to ~1e-10 vs finite
   differences, Grad-CAM localizes the object, and the shortcut model's Grad-CAM
   provably lands on the spurious band.
@@ -85,6 +97,6 @@ components.py     masthead, plates, readouts, chatbot embed
 plotting.py       one consistent academic Plotly grammar
 core/             all compute engines (+ from-scratch NumPy CNN)
 modules/          theory plates + interactive demos + pdf_export
-tests/            57 unit tests
+tests/            64 unit tests
 assets/           bundled Vazirmatn TTF (Arabic+Persian+Latin) for the PDF
 ```

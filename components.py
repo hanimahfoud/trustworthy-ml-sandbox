@@ -50,13 +50,19 @@ def masthead(eyebrow: str, title: str, subtitle: str, colophon: list[str],
     )
 
 
-def chatbot(url: str, height: int = 520) -> None:
-    """Embed a Botpress (or any) web-chat via iframe, sized for the sidebar."""
+def chatbot(url: str, label: str = "Ask me", height: int = 520) -> None:
+    """Floating bottom-right assistant. A pure-CSS <details> bubble labelled
+    "Ask me" that expands to an iframe of the web-chat -- no JavaScript needed,
+    so it works inside Streamlit's markdown sandbox."""
     st.markdown(
-        f'<div class="assistant-frame">'
-        f'<iframe src="{_esc(url)}" title="assistant" '
-        f'style="width:100%; height:{int(height)}px; border:0; display:block;">'
-        f'</iframe></div>',
+        f"""
+        <details class="assistant-fab">
+          <summary>{_esc(label)}</summary>
+          <div class="assistant-panel">
+            <iframe src="{_esc(url)}" title="assistant"></iframe>
+          </div>
+        </details>
+        """,
         unsafe_allow_html=True,
     )
 

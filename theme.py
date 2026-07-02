@@ -208,6 +208,18 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 [data-baseweb="select"] > div { background: var(--surface2); color: var(--text); border-color: var(--border); }
 [data-testid="stSlider"] label, [data-testid="stSlider"] div { color: var(--text); }
 
+/* Dropdown menu popover (rendered at body root) -- theme it so it is never a
+   dark box on the light/colored themes. */
+[data-baseweb="popover"] [role="listbox"],
+[data-baseweb="popover"] ul,
+[data-baseweb="menu"], ul[role="listbox"] {
+  background: var(--surface) !important; border: 1px solid var(--border) !important;
+}
+[role="option"], li[role="option"] { background: var(--surface) !important; color: var(--text) !important; }
+[role="option"]:hover, li[role="option"]:hover, [aria-selected="true"][role="option"] {
+  background: var(--surface2) !important; color: var(--text) !important;
+}
+
 /* Tabs */
 [data-testid="stTabs"] button[role="tab"] { font-family: var(--mono); letter-spacing: .08em; text-transform: uppercase; font-size: .78rem; color: var(--muted); }
 [data-testid="stTabs"] button[role="tab"][aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); }
@@ -215,8 +227,37 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 [data-testid="stTable"] table { font-family: var(--mono); font-size: .85rem; color: var(--text); }
 [data-testid="stSlider"] [role="slider"] { background: var(--accent); }
 
-/* Assistant (Botpress) frame */
+/* ---- Floating "Ask me" assistant (bottom-right, pure CSS, no JS) ---- */
+.assistant-fab { position: fixed; right: 22px; bottom: 22px; z-index: 9999; }
+.assistant-fab > summary {
+  list-style: none; cursor: pointer; display: inline-flex; align-items: center;
+  gap: 8px; background: var(--accent); color: #fff; font-family: var(--mono);
+  font-size: .8rem; letter-spacing: .06em; padding: 12px 18px; border-radius: 999px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.28); user-select: none; white-space: nowrap;
+}
+.assistant-fab > summary::-webkit-details-marker { display: none; }
+.assistant-fab > summary::before { content: "\1F4AC"; font-size: 1rem; }
+.assistant-fab[open] > summary { border-radius: 12px 12px 0 0; }
+.assistant-panel {
+  position: absolute; bottom: 52px; right: 0; width: min(380px, 92vw);
+  height: min(560px, 70vh); background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,.35);
+}
+.assistant-panel iframe { width: 100%; height: 100%; border: 0; display: block; }
 .assistant-frame { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--surface); }
+
+/* ---- Mobile responsiveness ---- */
+@media (max-width: 640px) {
+  .block-container, [data-testid="block-container"] { padding: 1.1rem .7rem 3rem .7rem; }
+  .masthead { padding: 16px 16px 12px 16px; }
+  .masthead .title { font-size: 1.5rem; }
+  .masthead .subtitle { font-size: .92rem; }
+  .masthead .colophon, .masthead .byline { gap: 10px; font-size: .62rem; }
+  .readout .v { font-size: 1.15rem; }
+  [data-testid="stMarkdownContainer"] p { font-size: .98rem; }
+  .assistant-fab { right: 12px; bottom: 12px; }
+  .assistant-fab > summary { padding: 10px 14px; font-size: .74rem; }
+}
 
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 """

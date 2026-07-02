@@ -296,8 +296,8 @@ EN: dict[str, str] = {
     "byline_supervisor": "Supervisor",
     "byline_author": "Prepared by",
     "name_supervisor": "Dr. Behrouz Minaei-Bidgoli",
-    "name_author": "Hani Akram Mahfoudh",
-    "assistant_label": "Assistant",
+    "name_author": "Hani Akram Mahfoud",
+    "assistant_label": "Ask me",
 }
 
 
@@ -532,8 +532,8 @@ FA: dict[str, str] = {
     "byline_supervisor": "استاد راهنما",
     "byline_author": "تهیه‌کننده",
     "name_supervisor": "Dr. Behrouz Minaei-Bidgoli",
-    "name_author": "Hani Akram Mahfoudh",
-    "assistant_label": "دستیار",
+    "name_author": "Hani Akram Mahfoud",
+    "assistant_label": "از من بپرس",
 }
 
 
@@ -760,8 +760,8 @@ AR: dict[str, str] = {
     "byline_supervisor": "المشرف",
     "byline_author": "إعداد",
     "name_supervisor": "Dr. Behrouz Minaei-Bidgoli",
-    "name_author": "Hani Akram Mahfoudh",
-    "assistant_label": "المساعد",
+    "name_author": "Hani Akram Mahfoud",
+    "assistant_label": "اسألني",
 }
 
 
@@ -778,6 +778,12 @@ from i18n_fair import EN3, FA3, AR3  # noqa: E402
 EN.update(EN3)
 FA.update(FA3)
 AR.update(AR3)
+
+# Merge Section IV (Robustness) strings.
+from i18n_robust import EN4, FA4, AR4  # noqa: E402
+EN.update(EN4)
+FA.update(FA4)
+AR.update(AR4)
 
 
 def t(lang: str, key: str) -> str:
