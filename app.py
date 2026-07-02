@@ -14,7 +14,7 @@ import streamlit as st
 import components as C
 import nav
 from i18n import LANGS, is_rtl, t
-from modules import theory, theory_xai, theory_fair, theory_robust, theory_privacy
+from modules import theory, theory_xai, theory_fair, theory_robust, theory_privacy, theory_align
 from modules import (
     bias_variance,
     counterfactual,
@@ -26,6 +26,7 @@ from modules import xai_loan, recourse_xai, cv_scanner, spurious
 from modules import fair_scales, fair_cda, fair_multiturn, fair_constitution
 from modules import rob_evasion, rob_tradeoff, rob_smoothing, rob_jailbreak
 from modules import pp_backdoor, pp_coin, pp_laplace, pp_leak
+from modules import pa_hacking, pa_grpo, pa_jailbreak, pa_agency
 from modules import pdf_export
 
 st.set_page_config(
@@ -39,7 +40,8 @@ st.set_page_config(
 THEORY_RENDER = {"sec1": theory.SECTIONS, "sec2": theory_xai.SECTIONS_XAI,
                  "sec3": theory_fair.SECTIONS_FAIR,
                  "sec4": theory_robust.SECTIONS_ROBUST,
-                 "sec5": theory_privacy.SECTIONS_PRIVACY}
+                 "sec5": theory_privacy.SECTIONS_PRIVACY,
+                 "sec6": theory_align.SECTIONS_ALIGN}
 PRACTICE_RENDER = {
     "sec1": {
         "pr_bv": bias_variance.render,
@@ -71,6 +73,12 @@ PRACTICE_RENDER = {
         "pp_coin": pp_coin.render,
         "pp_laplace": pp_laplace.render,
         "pp_leak": pp_leak.render,
+    },
+    "sec6": {
+        "pa_hacking": pa_hacking.render,
+        "pa_grpo": pa_grpo.render,
+        "pa_jailbreak": pa_jailbreak.render,
+        "pa_agency": pa_agency.render,
     },
 }
 
@@ -162,9 +170,12 @@ elif section == "sec3":
 elif section == "sec4":
     subtitle = t(lang, "masthead_subtitle_4")
     colophon = [t(lang, "colophon_1"), t(lang, "colophon_4b"), t(lang, "colophon_3")]
-else:
+elif section == "sec5":
     subtitle = t(lang, "masthead_subtitle_5")
     colophon = [t(lang, "colophon_1"), t(lang, "colophon_5b"), t(lang, "colophon_3")]
+else:
+    subtitle = t(lang, "masthead_subtitle_6")
+    colophon = [t(lang, "colophon_1"), t(lang, "colophon_6b"), t(lang, "colophon_3")]
 
 C.masthead(
     t(lang, "masthead_eyebrow"), t(lang, "masthead_title"), subtitle, colophon,

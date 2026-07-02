@@ -75,10 +75,23 @@ Every practice demo now opens with a plain-language explainer (what it does, why
 it matters, what to look for), and the theory plates are written as full
 explanations with diagrams rather than bullet points.
 
+**VI · Generative AI Safety & Alignment** — the alignment gap, RLHF (SFT +
+Bradley–Terry reward model + PPO) and reward hacking, DPO's implicit reward,
+the SimPO/RDPO/GRPO family, the OWASP LLM Top 10, and excessive agency. Four
+interactive demos:
+- **Reward-Hacking Simulator** — the closed-form KL-regularized policy; shrink β
+  and watch the policy game an over-valued reward model.
+- **GRPO Reasoning Visualizer** — K candidates scored by a real rule-based
+  arithmetic verifier plus majority voting; no human labels.
+- **Jailbreak Challenge** — a rule-based Gandalf-style guardrail; indirect
+  framings defeat a naive refusal.
+- **Excessive-Agency Sandbox** — an inbox with a hidden instruction; identical
+  injection is inert under read-only, catastrophic under delete access.
+
 ## What makes it rigorous
 - **No fake UI.** Every slider triggers genuine `numpy`/`scipy`/`scikit-learn`
   compute. The CNN is a real conv-net with im2col forward/backward.
-- **Verified.** 71 unit tests: exact SHAP additivity (residual ≈ 0), causal
+- **Verified.** 79 unit tests: exact SHAP additivity (residual ≈ 0), causal
   recourse strictly cheaper, CNN gradients correct to ~1e-10 vs finite
   differences, Grad-CAM localizes the object, and the shortcut model's Grad-CAM
   provably lands on the spurious band.
@@ -114,6 +127,6 @@ components.py     masthead, plates, readouts, chatbot embed
 plotting.py       one consistent academic Plotly grammar
 core/             all compute engines (+ from-scratch NumPy CNN)
 modules/          theory plates + interactive demos + pdf_export
-tests/            71 unit tests
+tests/            79 unit tests
 assets/           bundled Vazirmatn TTF (Arabic+Persian+Latin) for the PDF
 ```

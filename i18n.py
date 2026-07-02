@@ -791,6 +791,12 @@ EN.update(EN5)
 FA.update(FA5)
 AR.update(AR5)
 
+# Merge Section VI (Alignment) strings.
+from i18n_align import EN6, FA6, AR6  # noqa: E402
+EN.update(EN6)
+FA.update(FA6)
+AR.update(AR6)
+
 
 def t(lang: str, key: str) -> str:
     """Translate ``key`` into ``lang``, falling back to English then the key."""
