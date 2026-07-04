@@ -276,7 +276,7 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   letter-spacing: .07em; text-transform: uppercase; color: var(--accent); padding-top: 2px; }
 .demo-intro .di-v { flex: 1; color: var(--text); font-size: .95rem; line-height: 1.5; }
 
-/* ---- Mobile responsiveness ---- */
+/* ---- Mobile responsiveness (mobile-first refinements) ---- */
 @media (max-width: 640px) {
   .block-container, [data-testid="block-container"] { padding: 1.1rem .7rem 3rem .7rem; }
   .masthead { padding: 16px 16px 12px 16px; }
@@ -287,9 +287,130 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   [data-testid="stMarkdownContainer"] p { font-size: .98rem; }
   .assistant-fab { right: 12px; bottom: 12px; }
   .assistant-fab > summary { padding: 10px 14px; font-size: .74rem; }
+  /* section-card grid collapses to a single column on phones */
+  .section-grid { grid-template-columns: 1fr !important; }
+  .hero .hero-title { font-size: 1.7rem !important; }
+  .hero .hero-summary { font-size: .95rem !important; }
+  /* stack Streamlit columns full-width on phones */
+  [data-testid="stHorizontalBlock"] { flex-direction: column !important; }
+  [data-testid="column"] { width: 100% !important; flex: 1 1 100% !important; }
+}
+@media (min-width: 641px) and (max-width: 1024px) {
+  .section-grid { grid-template-columns: repeat(2, 1fr) !important; }
 }
 
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* ============================================================= */
+/*  PRINT / PDF  —  clean, professional printout                 */
+/*  Hides all chrome (sidebar, chatbot, buttons) and prints only */
+/*  the article content in a legible, ink-friendly layout.       */
+/* ============================================================= */
+@media print {
+  /* force a light, high-contrast, ink-saving palette */
+  :root, [data-testid="stAppViewContainer"] {
+    --text: #111 !important; --surface: #fff !important; --surface2: #fff !important;
+    --border: #bbb !important; background: #fff !important;
+  }
+  html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
+    background: #fff !important; color: #111 !important;
+  }
+  /* hide everything that isn't the article */
+  [data-testid="stSidebar"], [data-testid="collapsedControl"],
+  .assistant-fab, .assistant-panel, header, footer,
+  [data-testid="stToolbar"], [data-testid="stDecoration"],
+  .stButton, [data-testid="stDownloadButton"], .site-nav, .view-toggle,
+  .section-grid, .roadmap-panel { display: none !important; }
+  /* give the content the full page with sane margins */
+  .block-container, [data-testid="block-container"] {
+    max-width: 100% !important; padding: 0 !important; margin: 0 !important;
+  }
+  @page { margin: 1.6cm 1.4cm; }
+  /* keep cards and figures from breaking awkwardly across pages */
+  [data-testid="stVerticalBlockBorderWrapper"], .demo-intro, .keyidea, .warn,
+  figure, .js-plotly-plot, [data-testid="stImage"] {
+    break-inside: avoid; page-break-inside: avoid;
+    box-shadow: none !important; border-color: #ccc !important;
+  }
+  h1, h2, h3, .plate-title { break-after: avoid; page-break-after: avoid; }
+  a { color: #111 !important; text-decoration: none !important; }
+  /* plotly/altair charts sometimes render dark controls — neutralise */
+  .modebar { display: none !important; }
+  .masthead { border: none !important; }
+}
+
+/* ============================================================= */
+/*  HERO SECTION  —  course title, author, supervisor, summary   */
+/* ============================================================= */
+.hero {
+  text-align: center; padding: 30px 20px 22px 20px; margin: 0 0 10px 0;
+  border-bottom: 2px solid var(--mast-rule, var(--accent));
+}
+.hero .hero-eyebrow {
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .28em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 10px;
+}
+.hero .hero-title {
+  font-family: var(--serif); font-weight: 800; font-size: 2.4rem; line-height: 1.15;
+  color: var(--mast-title, var(--text)); margin: 0 0 14px 0; letter-spacing: -.01em;
+}
+.hero .hero-byline {
+  display: flex; gap: 30px; justify-content: center; flex-wrap: wrap;
+  margin: 12px 0 16px 0;
+}
+.hero .hero-byline .cell { text-align: center; }
+.hero .hero-byline .lab {
+  display: block; font-family: var(--mono); font-size: .62rem; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 3px;
+}
+.hero .hero-byline b { font-family: var(--serif); font-size: 1rem; color: var(--text); font-weight: 600; }
+.hero .hero-summary {
+  max-width: 720px; margin: 0 auto; font-family: var(--serif); font-size: 1.05rem;
+  line-height: 1.6; color: var(--mast-sub, var(--muted)); font-style: italic;
+}
+
+/* ============================================================= */
+/*  SECTION-CARD GRID  —  six course sections as elevated cards  */
+/* ============================================================= */
+.section-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 22px 0;
+}
+.section-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 20px 18px; transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  position: relative; overflow: hidden;
+}
+.section-card::before {
+  content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+  background: var(--accent); opacity: .85;
+}
+.section-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(14,42,71,.14); border-color: var(--accent); }
+.section-card .sc-icon {
+  font-size: 1.6rem; line-height: 1; margin-bottom: 10px; display: block;
+}
+.section-card .sc-num {
+  font-family: var(--mono); font-size: .66rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 6px;
+}
+.section-card .sc-title {
+  font-family: var(--serif); font-weight: 700; font-size: 1.12rem; color: var(--text);
+  margin-bottom: 6px; line-height: 1.25;
+}
+.section-card .sc-desc { font-size: .88rem; color: var(--muted); line-height: 1.5; }
+
+/* ============================================================= */
+/*  ROADMAP / SITE-MAP PANEL                                     */
+/* ============================================================= */
+.roadmap-panel {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 20px 22px; margin: 8px 0 18px 0;
+}
+.roadmap-col .rm-head {
+  font-family: var(--mono); font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+.roadmap-col .rm-item { font-size: .86rem; color: var(--text); padding: 3px 0; line-height: 1.4; }
+.roadmap-col .rm-item::before { content: "▸ "; color: var(--muted); }
 """
 
 
@@ -312,6 +433,10 @@ h1, h2, h3, h4, .masthead .title, .plate-title { font-family: var(--rtl-display)
 .warn { border-left: none; border-right: 3px solid var(--accent); }
 .figure-caption { text-align: right; }
 .stButton > button { text-align: right; }
+.section-card::before { left: auto; right: 0; }
+.section-card { text-align: right; }
+.roadmap-col .rm-item::before { content: ""; }
+.roadmap-col .rm-item::after { content: " ◂"; color: var(--muted); }
 /* Numerals and mono readouts stay LTR for legibility */
 .readout, .colophon, .figure-caption { direction: ltr; }
 .measure { margin-right: 0; }

@@ -87,6 +87,11 @@ LANG_CODES = [c for c, _ in LANGS]
 NAME_OF = dict(LANGS)
 THEME_CODES = ["light", "dark"]
 
+# icons for the six section cards (neutral / academic emoji)
+SECTION_ICONS = {
+    "sec1": "◷", "sec2": "◉", "sec3": "⚖", "sec4": "⛊", "sec5": "🔒", "sec6": "✦",
+}
+
 BOTPRESS_URL = (
     "https://cdn.botpress.cloud/webchat/v3.6/shareable.html?configUrl="
     "https://files.bpcontent.cloud/2026/07/01/08/20260701082723-ZJ4IWTNT.json"
@@ -157,7 +162,42 @@ sb.download_button(
 # --- assistant (floating "Ask me" bubble, bottom-right) ---
 C.chatbot(BOTPRESS_URL, label=t(lang, "assistant_label"))
 
-# --- masthead (subtitle + colophon vary by section) ---
+# =============================================================== #
+#  MAIN PANEL — hero, view toggles, section grid, and routing      #
+# =============================================================== #
+
+# Hero band: course name, byline (supervisor / author), summary.
+C.hero(
+    t(lang, "masthead_eyebrow"),
+    t(lang, "hero_title"),
+    t(lang, "hero_summary"),
+    byline=[
+        {"label": t(lang, "byline_supervisor"), "name": t(lang, "name_supervisor")},
+        {"label": t(lang, "byline_author"), "name": t(lang, "name_author")},
+    ],
+)
+
+# A "Site map" toggle lives just under the hero (mirrors the sidebar nav,
+# giving a one-glance overview of the whole structure).
+show_map = st.toggle(t(lang, "roadmap_label"), value=False, key="show_roadmap")
+if show_map:
+    columns = []
+    for sec in nav.SECTIONS:
+        items = [t(lang, k) for k in nav.THEORY[sec]] + \
+                [t(lang, k) for k in nav.PRACTICE[sec]]
+        columns.append({"head": t(lang, sec + "_title"), "items": items})
+    C.roadmap(columns)
+
+# Section-card grid: a visual overview of the six sections. It highlights the
+# section currently selected in the sidebar.
+cards = [
+    {"icon": SECTION_ICONS.get(sec, "◆"), "num": t(lang, sec + "_title"),
+     "title": t(lang, sec + "_title"), "desc": t(lang, "sc_desc_" + sec)}
+    for sec in nav.SECTIONS
+]
+C.section_grid(cards)
+
+# Per-section masthead (subtitle + colophon) above the article content.
 if section == "sec1":
     subtitle = t(lang, "masthead_subtitle")
     colophon = [t(lang, "colophon_1"), t(lang, "colophon_2"), t(lang, "colophon_3")]
@@ -178,14 +218,10 @@ else:
     colophon = [t(lang, "colophon_1"), t(lang, "colophon_6b"), t(lang, "colophon_3")]
 
 C.masthead(
-    t(lang, "masthead_eyebrow"), t(lang, "masthead_title"), subtitle, colophon,
-    byline=[
-        {"label": t(lang, "byline_supervisor"), "name": t(lang, "name_supervisor")},
-        {"label": t(lang, "byline_author"), "name": t(lang, "name_author")},
-    ],
+    t(lang, "masthead_eyebrow"), t(lang, section + "_title"), subtitle, colophon,
 )
 
-# --- route ---
+# --- route to the selected theory plate or interactive demo ---
 if mode == "mode_theory":
     THEORY_RENDER[section][page](lang)
 else:

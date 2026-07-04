@@ -797,6 +797,12 @@ EN.update(EN6)
 FA.update(FA6)
 AR.update(AR6)
 
+# Merge UI-overhaul chrome strings (hero, roadmap, section cards).
+from i18n_ui import EN_UI, FA_UI, AR_UI  # noqa: E402
+EN.update(EN_UI)
+FA.update(FA_UI)
+AR.update(AR_UI)
+
 
 def t(lang: str, key: str) -> str:
     """Translate ``key`` into ``lang``, falling back to English then the key."""

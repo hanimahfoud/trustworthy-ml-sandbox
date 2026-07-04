@@ -50,6 +50,62 @@ def masthead(eyebrow: str, title: str, subtitle: str, colophon: list[str],
     )
 
 
+def hero(eyebrow: str, title: str, summary: str,
+         byline: list[dict] | None = None) -> None:
+    """A centered hero band under the navbar: course name, byline
+    (supervisor / author), and a concise course summary."""
+    byline_html = ""
+    if byline:
+        cells = "".join(
+            f'<div class="cell"><span class="lab">{_esc(b.get("label", ""))}</span>'
+            f'<b>{_esc(b.get("name", ""))}</b></div>'
+            for b in byline
+        )
+        byline_html = f'<div class="hero-byline">{cells}</div>'
+    st.markdown(
+        f"""
+        <div class="hero">
+          <div class="hero-eyebrow">{_esc(eyebrow)}</div>
+          <div class="hero-title">{_esc(title)}</div>
+          {byline_html}
+          <div class="hero-summary">{_esc(summary)}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def section_grid(cards: list[dict]) -> None:
+    """A responsive grid of section cards. Each card is a dict with keys
+    ``icon``, ``num``, ``title``, ``desc``. Purely visual overview; navigation
+    stays in the sidebar/toggles."""
+    cells = "".join(
+        f'<div class="section-card">'
+        f'<span class="sc-icon">{_esc(c.get("icon", "◆"))}</span>'
+        f'<div class="sc-num">{_esc(c.get("num", ""))}</div>'
+        f'<div class="sc-title">{_esc(c.get("title", ""))}</div>'
+        f'<div class="sc-desc">{_esc(c.get("desc", ""))}</div>'
+        f'</div>'
+        for c in cards
+    )
+    st.markdown(f'<div class="section-grid">{cells}</div>', unsafe_allow_html=True)
+
+
+def roadmap(columns: list[dict]) -> None:
+    """A visual site-map / roadmap panel. Each column is a dict with keys
+    ``head`` (section title) and ``items`` (list of sub-page titles)."""
+    cols = ""
+    for col in columns:
+        items = "".join(
+            f'<div class="rm-item">{_esc(it)}</div>' for it in col.get("items", []))
+        cols += (f'<div class="roadmap-col"><div class="rm-head">'
+                 f'{_esc(col.get("head", ""))}</div>{items}</div>')
+    st.markdown(
+        f'<div class="roadmap-panel"><div class="section-grid">{cols}</div></div>',
+        unsafe_allow_html=True,
+    )
+
+
 def chatbot(url: str, label: str = "Ask me", height: int = 520) -> None:
     """Floating bottom-right assistant. A pure-CSS <details> bubble labelled
     "Ask me" that expands to an iframe of the web-chat -- no JavaScript needed,
