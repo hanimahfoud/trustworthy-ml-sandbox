@@ -803,6 +803,19 @@ EN.update(EN_UI)
 FA.update(FA_UI)
 AR.update(AR_UI)
 
+# Retrofit demo_intro (what/why/expect) onto the 17 Section I-IV practice demos.
+from i18n_demo_retrofit import EN_RETROFIT, FA_RETROFIT, AR_RETROFIT  # noqa: E402
+EN.update(EN_RETROFIT)
+FA.update(FA_RETROFIT)
+AR.update(AR_RETROFIT)
+
+# Deepen Section I theory with a 4th paragraph per topic (mechanism, worked
+# examples, honest caveats, forward-links).
+from i18n_sec1_depth import EN_DEPTH1, FA_DEPTH1, AR_DEPTH1  # noqa: E402
+EN.update(EN_DEPTH1)
+FA.update(FA_DEPTH1)
+AR.update(AR_DEPTH1)
+
 
 def t(lang: str, key: str) -> str:
     """Translate ``key`` into ``lang``, falling back to English then the key."""

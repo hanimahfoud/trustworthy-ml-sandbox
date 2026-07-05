@@ -63,12 +63,6 @@ def _clean(text: str) -> str:
     return text.replace("  ", " ").strip()
 
 
-def _shape(text: str, lang: str) -> str:
-    if is_rtl(lang):
-        return get_display(arabic_reshaper.reshape(text))
-    return text
-
-
 class _Doc(FPDF):
     def __init__(self, lang):
         super().__init__(format="A4")
@@ -79,12 +73,41 @@ class _Doc(FPDF):
         self.add_font("Vazir", "B", _BOLD)
         self.set_margins(18, 18, 18)
 
+    def _wrap_logical(self, text: str, width: float) -> list[str]:
+        """Word-wrap ``text`` to fit ``width`` mm, measuring in LOGICAL
+        (reading) order -- i.e. *before* any bidi reshaping. This must happen
+        first: reshaping/reversing the whole paragraph and then handing it to
+        fpdf2's own multi_cell wrapper (as the previous version did) breaks
+        word boundaries, because multi_cell splits on spaces in the already
+        visually-reversed string, which is not where the real word breaks
+        are. Wrapping on the logical string, then reshaping each finished
+        line on its own, keeps both the wrapping and the visual order
+        correct for Arabic and Persian."""
+        words = text.split(" ")
+        lines, cur = [], ""
+        for w in words:
+            trial = (cur + " " + w).strip()
+            if not cur or self.get_string_width(trial) <= width:
+                cur = trial
+            else:
+                lines.append(cur)
+                cur = w
+        if cur:
+            lines.append(cur)
+        return lines or [""]
+
     def _line(self, text, size=11, style="", gap=1.4, color=(32, 48, 63)):
         self.set_font("Vazir", style, size)
         self.set_text_color(*color)
-        align = "R" if self.rtl else "L"
-        self.multi_cell(0, size * 0.62, _shape(_clean(text), self.lang),
-                        align=align)
+        cleaned = _clean(text)
+        line_h = size * 0.62
+        if self.rtl:
+            avail = self.w - self.l_margin - self.r_margin
+            for ln in self._wrap_logical(cleaned, avail):
+                shaped = get_display(arabic_reshaper.reshape(ln))
+                self.cell(0, line_h, shaped, align="R", new_x="LMARGIN", new_y="NEXT")
+        else:
+            self.multi_cell(0, line_h, cleaned, align="L")
         self.ln(gap)
 
 

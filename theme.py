@@ -219,7 +219,12 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 [data-testid="stSidebar"] .sidebar-nameplate { font-family: var(--display); font-weight: 700; font-size: 1.05rem; color: var(--text); line-height: 1.2; }
 [data-testid="stSidebar"] .sidebar-sub { font-family: var(--mono); font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
 [data-testid="stSidebar"] hr { border-color: var(--border); }
+[data-testid="stSidebar"] { min-width: 340px !important; width: 340px !important; }
+[data-testid="stSidebar"] > div { width: 340px !important; }
 [data-testid="stSidebar"] .rail-label { font-family: var(--mono); font-size: .66rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin: 10px 0 4px 0; }
+[data-testid="stSidebar"] [data-testid="stRadio"] label p {
+  font-size: .92rem !important; line-height: 1.35 !important;
+}
 
 /* Buttons */
 .stButton > button { font-family: var(--mono); font-size: .82rem; letter-spacing: .02em; border: 1px solid var(--border); background: var(--btn); color: var(--text); border-radius: 4px; text-align: left; padding: 8px 12px; transition: none; }
@@ -302,6 +307,9 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 
 /* ---- Mobile responsiveness (mobile-first refinements) ---- */
 @media (max-width: 640px) {
+  [data-testid="stSidebar"], [data-testid="stSidebar"] > div {
+    min-width: 88vw !important; width: 88vw !important; max-width: 360px !important;
+  }
   .block-container, [data-testid="block-container"] { padding: 1.1rem .7rem 3rem .7rem; }
   .masthead { padding: 16px 16px 12px 16px; }
   .masthead .title { font-size: 1.5rem; }
@@ -460,28 +468,39 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 /* ---- Clickable section cards: style Streamlit buttons in the landing grid --- */
 .landing-grid [data-testid="stButton"] > button,
 .landing-grid .stButton > button {
-  width: 100%; min-height: 132px; text-align: start; white-space: pre-line;
-  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-  border-top: 3px solid var(--accent); padding: 18px 18px;
-  font-family: var(--serif); color: var(--text);
+  width: 100%; height: 188px; text-align: start; white-space: pre-line;
+  background: var(--surface); border: 1px solid var(--border); border-bottom: none;
+  border-radius: 12px 12px 0 0; border-top: 3px solid var(--accent);
+  padding: 18px 18px; font-family: var(--serif); color: var(--text);
   box-shadow: 0 4px 14px rgba(14,42,71,.06);
-  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;
+  overflow: hidden; transition: box-shadow .15s ease, border-color .15s ease;
 }
 .landing-grid [data-testid="stButton"] > button:hover,
 .landing-grid .stButton > button:hover {
-  transform: translateY(-4px); box-shadow: 0 14px 34px rgba(14,42,71,.16);
+  box-shadow: 0 10px 26px rgba(14,42,71,.14);
   border-color: var(--accent); color: var(--text);
 }
-/* Mini Theory/Practice row under each section card */
-.card-mode-row { margin-top: 6px; }
+/* Mini Theory/Practice footer -- visually fused to the card above (no gap,
+   matching border, rounded only on the two bottom outer corners) */
+.card-mode-row { margin-top: 0; }
+.card-mode-row [data-testid="stHorizontalBlock"] { gap: 0 !important; }
 .card-mode-row [data-testid="stButton"] > button {
-  min-height: 34px !important; font-size: .78rem !important; font-weight: 600 !important;
-  border-radius: 6px !important; border: 1px solid var(--border) !important;
+  height: 38px !important; width: 100% !important; font-size: .78rem !important;
+  font-weight: 600 !important; border-radius: 0 !important;
+  border: 1px solid var(--border) !important; border-top: 1px solid var(--border) !important;
   background: var(--surface2) !important; color: var(--text) !important;
   box-shadow: none !important;
 }
+.card-mode-row [data-testid="column"]:first-child [data-testid="stButton"] > button {
+  border-bottom-left-radius: 10px !important;
+}
+.card-mode-row [data-testid="column"]:last-child [data-testid="stButton"] > button {
+  border-bottom-right-radius: 10px !important; border-left: none !important;
+}
 .card-mode-row [data-testid="stButton"] > button:hover {
   border-color: var(--accent) !important; background: var(--surface) !important;
+  color: var(--accent) !important;
 }
 
 /* ---- Navigation buttons (Home / Prev / Next, choose Theory/Practice) ---- */
@@ -530,12 +549,14 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 }
 .topbar-row [data-testid="stButton"] > button,
 .topbar-row [data-testid="stDownloadButton"] > button {
-  min-height: 42px !important; width: 100%;
+  min-height: 42px !important; height: 42px !important; width: 100%;
   border-radius: 8px !important; border: 1px solid var(--border) !important;
   background: var(--surface) !important; color: var(--text) !important;
-  font-family: var(--serif) !important; font-weight: 600 !important; font-size: .92rem !important;
+  font-family: var(--serif) !important; font-weight: 600 !important; font-size: .88rem !important;
   box-shadow: 0 3px 10px rgba(12,35,64,.06) !important; margin-top: 21px !important;
   transition: all .15s ease !important;
+  white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important;
+  padding: 0 10px !important;
 }
 .topbar-row [data-testid="stButton"] > button:hover,
 .topbar-row [data-testid="stDownloadButton"] > button:hover {

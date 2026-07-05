@@ -39,7 +39,10 @@ def _pct(v: float) -> str:
 def render(lang: str) -> None:
     C.eyebrow(t(lang, "pr_dann_eyebrow"))
     C.section_title(t(lang, "pr_dann"))
-    C.measure(f"<p>{t(lang, 'pr_dann_intro')}</p>")
+    C.demo_intro(t(lang, "pr_dann_what"), t(lang, "pr_dann_why"),
+                 t(lang, "pr_dann_expect"),
+                 labels=(t(lang, "di_what"), t(lang, "di_why"),
+                         t(lang, "di_expect")))
 
     with st.container(border=True):
         c1, c2 = st.columns(2)

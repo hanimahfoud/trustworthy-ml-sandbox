@@ -57,7 +57,10 @@ def _fmt(v: float) -> str:
 def render(lang: str) -> None:
     C.eyebrow(t(lang, "pr_bv_eyebrow"))
     C.section_title(t(lang, "pr_bv"))
-    C.measure(f"<p>{t(lang, 'pr_bv_intro')}</p>")
+    C.demo_intro(t(lang, "pr_bv_what"), t(lang, "pr_bv_why"),
+                 t(lang, "pr_bv_expect"),
+                 labels=(t(lang, "di_what"), t(lang, "di_why"),
+                         t(lang, "di_expect")))
 
     # ---- controls ----
     with st.container(border=True):

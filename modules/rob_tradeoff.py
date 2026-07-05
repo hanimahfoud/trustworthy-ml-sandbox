@@ -48,7 +48,10 @@ def _scores(use_adv, eps=0.20):
 def render(lang):
     with st.container(border=True):
         C.plate_header(t(lang, "prb_tradeoff_eyebrow"), t(lang, "prb_tradeoff"))
-        C.measure(f"<p>{t(lang, 'prb_tradeoff_intro')}</p>")
+        C.demo_intro(t(lang, "prb_tradeoff_what"), t(lang, "prb_tradeoff_why"),
+                 t(lang, "prb_tradeoff_expect"),
+                 labels=(t(lang, "di_what"), t(lang, "di_why"),
+                         t(lang, "di_expect")))
 
         use_adv = st.checkbox(t(lang, "prb_tradeoff_adv"), value=False)
 

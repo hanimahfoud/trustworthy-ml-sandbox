@@ -188,7 +188,7 @@ C.chatbot(BOTPRESS_URL, label=t(lang, "assistant_label"))
 st.markdown('<div class="topbar-row">', unsafe_allow_html=True)
 tb = st.columns(7)
 with tb[0]:
-    C.sidebar_toggle_button(f"☰ {t(lang, 'open_sections')}")
+    C.sidebar_toggle_button(t(lang, "open_sections"))
 with tb[1]:
     st.selectbox(f"🌐 {t(lang, 'lang_label')}", LANG_CODES,
                  format_func=lambda c: NAME_OF[c], key="lang")

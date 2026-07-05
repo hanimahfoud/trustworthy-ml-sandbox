@@ -61,7 +61,10 @@ def render(lang):
 
     with st.container(border=True):
         C.plate_header(t(lang, "px_spurious_eyebrow"), t(lang, "px_spurious"))
-        C.measure(f"<p>{t(lang, 'px_spurious_intro')}</p>")
+        C.demo_intro(t(lang, "px_spurious_what"), t(lang, "px_spurious_why"),
+                 t(lang, "px_spurious_expect"),
+                 labels=(t(lang, "di_what"), t(lang, "di_why"),
+                         t(lang, "di_expect")))
 
         col_a, col_b = st.columns(2)
         with col_a:

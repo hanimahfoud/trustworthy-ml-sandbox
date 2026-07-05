@@ -25,7 +25,10 @@ DEFAULT_PSAD = 0.20
 def render(lang: str) -> None:
     C.eyebrow(t(lang, "pr_cf_eyebrow"))
     C.section_title(t(lang, "pr_cf"))
-    C.measure(f"<p>{t(lang, 'pr_cf_intro')}</p>")
+    C.demo_intro(t(lang, "pr_cf_what"), t(lang, "pr_cf_why"),
+                 t(lang, "pr_cf_expect"),
+                 labels=(t(lang, "di_what"), t(lang, "di_why"),
+                         t(lang, "di_expect")))
 
     with st.container(border=True):
         c1, c2, c3, c4, c5 = st.columns(5)

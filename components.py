@@ -224,13 +224,14 @@ def sidebar_toggle_button(label: str) -> None:
     document and clicks it on the user's behalf. Works on mobile and desktop."""
     import streamlit.components.v1 as components
     html = f"""
-    <div id="tml-sidebar-btn-wrap" style="width:100%;">
+    <div id="tml-sidebar-btn-wrap" style="width:100%; box-sizing:border-box;">
       <button id="tml-sidebar-btn" style="
-          width:100%; min-height:42px; margin-top:21px;
+          width:100%; height:42px; margin-top:21px; box-sizing:border-box;
           border-radius:8px; border:1px solid #6E1620;
           background:#8A1C2B; color:#fff; cursor:pointer;
           font-family: Georgia, 'Playfair Display', serif; font-weight:700;
-          font-size:.92rem; box-shadow:0 3px 10px rgba(0,0,0,.25);">
+          font-size:.88rem; box-shadow:0 3px 10px rgba(0,0,0,.25);
+          white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:0 10px;">
         {_esc(label)}
       </button>
     </div>
@@ -247,6 +248,7 @@ def sidebar_toggle_button(label: str) -> None:
       }});
     </script>
     """
+    components.html(html, height=80)
     components.html(html, height=64)
 
 

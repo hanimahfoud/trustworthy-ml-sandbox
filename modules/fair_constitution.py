@@ -19,7 +19,10 @@ def render(lang):
     with st.container(border=True):
         C.plate_header(t(lang, "pf_constitution_eyebrow"),
                        t(lang, "pf_constitution"))
-        C.measure(f"<p>{t(lang, 'pf_constitution_intro')}</p>")
+        C.demo_intro(t(lang, "pf_constitution_what"), t(lang, "pf_constitution_why"),
+                 t(lang, "pf_constitution_expect"),
+                 labels=(t(lang, "di_what"), t(lang, "di_why"),
+                         t(lang, "di_expect")))
 
         col_a, col_b = st.columns(2)
         with col_a:

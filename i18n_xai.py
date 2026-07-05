@@ -214,7 +214,7 @@ EN2 = {
         "This is a black box that will fail the moment the band disappears.",
 
     # ---- PDF export ----
-    "pdf_button": "Download printable PDF",
+    "pdf_button": "PDF",
     "pdf_prep": "Preparing the document…",
     "pdf_theory_heading": "Theory",
     "pdf_practice_heading": "Practice",
@@ -396,7 +396,7 @@ FA2 = {
         "حفظ کرد که نوار یعنی این کلاس. این جعبهٔ سیاهی است که لحظهٔ ناپدیدشدنِ نوار شکست "
         "خواهد خورد.",
 
-    "pdf_button": "دانلودِ PDFِ قابلِ چاپ",
+    "pdf_button": "PDF",
     "pdf_prep": "در حالِ آماده‌سازیِ سند…",
     "pdf_theory_heading": "نظری",
     "pdf_practice_heading": "عملی",
@@ -568,7 +568,7 @@ AR2 = {
     "px_spurious_warn": "تحذير: نموذجُ المختصر مُصيبٌ لسببٍ خاطئ. لم يتعلّم الشكل — حفِظ أنّ "
         "الشريطَ يعني هذا الصنف. هذا صندوقٌ أسودُ سيفشل لحظةَ اختفاء الشريط.",
 
-    "pdf_button": "تنزيل PDF قابل للطباعة",
+    "pdf_button": "PDF",
     "pdf_prep": "يجري تجهيز المستند…",
     "pdf_theory_heading": "النظري",
     "pdf_practice_heading": "العملي",

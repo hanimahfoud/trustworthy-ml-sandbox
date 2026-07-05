@@ -29,7 +29,10 @@ def _demo(rho: float):
 def render(lang: str) -> None:
     C.eyebrow(t(lang, "pr_sam_eyebrow"))
     C.section_title(t(lang, "pr_sam"))
-    C.measure(f"<p>{t(lang, 'pr_sam_intro')}</p>")
+    C.demo_intro(t(lang, "pr_sam_what"), t(lang, "pr_sam_why"),
+                 t(lang, "pr_sam_expect"),
+                 labels=(t(lang, "di_what"), t(lang, "di_why"),
+                         t(lang, "di_expect")))
 
     with st.container(border=True):
         rho = st.slider(t(lang, "pr_sam_ctrl_rho"), 0.0, 1.2, DEFAULT_RHO, 0.05)

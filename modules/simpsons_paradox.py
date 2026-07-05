@@ -32,7 +32,10 @@ def _pct(rate) -> float:
 def render(lang: str) -> None:
     C.eyebrow(t(lang, "pr_simpson_eyebrow"))
     C.section_title(t(lang, "pr_simpson"))
-    C.measure(f"<p>{t(lang, 'pr_simpson_intro')}</p>")
+    C.demo_intro(t(lang, "pr_simpson_what"), t(lang, "pr_simpson_why"),
+                 t(lang, "pr_simpson_expect"),
+                 labels=(t(lang, "di_what"), t(lang, "di_why"),
+                         t(lang, "di_expect")))
 
     with st.container(border=True):
         skew = st.slider(t(lang, "pr_simpson_ctrl_skew"), 0.0, 0.95,

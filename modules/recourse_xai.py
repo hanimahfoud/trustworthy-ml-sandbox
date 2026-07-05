@@ -28,7 +28,10 @@ def render(lang):
 
     with st.container(border=True):
         C.plate_header(t(lang, "px_recourse_eyebrow"), t(lang, "px_recourse"))
-        C.measure(f"<p>{t(lang, 'px_recourse_intro')}</p>")
+        C.demo_intro(t(lang, "px_recourse_what"), t(lang, "px_recourse_why"),
+                 t(lang, "px_recourse_expect"),
+                 labels=(t(lang, "di_what"), t(lang, "di_why"),
+                         t(lang, "di_expect")))
 
         c1, c2 = st.columns(2)
         with c1:

@@ -17,7 +17,10 @@ from i18n import t
 def render(lang):
     with st.container(border=True):
         C.plate_header(t(lang, "pf_cda_eyebrow"), t(lang, "pf_cda"))
-        C.measure(f"<p>{t(lang, 'pf_cda_intro')}</p>")
+        C.demo_intro(t(lang, "pf_cda_what"), t(lang, "pf_cda_why"),
+                 t(lang, "pf_cda_expect"),
+                 labels=(t(lang, "di_what"), t(lang, "di_why"),
+                         t(lang, "di_expect")))
 
         text = st.text_input(t(lang, "pf_cda_input"), t(lang, "pf_cda_default"))
         swapped, n = F.cda_swap(text, lang)

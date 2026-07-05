@@ -17,7 +17,10 @@ from i18n import t
 def render(lang):
     with st.container(border=True):
         C.plate_header(t(lang, "prb_jailbreak_eyebrow"), t(lang, "prb_jailbreak"))
-        C.measure(f"<p>{t(lang, 'prb_jailbreak_intro')}</p>")
+        C.demo_intro(t(lang, "prb_jailbreak_what"), t(lang, "prb_jailbreak_why"),
+                 t(lang, "prb_jailbreak_expect"),
+                 labels=(t(lang, "di_what"), t(lang, "di_why"),
+                         t(lang, "di_expect")))
 
         tactics = {
             "direct": "prb_jailbreak_t_direct",

@@ -33,6 +33,7 @@ def bias_variance(lang: str) -> None:
         )
         C.figure_caption(t(lang, "th_bv_eqcap"))
         C.measure(_p(t(lang, "th_bv_p3")))
+        C.measure(_p(t(lang, "th_bv_p4")))
         C.key_idea(t(lang, "th_bv_call"))
 
 
@@ -50,6 +51,7 @@ def vc_dimension(lang: str) -> None:
         )
         C.figure_caption(t(lang, "th_vc_eqcap"))
         C.measure(_p(t(lang, "th_vc_p3")))
+        C.measure(_p(t(lang, "th_vc_p4")))
         C.warn(t(lang, "th_vc_call"))
 
 
@@ -67,6 +69,7 @@ def inductive_bias(lang: str) -> None:
         )
         C.figure_caption(t(lang, "th_ib_eqcap"))
         C.measure(_p(t(lang, "th_ib_p3")))
+        C.measure(_p(t(lang, "th_ib_p4")))
         C.key_idea(t(lang, "th_ib_call"))
 
 
@@ -84,6 +87,7 @@ def transfer(lang: str) -> None:
         )
         C.figure_caption(t(lang, "th_tl_eqcap"))
         C.measure(_p(t(lang, "th_tl_p3")))
+        C.measure(_p(t(lang, "th_tl_p4")))
         C.key_idea(t(lang, "th_tl_call"))
 
 
@@ -99,6 +103,7 @@ def sam(lang: str) -> None:
         )
         C.figure_caption(t(lang, "th_sam_eqcap"))
         C.measure(_p(t(lang, "th_sam_p3")))
+        C.measure(_p(t(lang, "th_sam_p4")))
         C.key_idea(t(lang, "th_sam_call"))
 
 
@@ -114,6 +119,7 @@ def causality(lang: str) -> None:
         )
         C.figure_caption(t(lang, "th_cz_eqcap"))
         C.measure(_p(t(lang, "th_cz_p3")))
+        C.measure(_p(t(lang, "th_cz_p4")))
         C.warn(t(lang, "th_cz_call"))
 
 
