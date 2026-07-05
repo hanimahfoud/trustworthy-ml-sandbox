@@ -99,12 +99,28 @@ def _base_css() -> str:
     return """
 /* ---- Page ground ---- */
 [data-testid="stAppViewContainer"] { background: var(--page); }
-[data-testid="stHeader"], [data-testid="stToolbar"],
-#MainMenu, footer, [data-testid="stDecoration"] {
-  display: none !important; height: 0 !important;
+/* NOTE: stHeader must stay in the DOM (not display:none) because Streamlit's
+   native sidebar-open control lives inside it on mobile; hiding the header
+   entirely was hiding that control too, which is why the sidebar could not
+   be reopened on phones. We blend the header visually instead of removing
+   it, and make the toggle itself impossible to miss. */
+[data-testid="stHeader"] {
+  background: transparent !important; box-shadow: none !important;
+  height: 2.6rem !important; min-height: 2.6rem !important;
 }
+[data-testid="stToolbar"], #MainMenu, footer, [data-testid="stDecoration"] {
+  display: none !important;
+}
+/* The native sidebar-open arrow, styled as an unmissable pill button */
+[data-testid="collapsedControl"] {
+  display: flex !important; visibility: visible !important; opacity: 1 !important;
+  background: var(--accent) !important; border-radius: 10px !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,.28) !important; z-index: 999999 !important;
+  padding: 4px !important; margin-top: 4px !important;
+}
+[data-testid="collapsedControl"] svg { fill: #fff !important; width: 22px !important; height: 22px !important; }
 .block-container, [data-testid="block-container"] {
-  padding-top: 2.2rem; padding-bottom: 4rem; max-width: 1180px;
+  padding-top: 1rem; padding-bottom: 4rem; max-width: 1180px;
 }
 
 /* ---- Typography ---- */
@@ -251,16 +267,16 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 .assistant-fab { position: fixed; right: 26px; bottom: 26px; z-index: 99999; }
 .assistant-fab > summary {
   list-style: none; cursor: pointer; display: inline-flex; align-items: center;
-  gap: 9px; background: var(--accent); color: #fff;
-  font-family: var(--sans); font-weight: 600; font-size: .86rem; letter-spacing: .01em;
+  gap: 9px; background: linear-gradient(135deg, #1B4E8C, #123152); color: #FFFFFF;
+  font-family: var(--sans); font-weight: 700; font-size: .9rem; letter-spacing: .01em;
   padding: 13px 20px; border-radius: 999px;
-  box-shadow: 0 8px 24px rgba(14,42,71,.30), 0 2px 6px rgba(0,0,0,.16);
+  box-shadow: 0 8px 24px rgba(18,49,82,.35), 0 2px 6px rgba(0,0,0,.16);
   user-select: none; white-space: nowrap;
   transition: transform .15s ease, box-shadow .15s ease;
 }
 .assistant-fab > summary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(14,42,71,.38), 0 3px 8px rgba(0,0,0,.20);
+  box-shadow: 0 12px 30px rgba(18,49,82,.45), 0 3px 8px rgba(0,0,0,.20);
 }
 .assistant-fab > summary::-webkit-details-marker { display: none; }
 .assistant-fab > summary::marker { content: ""; }
@@ -400,6 +416,10 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   max-width: 760px; margin: 18px auto 0 auto; font-family: var(--serif); font-size: 1.1rem;
   line-height: 1.65; border-radius: 8px; padding: 16px 22px; text-align: start;
 }
+.hero .hero-practice-note {
+  max-width: 760px; margin: 12px auto 0 auto; font-family: var(--mono); font-size: .84rem;
+  line-height: 1.6; color: #C9D6E5; padding: 0 22px; text-align: start;
+}
 
 /* ---- Footer ---- */
 .site-footer {
@@ -477,6 +497,7 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 .rm-node-accent { fill: var(--accent); }
 .rm-edge { stroke: var(--border); stroke-width: 1.5; fill: none; }
 .rm-txt { font-family: var(--mono); fill: var(--text); }
+.rm-txt-leaf { font-family: var(--mono); fill: var(--text-body); opacity: 0.85; }
 .rm-txt-root { font-family: var(--serif); fill: #fff; font-weight: 700; }
 .rm-txt-accent { font-family: var(--mono); fill: var(--accent); }
 
@@ -484,6 +505,31 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 .topbar-hint {
   font-family: var(--mono); font-size: .68rem; letter-spacing: .12em;
   color: var(--muted); margin: 0 0 6px 2px; text-transform: uppercase;
+}
+/* Uniform sizing for all 6 top-bar controls (selectboxes, buttons, download) */
+.topbar-row [data-testid="stSelectbox"] label,
+.topbar-row [data-testid="stWidgetLabel"] p {
+  font-family: var(--mono) !important; font-size: .66rem !important;
+  letter-spacing: .08em !important; text-transform: uppercase !important;
+  color: var(--accent) !important; margin-bottom: 3px !important;
+}
+.topbar-row [data-baseweb="select"] > div {
+  min-height: 42px !important; border-radius: 8px !important;
+  border: 1px solid var(--border) !important; background: var(--surface) !important;
+}
+.topbar-row [data-testid="stButton"] > button,
+.topbar-row [data-testid="stDownloadButton"] > button {
+  min-height: 42px !important; width: 100%;
+  border-radius: 8px !important; border: 1px solid var(--border) !important;
+  background: var(--surface) !important; color: var(--text) !important;
+  font-family: var(--serif) !important; font-weight: 600 !important; font-size: .92rem !important;
+  box-shadow: 0 3px 10px rgba(12,35,64,.06) !important; margin-top: 21px !important;
+  transition: all .15s ease !important;
+}
+.topbar-row [data-testid="stButton"] > button:hover,
+.topbar-row [data-testid="stDownloadButton"] > button:hover {
+  border-color: var(--accent) !important; box-shadow: 0 8px 20px rgba(12,35,64,.14) !important;
+  transform: translateY(-1px);
 }
 .info-panel {
   background: var(--surface); border: 1px solid var(--border);

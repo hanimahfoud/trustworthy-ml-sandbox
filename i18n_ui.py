@@ -13,6 +13,9 @@ EN_UI = {
         "pillars of trustworthy ML — from generalization and explainability to "
         "fairness, robustness, privacy, and the alignment of generative models. "
         "Every demo runs real computation, not mock-ups.",
+    "hero_practice_note": "Choose Theory to read the rigorous explanation, or "
+        "Practice to see the concept happen live — move a slider or press a "
+        "button and watch the real computation unfold before you.",
     # navbar / toggles
     "overview_label": "Overview",
     "roadmap_label": "Site map",
@@ -72,6 +75,9 @@ FA_UI = {
     "hero_summary": "جعبه‌شنی تعاملی و دقیقِ ریاضی در شش ستونِ یادگیری ماشینِ "
         "قابل‌اعتماد — از تعمیم و تفسیرپذیری تا انصاف، استواری، حریم خصوصی، و "
         "هم‌ترازیِ مدل‌های مولد. هر نمایش محاسبهٔ واقعی اجرا می‌کند، نه ماکت.",
+    "hero_practice_note": "بخشِ نظری را برای شرحِ دقیق برگزینید، یا بخشِ عملی را تا "
+        "ببینید مفهوم زنده اتفاق می‌افتد — لغزنده‌ای را بجنبانید یا دکمه‌ای را بزنید و "
+        "محاسبهٔ واقعی را پیشِ چشمانتان تماشا کنید.",
     "overview_label": "نمای کلی",
     "roadmap_label": "نقشهٔ سایت",
     "roadmap_title": "نقشهٔ سایت — کلِّ ساختار در یک نگاه",
@@ -124,6 +130,9 @@ AR_UI = {
     "hero_summary": "منصّةٌ تفاعليّةٌ دقيقةٌ رياضيًّا تمتدّ على ستّة أعمدةٍ للتعلّم "
         "الآليّ الموثوق — من التعميم والتفسير إلى العدالة والمتانة والخصوصيّة ومحاذاة "
         "النماذج التوليديّة. كلُّ عرضٍ يُشغّل حسابًا حقيقيًّا، لا واجهاتٍ وهميّة.",
+    "hero_practice_note": "اختر النظريّ لقراءة الشرح الدقيق، أو العمليّ لترى المفهوم "
+        "يحدث حيًّا أمامك — حرّك مؤشّرًا أو اضغط زرًّا وشاهد الحساب الحقيقيّ يتكشّف "
+        "أمامك.",
     "overview_label": "نظرة عامّة",
     "roadmap_label": "خريطة الموقع",
     "roadmap_title": "خريطة الموقع — البنية كاملةً بلمحة",

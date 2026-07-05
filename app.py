@@ -98,44 +98,69 @@ ss = st.session_state
 ss.setdefault("section", "sec1")
 ss.setdefault("mode", "mode_theory")
 ss.setdefault("page_idx", 0)
-ss.setdefault("overlay", None)          # None | "about" | "contact"
+ss.setdefault("overlay", None)          # None | "about" | "contact" | "map"
+ss.setdefault("lang", "en")
+ss.setdefault("theme", "light")
+
+
+def _go_section(sec: str):
+    """Callback: jump to a section (from a card or the site-map). Setting
+    session_state here -- before the sidebar widgets are (re)created on the
+    upcoming rerun -- is what makes the sidebar radio pick up the new value
+    instead of overriding it back (the classic Streamlit widget-key gotcha)."""
+    st.session_state["section"] = sec
+    st.session_state["page_idx"] = 0
+    st.session_state["overlay"] = None
+
+
+def _toggle_overlay(name: str):
+    st.session_state["overlay"] = None if st.session_state.get("overlay") == name else name
+
+
+def _set_page(delta_or_value, absolute=False):
+    st.session_state["page_idx"] = delta_or_value if absolute else \
+        st.session_state["page_idx"] + delta_or_value
 
 
 # =============================================================== #
 #  SIDEBAR — the contents rail (Part → Section → Page)             #
-#  Opens on mobile via the ☰ control; language/theme live up top.  #
+#  Opens on mobile via Streamlit's native ›› arrow (styled below); #
+#  language/theme/PDF/About/Contact/Site-map live in the top bar.  #
 # =============================================================== #
 sb = st.sidebar
-lang = ss.get("lang", "en")
-theme = ss.get("theme", "light")
+lang = ss.lang
+theme = ss.theme
 
 from theme import inject_theme  # noqa: E402
 inject_theme(theme, "rtl" if is_rtl(lang) else "ltr", lang)
 
 C.sidebar_nameplate(t(lang, "sidebar_name"), t(lang, "sidebar_sub"))
 
-# Part: Theory / Practice
+# track previous section/mode to know when to reset the page index
+_prev_section = ss.get("_prev_section", ss.section)
+_prev_mode = ss.get("_prev_mode", ss.mode)
+
+# Part: Theory / Practice -- widget key == "mode", so it IS ss.mode: no
+# separate tracking variable is needed and no stale-override bug can occur.
 sb.markdown(f'<div class="rail-label">{t(lang, "mode_label")}</div>',
             unsafe_allow_html=True)
-mode = sb.radio("mode", MODE_KEYS, format_func=lambda k: t(lang, k),
-                index=MODE_KEYS.index(ss.mode), key="mode_radio",
-                label_visibility="collapsed")
-if mode != ss.mode:
-    ss.mode = mode
-    ss.page_idx = 0
+sb.radio("mode", MODE_KEYS, format_func=lambda k: t(lang, k),
+         key="mode", label_visibility="collapsed")
 
-# Section: I – VI
+# Section: I – VI -- widget key == "section", so it IS ss.section.
 sb.markdown(f'<div class="rail-label">{t(lang, "section_label")}</div>',
             unsafe_allow_html=True)
-section = sb.radio("section", nav.SECTIONS,
-                   format_func=lambda k: t(lang, k + "_title"),
-                   index=nav.SECTIONS.index(ss.section), key="section_radio",
-                   label_visibility="collapsed")
-if section != ss.section:
-    ss.section = section
-    ss.page_idx = 0
+sb.radio("section", nav.SECTIONS, format_func=lambda k: t(lang, k + "_title"),
+         key="section", label_visibility="collapsed")
 
-# Page menu (per section + mode)
+# if the user changed section/mode via the sidebar itself, reset the page
+if ss.section != _prev_section or ss.mode != _prev_mode:
+    ss.page_idx = 0
+ss["_prev_section"] = ss.section
+ss["_prev_mode"] = ss.mode
+
+# Page menu (per section + mode) -- widget key == "page_idx", so it IS
+# ss.page_idx; clip it to range *before* creating the widget.
 pages = nav.THEORY[ss.section] if ss.mode == "mode_theory" \
     else nav.PRACTICE[ss.section]
 if ss.page_idx >= len(pages):
@@ -143,11 +168,8 @@ if ss.page_idx >= len(pages):
 sb.markdown(f'<div class="rail-label">{t(lang, "nav_label")}</div>',
             unsafe_allow_html=True)
 labels = [t(lang, k) for k in pages]
-sel = sb.radio("page", list(range(len(pages))), index=ss.page_idx,
-               format_func=lambda i: labels[i], key="page_radio",
-               label_visibility="collapsed")
-if sel != ss.page_idx:
-    ss.page_idx = sel
+sb.radio("page", list(range(len(pages))), format_func=lambda i: labels[i],
+         key="page_idx", label_visibility="collapsed")
 
 page = pages[ss.page_idx]
 
@@ -156,43 +178,36 @@ C.chatbot(BOTPRESS_URL, label=t(lang, "assistant_label"))
 
 
 # =============================================================== #
-#  TOP CONTROL BAR (main panel): 6 controls, tidy row              #
+#  TOP CONTROL BAR (main panel): 6 uniform controls in one row     #
 #  language · theme · PDF · About · Contact · Site map             #
 # =============================================================== #
 st.markdown(
-    f'<div class="topbar-hint">{t(lang, "open_sections")} — '
-    f'{t(lang, "nav_menu")}</div>',
+    f'<div class="topbar-hint">👉 {t(lang, "open_sections")}</div>',
     unsafe_allow_html=True)
 
+st.markdown('<div class="topbar-row">', unsafe_allow_html=True)
 tb = st.columns(6)
 with tb[0]:
-    lang2 = st.selectbox(t(lang, "lang_label"), LANG_CODES,
-                         index=LANG_CODES.index(lang),
-                         format_func=lambda c: NAME_OF[c], key="lang_top",
-                         label_visibility="collapsed")
-    if lang2 != lang:
-        ss.lang = lang2; st.rerun()
+    st.selectbox(f"🌐 {t(lang, 'lang_label')}", LANG_CODES,
+                 format_func=lambda c: NAME_OF[c], key="lang")
 with tb[1]:
-    theme2 = st.selectbox(t(lang, "theme_label"), THEME_CODES,
-                          index=THEME_CODES.index(theme),
-                          format_func=lambda k: t(lang, "theme_" + k),
-                          key="theme_top", label_visibility="collapsed")
-    if theme2 != theme:
-        ss.theme = theme2; st.rerun()
+    st.selectbox(f"🌓 {t(lang, 'theme_label')}", THEME_CODES,
+                 format_func=lambda k: t(lang, "theme_" + k), key="theme")
 with tb[2]:
     st.download_button(
-        t(lang, "pdf_button"), data=_pdf_bytes(lang, ss.section),
+        f"⬇ {t(lang, 'pdf_button')}", data=_pdf_bytes(lang, ss.section),
         file_name=f"TrustworthyML_{ss.section}_{lang}.pdf", mime="application/pdf",
         use_container_width=True, key="pdf_top")
 with tb[3]:
-    if st.button(t(lang, "nav_about"), key="btn_about", use_container_width=True):
-        ss.overlay = None if ss.overlay == "about" else "about"; st.rerun()
+    st.button(f"ⓘ {t(lang, 'nav_about')}", key="btn_about",
+              use_container_width=True, on_click=_toggle_overlay, args=("about",))
 with tb[4]:
-    if st.button(t(lang, "nav_contact"), key="btn_contact", use_container_width=True):
-        ss.overlay = None if ss.overlay == "contact" else "contact"; st.rerun()
+    st.button(f"✉ {t(lang, 'nav_contact')}", key="btn_contact",
+              use_container_width=True, on_click=_toggle_overlay, args=("contact",))
 with tb[5]:
-    if st.button(t(lang, "roadmap_label"), key="btn_map", use_container_width=True):
-        ss.overlay = None if ss.overlay == "map" else "map"; st.rerun()
+    st.button(f"🗺 {t(lang, 'roadmap_label')}", key="btn_map",
+              use_container_width=True, on_click=_toggle_overlay, args=("map",))
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Site-map overlay (large, clear, clickable navigation)
 if ss.overlay == "map":
@@ -201,14 +216,13 @@ if ss.overlay == "map":
              "leaves": [t(lang, k) for k in nav.THEORY[s][:3]]}
             for s in nav.SECTIONS]
     C.roadmap_tree(t(lang, "hero_title"), meta, is_rtl(lang))
-    # clickable navigation row: jump to any section from the map
     st.markdown('<div class="nav-row">', unsafe_allow_html=True)
     mcols = st.columns(len(nav.SECTIONS))
     for mc, s in zip(mcols, nav.SECTIONS):
         with mc:
-            if st.button(f"{SECTION_ICONS.get(s,'◆')} {t(lang, s + '_title')}",
-                         key=f"map_{s}", use_container_width=True):
-                ss.section = s; ss.page_idx = 0; ss.overlay = None; st.rerun()
+            st.button(f"{SECTION_ICONS.get(s,'◆')} {t(lang, s + '_title')}",
+                      key=f"map_{s}", use_container_width=True,
+                      on_click=_go_section, args=(s,))
     st.markdown('</div>', unsafe_allow_html=True)
 
 # About / Contact overlay panels
@@ -228,6 +242,7 @@ elif ss.overlay == "contact":
 # =============================================================== #
 C.hero(
     t(lang, "masthead_eyebrow"), t(lang, "hero_title"), t(lang, "hero_summary"),
+    practice_note=t(lang, "hero_practice_note"),
     byline=[
         {"label": t(lang, "byline_supervisor"), "name": t(lang, "name_supervisor")},
         {"label": t(lang, "byline_author"), "name": t(lang, "name_author")},
@@ -250,11 +265,8 @@ for row_start in range(0, len(nav.SECTIONS), 3):
             active = "  ●" if sec == ss.section else ""
             label = (f"{SECTION_ICONS.get(sec,'◆')}  {t(lang, sec + '_title')}{active}\n\n"
                      f"{t(lang, 'sc_desc_' + sec)}")
-            if st.button(label, key=f"card_{sec}", use_container_width=True):
-                ss.section = sec
-                ss.page_idx = 0
-                ss.overlay = None
-                st.rerun()
+            st.button(label, key=f"card_{sec}", use_container_width=True,
+                      on_click=_go_section, args=(sec,))
 st.markdown('</div>', unsafe_allow_html=True)
 
 # =============================================================== #

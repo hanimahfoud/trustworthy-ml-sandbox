@@ -93,10 +93,11 @@ def footer(text: str) -> None:
                 unsafe_allow_html=True)
 
 
-def hero(eyebrow: str, title: str, summary: str,
+def hero(eyebrow: str, title: str, summary: str, practice_note: str = "",
          byline: list[dict] | None = None) -> None:
     """A centered hero band under the navbar: course name, byline
-    (supervisor / author), and a concise course summary."""
+    (supervisor / author), course summary, and a short note on what choosing
+    Theory vs Practice means."""
     byline_html = ""
     if byline:
         cells = "".join(
@@ -105,6 +106,8 @@ def hero(eyebrow: str, title: str, summary: str,
             for b in byline
         )
         byline_html = f'<div class="hero-byline">{cells}</div>'
+    note_html = (f'<div class="hero-practice-note">{_esc(practice_note)}</div>'
+                if practice_note else "")
     st.markdown(
         f"""
         <div class="hero hero-blue">
@@ -113,6 +116,7 @@ def hero(eyebrow: str, title: str, summary: str,
           <div class="hero-title">{_esc(title)}</div>
           {byline_html}
           <div class="hero-summary">{_esc(summary)}</div>
+          {note_html}
         </div>
         """,
         unsafe_allow_html=True,
@@ -154,54 +158,58 @@ def info_panel(title: str, body: str, rows: list | None = None) -> None:
 def roadmap_tree(root_label: str, sections: list[dict], is_rtl: bool = False) -> None:
     """Render the site map as a large, clear SVG tree: a root node branching to
     the six section nodes, each listing its theory + practice counts and its
-    first pages. Scales to full width."""
+    first pages. Scales to full width. The root box width is computed from the
+    label length so long titles (e.g. "Trustworthy Machine Learning") are
+    never clipped."""
     n = len(sections)
-    col_w = 250
-    width = max(1000, n * col_w)
-    height = 340
+    col_w = 260
+    width = max(1080, n * col_w)
+    height = 380
     root_x = width / 2
     top_y = 30
-    root_h = 60
-    sec_y = 170
-    box_w, box_h = 210, 132
+    root_h = 64
+    # widen the root box to fit its label (approx. .58 * font-size per glyph)
+    root_font = 22
+    root_w = max(320, len(root_label) * root_font * 0.60 + 60)
+    sec_y = 190
+    box_w, box_h = 226, 148
     gap = width / n
 
     parts = [f'<svg viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg" '
              f'role="img" aria-label="site map" preserveAspectRatio="xMidYMid meet">']
 
-    # root node
+    # root node (width fits the label; never clipped)
     parts.append(
-        f'<rect class="rm-node-root" x="{root_x-150}" y="{top_y}" width="300" '
-        f'height="{root_h}" rx="12"/>'
-        f'<text class="rm-txt-root" x="{root_x}" y="{top_y+38}" '
-        f'text-anchor="middle" font-size="21">{_esc(root_label)}</text>')
+        f'<rect class="rm-node-root" x="{root_x-root_w/2}" y="{top_y}" '
+        f'width="{root_w}" height="{root_h}" rx="14"/>'
+        f'<text class="rm-txt-root" x="{root_x}" y="{top_y+40}" '
+        f'text-anchor="middle" font-size="{root_font}">{_esc(root_label)}</text>')
 
     for i, sec in enumerate(sections):
         cx = gap * (i + 0.5)
         bx = cx - box_w / 2
         parts.append(
             f'<path class="rm-edge" d="M {root_x} {top_y+root_h} '
-            f'C {root_x} {sec_y-40}, {cx} {top_y+90}, {cx} {sec_y}"/>')
+            f'C {root_x} {sec_y-46}, {cx} {top_y+100}, {cx} {sec_y}"/>')
         parts.append(
             f'<rect class="rm-node-sec" x="{bx}" y="{sec_y}" width="{box_w}" '
-            f'height="{box_h}" rx="12" stroke-width="2"/>')
-        # top accent bar on each section box
+            f'height="{box_h}" rx="14" stroke-width="2"/>')
         parts.append(
             f'<rect class="rm-node-accent" x="{bx}" y="{sec_y}" width="{box_w}" '
-            f'height="6" rx="3"/>')
+            f'height="7" rx="3.5"/>')
         title = sec.get("title", "")
         parts.append(
-            f'<text class="rm-txt" x="{cx}" y="{sec_y+38}" text-anchor="middle" '
-            f'font-size="17" font-weight="700">{_esc(title)}</text>')
+            f'<text class="rm-txt" x="{cx}" y="{sec_y+40}" text-anchor="middle" '
+            f'font-size="18" font-weight="700">{_esc(title)}</text>')
         parts.append(
-            f'<text class="rm-txt-accent" x="{cx}" y="{sec_y+62}" '
-            f'text-anchor="middle" font-size="13" letter-spacing="1">'
+            f'<text class="rm-txt-accent" x="{cx}" y="{sec_y+66}" '
+            f'text-anchor="middle" font-size="14" letter-spacing="0.5">'
             f'{sec.get("n_theory",0)} theory · {sec.get("n_practice",0)} practice</text>')
         for j, lf in enumerate(sec.get("leaves", [])[:3]):
             parts.append(
-                f'<text class="rm-txt" x="{cx}" y="{sec_y+86+j*17}" '
-                f'text-anchor="middle" font-size="12" opacity="0.72">'
-                f'▸ {_esc(lf[:26])}</text>')
+                f'<text class="rm-txt-leaf" x="{cx}" y="{sec_y+94+j*20}" '
+                f'text-anchor="middle" font-size="14">'
+                f'▸ {_esc(lf[:28])}</text>')
 
     parts.append('</svg>')
     st.markdown(f'<div class="roadmap-panel">{"".join(parts)}</div>',

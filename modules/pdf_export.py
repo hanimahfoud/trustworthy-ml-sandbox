@@ -95,33 +95,53 @@ def build_pdf(lang: str, section: str) -> bytes:
 
     doc._line(t(lang, "masthead_title"), size=20, style="B", gap=2,
               color=(14, 42, 71))
-    sub = "sec1_title" if section == "sec1" else "sec2_title"
-    doc._line(t(lang, sub), size=13, style="B", gap=1, color=(138, 28, 43))
+    # BUGFIX: the section subtitle used to be hardcoded to sec1/sec2 only,
+    # so sections III-VI always printed "II - Explainability" in the header.
+    # t(lang, section + "_title") works generically for every section.
+    doc._line(t(lang, section + "_title"), size=13, style="B", gap=1,
+              color=(138, 28, 43))
     doc._line(f'{t(lang, "byline_supervisor")}: {t(lang, "name_supervisor")}  ·  '
               f'{t(lang, "byline_author")}: {t(lang, "name_author")}',
               size=9, gap=4, color=(90, 107, 123))
 
-    # Theory
+    # Theory -- BUGFIX: loop ALL paragraph suffixes present (_p1.._p9), not a
+    # hardcoded _p1.._p3; Section V topics have 4 paragraphs and were being
+    # silently truncated.
     doc._line(t(lang, "pdf_theory_heading"), size=15, style="B", gap=2,
               color=(14, 42, 71))
     for key in nav.THEORY[section]:
         doc._line(t(lang, key), size=12, style="B", gap=1, color=(15, 110, 102))
-        for suf in ("_p1", "_p2", "_p3"):
-            val = t(lang, key + suf)
-            if val and val != key + suf:
-                doc._line(val, size=10.5)
+        for i in range(1, 10):
+            val = t(lang, f"{key}_p{i}")
+            if not val or val == f"{key}_p{i}":
+                break
+            doc._line(val, size=10.5)
         call = t(lang, key + "_call")
         if call and call != key + "_call":
             doc._line(call, size=10.5, style="B", gap=3, color=(60, 90, 120))
 
-    # Practice
+    # Practice -- BUGFIX: sections I-IV use the "<key>_intro" convention, but
+    # sections V-VI (and the retrofitted demo_intro standard) use
+    # "<key>_what" / "_why" / "_expect" / "_note" instead; the old code only
+    # ever looked for "_intro", so V/VI practice pages printed nothing.
+    # We now support both conventions and include the full explainer.
     doc._line(t(lang, "pdf_practice_heading"), size=15, style="B", gap=2,
               color=(14, 42, 71))
     for key in nav.PRACTICE[section]:
         doc._line(t(lang, key), size=12, style="B", gap=1, color=(15, 110, 102))
         intro = t(lang, key + "_intro")
         if intro and intro != key + "_intro":
-            doc._line(intro, size=10.5, gap=3)
+            doc._line(intro, size=10.5, gap=2)
+        else:
+            for suf, label_color in (("_what", (15, 110, 102)),
+                                     ("_why", (15, 110, 102)),
+                                     ("_expect", (15, 110, 102))):
+                val = t(lang, key + suf)
+                if val and val != key + suf:
+                    doc._line(val, size=10.5, gap=2)
+        note = t(lang, key + "_note")
+        if note and note != key + "_note":
+            doc._line(note, size=10.5, style="B", gap=3, color=(60, 90, 120))
 
     doc._line(t(lang, "pdf_generated"), size=8, gap=0, color=(150, 150, 150))
 
