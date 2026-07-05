@@ -18,6 +18,36 @@ EN_UI = {
     "roadmap_label": "Site map",
     "roadmap_title": "Site map — the full structure at a glance",
     "roadmap_hide": "Hide site map",
+    # state-based navigation
+    "nav_home": "⌂ Home",
+    "nav_prev": "← Previous",
+    "nav_next": "Next →",
+    "nav_menu": "☰ Menu",
+    "landing_prompt": "Choose a section to begin — each opens in Theory or Practice.",
+    "choose_view": "How would you like to explore this section?",
+    "choose_theory": "📖 Theory",
+    "choose_practice": "🧪 Practice",
+    "back_to_sections": "← All sections",
+    "card_cta": "Open section →",
+    # top-bar pages
+    "nav_about": "About",
+    "nav_contact": "Contact",
+    "about_title": "About this platform",
+    "about_body": "ExploreTML is an interactive, mathematically rigorous sandbox "
+        "for Trustworthy Machine Learning, spanning six pillars — generalization, "
+        "explainability, fairness, robustness, privacy, and the alignment of "
+        "generative models. Every practice demo runs real computation on real "
+        "data (NumPy, scikit-learn, SciPy), not mock-ups. It was developed by "
+        "Hani Akram Mahfoud under the supervision of Prof. Behrouz "
+        "Minaei-Bidgoli at Iran University of Science and Technology (IUST).",
+    "contact_title": "Contact",
+    "contact_body": "For questions about the platform or the course, please reach "
+        "out through the university. This sandbox accompanies the Trustworthy "
+        "Machine Learning course at IUST.",
+    "contact_author": "Author",
+    "contact_supervisor": "Supervisor",
+    "contact_institution": "Institution",
+    "contact_inst_val": "Iran University of Science and Technology (IUST)",
     # six section-card descriptions (short)
     "sc_desc_sec1": "Bias–variance, VC dimension, domain adaptation, SAM, and the "
         "causal foundations of generalization.",
@@ -43,6 +73,32 @@ FA_UI = {
     "roadmap_label": "نقشهٔ سایت",
     "roadmap_title": "نقشهٔ سایت — کلِّ ساختار در یک نگاه",
     "roadmap_hide": "پنهان‌کردنِ نقشه",
+    "nav_home": "⌂ خانه",
+    "nav_prev": "→ قبلی",
+    "nav_next": "بعدی ←",
+    "nav_menu": "☰ منو",
+    "landing_prompt": "برای شروع بخشی را برگزینید — هرکدام در حالتِ نظری یا عملی باز می‌شود.",
+    "choose_view": "این بخش را چگونه می‌خواهید کاوش کنید؟",
+    "choose_theory": "📖 نظری",
+    "choose_practice": "🧪 عملی",
+    "back_to_sections": "→ همهٔ بخش‌ها",
+    "card_cta": "بازکردنِ بخش ←",
+    "nav_about": "درباره",
+    "nav_contact": "تماس",
+    "about_title": "دربارهٔ این سکو",
+    "about_body": "ExploreTML یک جعبه‌شنِ تعاملی و دقیقِ ریاضی برای یادگیری ماشینِ "
+        "قابل‌اعتماد است که شش ستون را دربر می‌گیرد — تعمیم، تفسیرپذیری، انصاف، "
+        "استواری، حریم خصوصی، و هم‌ترازیِ مدل‌های مولد. هر نمایشِ عملی محاسبهٔ واقعی "
+        "روی دادهٔ واقعی اجرا می‌کند (NumPy، scikit-learn، SciPy)، نه ماکت. این سکو "
+        "توسط هانی اکرم محفوظ زیرِ نظرِ پروفسور بهروز مینائی-بیدگلی در دانشگاه علم و "
+        "صنعت ایران (IUST) توسعه یافته است.",
+    "contact_title": "تماس",
+    "contact_body": "برای پرسش دربارهٔ سکو یا درس، لطفاً از طریقِ دانشگاه در تماس "
+        "باشید. این جعبه‌شن همراهِ درسِ یادگیری ماشینِ قابل‌اعتماد در IUST است.",
+    "contact_author": "مؤلف",
+    "contact_supervisor": "استادِ راهنما",
+    "contact_institution": "دانشگاه",
+    "contact_inst_val": "دانشگاه علم و صنعت ایران (IUST)",
     "sc_desc_sec1": "بایاس–واریانس، بُعدِ VC، انطباقِ دامنه، SAM، و بنیادهای علّیِ "
         "تعمیم.",
     "sc_desc_sec2": "تفسیرِ جعبه‌سیاه با SHAP و LIME، جبرانِ علّی، و کشفِ همبستگیِ "
@@ -66,6 +122,32 @@ AR_UI = {
     "roadmap_label": "خريطة الموقع",
     "roadmap_title": "خريطة الموقع — البنية كاملةً بلمحة",
     "roadmap_hide": "إخفاء الخريطة",
+    "nav_home": "⌂ الرئيسيّة",
+    "nav_prev": "→ السابق",
+    "nav_next": "التالي ←",
+    "nav_menu": "☰ القائمة",
+    "landing_prompt": "اختر قسمًا للبدء — كلٌّ منها يُفتَح نظريًّا أو عمليًّا.",
+    "choose_view": "كيف تريد استكشاف هذا القسم؟",
+    "choose_theory": "📖 نظريّ",
+    "choose_practice": "🧪 عمليّ",
+    "back_to_sections": "→ كلّ الأقسام",
+    "card_cta": "افتح القسم ←",
+    "nav_about": "من نحن",
+    "nav_contact": "اتّصل بنا",
+    "about_title": "عن هذه المنصّة",
+    "about_body": "ExploreTML منصّةٌ تفاعليّةٌ دقيقةٌ رياضيًّا للتعلّم الآليّ الموثوق، "
+        "تمتدّ على ستّة أعمدة — التعميم، والتفسير، والعدالة، والمتانة، والخصوصيّة، "
+        "ومحاذاة النماذج التوليديّة. كلُّ عرضٍ عمليٍّ يُشغّل حسابًا حقيقيًّا على بياناتٍ "
+        "حقيقيّة (NumPy وscikit-learn وSciPy)، لا واجهاتٍ وهميّة. طُوِّرت المنصّة على "
+        "يد هاني أكرم محفوظ بإشراف البروفيسور بهروز مينائي-بيدجلي في جامعة العلوم "
+        "والتكنولوجيا الإيرانيّة (IUST).",
+    "contact_title": "اتّصل بنا",
+    "contact_body": "للاستفسار عن المنصّة أو المادّة، يُرجى التواصل عبر الجامعة. "
+        "هذه المنصّة مرافِقةٌ لمادّة التعلّم الآليّ الموثوق في جامعة IUST.",
+    "contact_author": "المؤلّف",
+    "contact_supervisor": "المشرف",
+    "contact_institution": "الجامعة",
+    "contact_inst_val": "جامعة العلوم والتكنولوجيا الإيرانيّة (IUST)",
     "sc_desc_sec1": "المفاضلة بين الانحياز والتباين، بُعد VC، تكيُّف المجال، SAM، "
         "والأسس السببيّة للتعميم.",
     "sc_desc_sec2": "تفسير الصناديق السوداء بـ SHAP وLIME، والجبر السببيّ، وكشف "

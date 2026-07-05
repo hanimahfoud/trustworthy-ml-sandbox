@@ -21,16 +21,16 @@ import streamlit as st
 # Palettes: semantic variables, three themes.                                 #
 # --------------------------------------------------------------------------- #
 LIGHT = {
-    "page": "#F7F5EF", "surface": "#FFFFFF", "surface2": "#FBFAF6",
+    "page": "#F4F2EC", "surface": "#FFFFFF", "surface2": "#FAF8F3",
     "sidebar": "#FCFBF7",
-    "text": "#0E2A47", "text_body": "#20303F", "muted": "#5A6B7B",
-    "border": "#D9D4C7",
+    "text": "#0C2340", "text_body": "#1C2B3A", "muted": "#5E6E7E",
+    "border": "#E2DDD1",
     "accent": "#8A1C2B", "good": "#0F6E66", "gold": "#A8842C",
     "masthead": "#0A1F38", "mast_title": "#FBF9F3", "mast_sub": "#C7D0DA",
     "mast_eyebrow": "#C9B98B", "mast_colophon": "#9FB0C0", "mast_rule": "#A8842C",
-    "keyidea_bg": "#F2F6F5", "keyidea_text": "#1D3A36",
-    "warn_bg": "#F8F0F0", "warn_text": "#4A1820",
-    "btn": "#FFFFFF", "btn_hover": "#FBFAF6",
+    "keyidea_bg": "#F0F5F4", "keyidea_text": "#123531",
+    "warn_bg": "#F9F1F1", "warn_text": "#4A1820",
+    "btn": "#FFFFFF", "btn_hover": "#F7F4EE",
     "link_border": "rgba(15,110,102,.35)",
 }
 
@@ -124,8 +124,12 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 /* ---- Masthead / nameplate ---- */
 .masthead {
   background: var(--masthead); color: var(--mast-title);
-  border-radius: 6px; padding: 22px 28px 18px 28px; margin-bottom: 26px;
-  box-shadow: 0 1px 0 rgba(0,0,0,.04);
+  border-radius: 10px; padding: 26px 32px 20px 32px; margin-bottom: 28px;
+  box-shadow: 0 10px 30px rgba(10,31,56,.16); position: relative; overflow: hidden;
+}
+.masthead::before {
+  content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+  background: linear-gradient(90deg, var(--mast-rule), var(--accent));
 }
 .masthead .eyebrow {
   font-family: var(--mono); font-size: .72rem; letter-spacing: .28em;
@@ -158,8 +162,12 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 /* ---- Theorem plates ---- */
 [data-testid="stVerticalBlockBorderWrapper"] {
   background: var(--surface); border: 1px solid var(--border) !important;
-  border-left: 3px solid var(--text) !important; border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0,0,0,.06); padding: 6px 4px;
+  border-left: 3px solid var(--accent) !important; border-radius: 8px;
+  box-shadow: 0 6px 22px rgba(12,35,64,.07); padding: 8px 6px;
+  transition: box-shadow .2s ease;
+}
+[data-testid="stVerticalBlockBorderWrapper"]:hover {
+  box-shadow: 0 10px 30px rgba(12,35,64,.10);
 }
 .plate-eyebrow {
   font-family: var(--mono); font-size: .70rem; letter-spacing: .22em;
@@ -289,8 +297,11 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   .assistant-fab > summary { padding: 10px 14px; font-size: .74rem; }
   /* section-card grid collapses to a single column on phones */
   .section-grid { grid-template-columns: 1fr !important; }
-  .hero .hero-title { font-size: 1.7rem !important; }
-  .hero .hero-summary { font-size: .95rem !important; }
+  .landing-grid [data-testid="column"] { width: 100% !important; flex: 1 1 100% !important; }
+  .hero { padding: 24px 14px 20px 14px; }
+  .hero .hero-title { font-size: 2.1rem !important; }
+  .hero .hero-summary { font-size: 1rem !important; }
+  .hero .hero-byline .cell { min-width: 100%; }
   /* stack Streamlit columns full-width on phones */
   [data-testid="stHorizontalBlock"] { flex-direction: column !important; }
   [data-testid="column"] { width: 100% !important; flex: 1 1 100% !important; }
@@ -343,30 +354,36 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 /*  HERO SECTION  —  course title, author, supervisor, summary   */
 /* ============================================================= */
 .hero {
-  text-align: center; padding: 30px 20px 22px 20px; margin: 0 0 10px 0;
-  border-bottom: 2px solid var(--mast-rule, var(--accent));
+  text-align: center; padding: 38px 22px 30px 22px; margin: 0 0 14px 0;
+  background: var(--surface);
+  border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(14,42,71,.08);
 }
 .hero .hero-eyebrow {
-  font-family: var(--mono); font-size: .72rem; letter-spacing: .28em;
-  text-transform: uppercase; color: var(--accent); margin-bottom: 10px;
+  font-family: var(--mono); font-size: .82rem; letter-spacing: .30em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 16px;
 }
 .hero .hero-title {
-  font-family: var(--serif); font-weight: 800; font-size: 2.4rem; line-height: 1.15;
-  color: var(--mast-title, var(--text)); margin: 0 0 14px 0; letter-spacing: -.01em;
+  font-family: var(--serif); font-weight: 800; font-size: 3.2rem; line-height: 1.12;
+  color: var(--text); margin: 0 0 22px 0; letter-spacing: -.015em;
 }
 .hero .hero-byline {
-  display: flex; gap: 30px; justify-content: center; flex-wrap: wrap;
-  margin: 12px 0 16px 0;
+  display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+  margin: 16px 0 20px 0;
 }
-.hero .hero-byline .cell { text-align: center; }
+.hero .hero-byline .cell {
+  text-align: center; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 24px; min-width: 220px;
+}
 .hero .hero-byline .lab {
-  display: block; font-family: var(--mono); font-size: .62rem; letter-spacing: .18em;
-  text-transform: uppercase; color: var(--muted); margin-bottom: 3px;
+  display: block; font-family: var(--mono); font-size: .68rem; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
 }
-.hero .hero-byline b { font-family: var(--serif); font-size: 1rem; color: var(--text); font-weight: 600; }
+.hero .hero-byline b { font-family: var(--serif); font-size: 1.22rem; color: var(--text); font-weight: 700; }
 .hero .hero-summary {
-  max-width: 720px; margin: 0 auto; font-family: var(--serif); font-size: 1.05rem;
-  line-height: 1.6; color: var(--mast-sub, var(--muted)); font-style: italic;
+  max-width: 760px; margin: 18px auto 0 auto; font-family: var(--serif); font-size: 1.12rem;
+  line-height: 1.65; color: var(--text); background: var(--surface2);
+  border-left: 3px solid var(--accent); border-radius: 8px; padding: 16px 22px; text-align: start;
 }
 
 /* ============================================================= */
@@ -375,6 +392,8 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 .section-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 22px 0;
 }
+/* clickable cards are real Streamlit buttons styled as cards (see below);
+   this class is used for the static/roadmap grid. */
 .section-card {
   background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
   padding: 20px 18px; transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
@@ -385,9 +404,7 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   background: var(--accent); opacity: .85;
 }
 .section-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(14,42,71,.14); border-color: var(--accent); }
-.section-card .sc-icon {
-  font-size: 1.6rem; line-height: 1; margin-bottom: 10px; display: block;
-}
+.section-card .sc-icon { font-size: 1.6rem; line-height: 1; margin-bottom: 10px; display: block; }
 .section-card .sc-num {
   font-family: var(--mono); font-size: .66rem; letter-spacing: .2em; text-transform: uppercase;
   color: var(--accent); margin-bottom: 6px;
@@ -398,19 +415,70 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 }
 .section-card .sc-desc { font-size: .88rem; color: var(--muted); line-height: 1.5; }
 
+/* ---- Clickable section cards: style Streamlit buttons in the landing grid --- */
+.landing-grid [data-testid="stButton"] > button,
+.landing-grid .stButton > button {
+  width: 100%; min-height: 132px; text-align: start; white-space: pre-line;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  border-top: 3px solid var(--accent); padding: 18px 18px;
+  font-family: var(--serif); color: var(--text);
+  box-shadow: 0 4px 14px rgba(14,42,71,.06);
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.landing-grid [data-testid="stButton"] > button:hover,
+.landing-grid .stButton > button:hover {
+  transform: translateY(-4px); box-shadow: 0 14px 34px rgba(14,42,71,.16);
+  border-color: var(--accent); color: var(--text);
+}
+
+/* ---- Navigation buttons (Home / Prev / Next, choose Theory/Practice) ---- */
+.nav-row [data-testid="stButton"] > button {
+  font-family: var(--mono); font-size: .8rem; letter-spacing: .04em;
+  border-radius: 8px; border: 1px solid var(--border); background: var(--surface2);
+  color: var(--text); padding: 9px 14px; transition: all .15s ease;
+}
+.nav-row [data-testid="stButton"] > button:hover {
+  border-color: var(--accent); background: var(--surface); color: var(--text);
+}
+
 /* ============================================================= */
-/*  ROADMAP / SITE-MAP PANEL                                     */
+/*  ROADMAP / SITE-MAP  —  as an SVG tree inside a panel          */
 /* ============================================================= */
 .roadmap-panel {
-  background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
-  padding: 20px 22px; margin: 8px 0 18px 0;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
+  padding: 18px 20px; margin: 8px 0 18px 0; overflow-x: auto;
 }
-.roadmap-col .rm-head {
-  font-family: var(--mono); font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
+.roadmap-panel svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.rm-node-box { fill: var(--surface); stroke: var(--border); }
+.rm-node-root { fill: var(--accent); }
+.rm-node-sec { fill: var(--surface); stroke: var(--accent); }
+.rm-edge { stroke: var(--border); stroke-width: 1.5; fill: none; }
+.rm-txt { font-family: var(--mono); fill: var(--text); }
+.rm-txt-root { font-family: var(--serif); fill: #fff; font-weight: 700; }
+.rm-txt-accent { font-family: var(--mono); fill: var(--accent); }
+
+/* ---- Top-bar mobile hint + About/Contact info panels ---- */
+.topbar-hint {
+  font-family: var(--mono); font-size: .68rem; letter-spacing: .12em;
+  color: var(--muted); margin: 0 0 6px 2px; text-transform: uppercase;
 }
-.roadmap-col .rm-item { font-size: .86rem; color: var(--text); padding: 3px 0; line-height: 1.4; }
-.roadmap-col .rm-item::before { content: "▸ "; color: var(--muted); }
+.info-panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--accent); border-radius: 10px;
+  padding: 18px 22px; margin: 6px 0 16px 0; box-shadow: 0 6px 22px rgba(12,35,64,.07);
+}
+.info-panel .ip-title {
+  font-family: var(--display); font-weight: 700; font-size: 1.2rem;
+  color: var(--text); margin-bottom: 8px;
+}
+.info-panel .ip-body { font-family: var(--serif); font-size: 1.02rem; line-height: 1.65; color: var(--text-body); }
+.info-panel .ip-rows { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+.info-panel .ip-row { display: flex; gap: 12px; align-items: baseline; }
+.info-panel .ip-k {
+  flex: 0 0 130px; font-family: var(--mono); font-size: .68rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--accent);
+}
+.info-panel .ip-v { flex: 1; font-family: var(--serif); color: var(--text); font-weight: 600; }
 """
 
 
@@ -435,8 +503,8 @@ h1, h2, h3, h4, .masthead .title, .plate-title { font-family: var(--rtl-display)
 .stButton > button { text-align: right; }
 .section-card::before { left: auto; right: 0; }
 .section-card { text-align: right; }
-.roadmap-col .rm-item::before { content: ""; }
-.roadmap-col .rm-item::after { content: " ◂"; color: var(--muted); }
+.landing-grid [data-testid="stButton"] > button { text-align: right; }
+.info-panel { border-left: 1px solid var(--border); border-right: 3px solid var(--accent); }
 /* Numerals and mono readouts stay LTR for legibility */
 .readout, .colophon, .figure-caption { direction: ltr; }
 .measure { margin-right: 0; }
