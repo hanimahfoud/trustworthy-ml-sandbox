@@ -563,6 +563,18 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   border-color: var(--accent) !important; box-shadow: 0 8px 20px rgba(12,35,64,.14) !important;
   transform: translateY(-1px);
 }
+/* The "Sections" control is the odd one out on purpose: same size as the
+   other six, distinct accent color so it reads as the primary action. */
+.topbar-row [data-testid="stHorizontalBlock"] > [data-testid="column"]:first-child
+  [data-testid="stButton"] > button {
+  background: var(--accent) !important; color: #fff !important;
+  border-color: var(--accent) !important; font-weight: 700 !important;
+}
+.topbar-row [data-testid="stHorizontalBlock"] > [data-testid="column"]:first-child
+  [data-testid="stButton"] > button:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 8px 22px rgba(138,28,43,.35) !important;
+}
 .info-panel {
   background: var(--surface); border: 1px solid var(--border);
   border-left: 3px solid var(--accent); border-radius: 10px;

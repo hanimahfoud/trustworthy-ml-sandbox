@@ -26,7 +26,7 @@ EN_UI = {
     "nav_prev": "← Previous",
     "nav_next": "Next →",
     "nav_menu": "☰ Menu",
-    "open_sections": "☰ Choose section",
+    "open_sections": "☰ Sections",
     "footer_text": "© 2026 ExploreTML · Trustworthy Machine Learning Laboratory · "
         "Iran University of Science and Technology (IUST). All rights reserved.",
     "landing_prompt": "Choose a section to begin — each opens in Theory or Practice.",
@@ -86,7 +86,7 @@ FA_UI = {
     "nav_prev": "→ قبلی",
     "nav_next": "بعدی ←",
     "nav_menu": "☰ منو",
-    "open_sections": "☰ انتخابِ بخش",
+    "open_sections": "☰ بخش‌ها",
     "footer_text": "© ۲۰۲۶ ExploreTML · آزمایشگاهِ یادگیری ماشینِ قابل‌اعتماد · "
         "دانشگاه علم و صنعت ایران (IUST). همهٔ حقوق محفوظ است.",
     "landing_prompt": "برای شروع بخشی را برگزینید — هرکدام در حالتِ نظری یا عملی باز می‌شود.",
@@ -141,7 +141,7 @@ AR_UI = {
     "nav_prev": "→ السابق",
     "nav_next": "التالي ←",
     "nav_menu": "☰ القائمة",
-    "open_sections": "☰ اختر القسم",
+    "open_sections": "☰ الأقسام",
     "footer_text": "© ٢٠٢٦ ExploreTML · مختبر تعلُّم الآلة الموثوق · "
         "جامعة العلوم والتكنولوجيا الإيرانيّة (IUST). جميع الحقوق محفوظة.",
     "landing_prompt": "اختر قسمًا للبدء — كلٌّ منها يُفتَح نظريًّا أو عمليًّا.",

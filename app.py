@@ -188,7 +188,8 @@ C.chatbot(BOTPRESS_URL, label=t(lang, "assistant_label"))
 st.markdown('<div class="topbar-row">', unsafe_allow_html=True)
 tb = st.columns(7)
 with tb[0]:
-    C.sidebar_toggle_button(t(lang, "open_sections"))
+    st.button(t(lang, "open_sections"), key="btn_open_sections",
+              use_container_width=True, on_click=_toggle_overlay, args=("sections",))
 with tb[1]:
     st.selectbox(f"🌐 {t(lang, 'lang_label')}", LANG_CODES,
                  format_func=lambda c: NAME_OF[c], key="lang")
@@ -210,6 +211,18 @@ with tb[6]:
     st.button(f"🗺 {t(lang, 'roadmap_label')}", key="btn_map",
               use_container_width=True, on_click=_toggle_overlay, args=("map",))
 st.markdown('</div>', unsafe_allow_html=True)
+
+# Simple sections-list overlay -- a compact, guaranteed-reliable set of
+# section buttons (distinct from the visual tree in the Site-map overlay).
+if ss.overlay == "sections":
+    st.markdown('<div class="nav-row">', unsafe_allow_html=True)
+    scols = st.columns(3)
+    for i, s in enumerate(nav.SECTIONS):
+        with scols[i % 3]:
+            st.button(f"{SECTION_ICONS.get(s,'◆')} {t(lang, s + '_title')}",
+                      key=f"pick_{s}", use_container_width=True,
+                      on_click=_go_section, args=(s,))
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # Site-map overlay (large, clear, clickable navigation)
 if ss.overlay == "map":

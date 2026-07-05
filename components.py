@@ -216,42 +216,6 @@ def roadmap_tree(root_label: str, sections: list[dict], is_rtl: bool = False) ->
                 unsafe_allow_html=True)
 
 
-def sidebar_toggle_button(label: str) -> None:
-    """A real, clickable 'open/close sections' button. Streamlit has no public
-    Python API to toggle the sidebar, so this renders a tiny HTML button (via
-    components.html, which -- unlike st.markdown -- actually executes <script>
-    tags) that finds Streamlit's own native sidebar-open control in the parent
-    document and clicks it on the user's behalf. Works on mobile and desktop."""
-    import streamlit.components.v1 as components
-    html = f"""
-    <div id="tml-sidebar-btn-wrap" style="width:100%; box-sizing:border-box;">
-      <button id="tml-sidebar-btn" style="
-          width:100%; height:42px; margin-top:21px; box-sizing:border-box;
-          border-radius:8px; border:1px solid #6E1620;
-          background:#8A1C2B; color:#fff; cursor:pointer;
-          font-family: Georgia, 'Playfair Display', serif; font-weight:700;
-          font-size:.88rem; box-shadow:0 3px 10px rgba(0,0,0,.25);
-          white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:0 10px;">
-        {_esc(label)}
-      </button>
-    </div>
-    <script>
-      const btn = document.getElementById('tml-sidebar-btn');
-      btn.addEventListener('click', function() {{
-        try {{
-          const doc = window.parent.document;
-          let ctrl = doc.querySelector('[data-testid="collapsedControl"] button')
-                  || doc.querySelector('[data-testid="collapsedControl"]')
-                  || doc.querySelector('[data-testid="stSidebarCollapseButton"] button');
-          if (ctrl) {{ ctrl.click(); }}
-        }} catch (e) {{ /* no-op */ }}
-      }});
-    </script>
-    """
-    components.html(html, height=80)
-    components.html(html, height=64)
-
-
 def chatbot(url: str, label: str = "Ask me", height: int = 520) -> None:
     """Floating bottom-right assistant. A pure-CSS <details> bubble labelled
     "Ask me" that expands to an iframe of the web-chat -- no JavaScript needed,
