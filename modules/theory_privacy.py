@@ -84,6 +84,7 @@ def privacy(lang):
         C.figure_caption(t(lang, "prv_privacy_eqcap") +
                          f" &nbsp; attack acc = {r['attack_accuracy']:.2f}")
         C.measure(_p(t(lang, "prv_privacy_p3")))
+        C.measure(_p(t(lang, "prv_privacy_p4")))
         C.key_idea(t(lang, "prv_privacy_call"))
 
 
@@ -105,6 +106,7 @@ def dp(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "prv_dp_eqcap"))
         C.measure(_p(t(lang, "prv_dp_p3")))
+        C.measure(_p(t(lang, "prv_dp_p4")))
         C.key_idea(t(lang, "prv_dp_call"))
 
 
@@ -125,6 +127,7 @@ def noise(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "prv_noise_eqcap"))
         C.measure(_p(t(lang, "prv_noise_p3")))
+        C.measure(_p(t(lang, "prv_noise_p4")))
         C.key_idea(t(lang, "prv_noise_call"))
 
 
@@ -146,6 +149,7 @@ def fl(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "prv_fl_eqcap"))
         C.measure(_p(t(lang, "prv_fl_p3")))
+        C.measure(_p(t(lang, "prv_fl_p4")))
         C.key_idea(t(lang, "prv_fl_call"))
 
 
@@ -168,6 +172,7 @@ def leak(lang):
             C.figure_caption(f"reconstructed (err {r['rel_error']:.1e})")
         C.figure_caption(t(lang, "prv_leak_eqcap"))
         C.measure(_p(t(lang, "prv_leak_p3")))
+        C.measure(_p(t(lang, "prv_leak_p4")))
         C.warn(t(lang, "prv_leak_call"))
 
 

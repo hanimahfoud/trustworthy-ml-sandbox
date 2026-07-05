@@ -75,6 +75,7 @@ def interp(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "xai_interp_eqcap"))
         C.measure(_p(t(lang, "xai_interp_p3")))
+        C.measure(_p(t(lang, "xai_interp_p4")))
         C.key_idea(t(lang, "xai_interp_call"))
 
 
@@ -97,6 +98,7 @@ def blackbox(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "xai_black_eqcap"))
         C.measure(_p(t(lang, "xai_black_p3")))
+        C.measure(_p(t(lang, "xai_black_p4")))
         C.warn(t(lang, "xai_black_call"))
 
 
@@ -121,6 +123,7 @@ def tabular(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "xai_tab_eqcap"))
         C.measure(_p(t(lang, "xai_tab_p3")))
+        C.measure(_p(t(lang, "xai_tab_p4")))
         C.key_idea(t(lang, "xai_tab_call"))
 
 
@@ -145,6 +148,7 @@ def recourse(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "xai_recourse_eqcap"))
         C.measure(_p(t(lang, "xai_recourse_p3")))
+        C.measure(_p(t(lang, "xai_recourse_p4")))
         C.key_idea(t(lang, "xai_recourse_call"))
 
 
@@ -166,6 +170,7 @@ def vision(lang):
                         use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "xai_cv_eqcap"))
         C.measure(_p(t(lang, "xai_cv_p3")))
+        C.measure(_p(t(lang, "xai_cv_p4")))
         C.key_idea(t(lang, "xai_cv_call"))
 
 
@@ -189,6 +194,7 @@ def vlm(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "xai_vlm_eqcap"))
         C.measure(_p(t(lang, "xai_vlm_p3")))
+        C.measure(_p(t(lang, "xai_vlm_p4")))
         C.key_idea(t(lang, "xai_vlm_call"))
 
 

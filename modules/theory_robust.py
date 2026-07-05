@@ -60,6 +60,7 @@ def intro(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "rob_intro_eqcap"))
         C.measure(_p(t(lang, "rob_intro_p3")))
+        C.measure(_p(t(lang, "rob_intro_p4")))
         C.key_idea(t(lang, "rob_intro_call"))
 
 
@@ -93,6 +94,7 @@ def formulation(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "rob_formulation_eqcap"))
         C.measure(_p(t(lang, "rob_formulation_p3")))
+        C.measure(_p(t(lang, "rob_formulation_p4")))
         C.key_idea(t(lang, "rob_formulation_call"))
 
 
@@ -116,6 +118,7 @@ def attacks(lang):
                             config=P.PLOTLY_CONFIG)
             C.figure_caption(f"FGSM ε=0.25 → <b>{t(lang, 'px_cv_class'+str(p_adv))}</b>")
         C.measure(_p(t(lang, "rob_attacks_p3")))
+        C.measure(_p(t(lang, "rob_attacks_p4")))
         C.key_idea(t(lang, "rob_attacks_call"))
 
 
@@ -135,6 +138,7 @@ def defense(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "rob_defense_eqcap"))
         C.measure(_p(t(lang, "rob_defense_p3")))
+        C.measure(_p(t(lang, "rob_defense_p4")))
         C.warn(t(lang, "rob_defense_call"))
 
 
@@ -154,6 +158,7 @@ def certified(lang):
         C.figure_caption(t(lang, "rob_certified_eqcap") +
                          f" &nbsp; R = {cert['radius']:.3f}")
         C.measure(_p(t(lang, "rob_certified_p3")))
+        C.measure(_p(t(lang, "rob_certified_p4")))
         C.key_idea(t(lang, "rob_certified_call"))
 
 
@@ -175,6 +180,7 @@ def llm(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "rob_llm_eqcap"))
         C.measure(_p(t(lang, "rob_llm_p3")))
+        C.measure(_p(t(lang, "rob_llm_p4")))
         C.key_idea(t(lang, "rob_llm_call"))
 
 

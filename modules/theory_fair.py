@@ -45,6 +45,7 @@ def intro(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "fair_intro_eqcap"))
         C.measure(_p(t(lang, "fair_intro_p3")))
+        C.measure(_p(t(lang, "fair_intro_p4")))
         C.key_idea(t(lang, "fair_intro_call"))
 
 
@@ -70,6 +71,7 @@ def metrics(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "fair_metrics_eqcap"))
         C.measure(_p(t(lang, "fair_metrics_p3")))
+        C.measure(_p(t(lang, "fair_metrics_p4")))
         C.key_idea(t(lang, "fair_metrics_call"))
 
 
@@ -89,6 +91,7 @@ def llm(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "fair_llm_eqcap"))
         C.measure(_p(t(lang, "fair_llm_p3")))
+        C.measure(_p(t(lang, "fair_llm_p4")))
         C.key_idea(t(lang, "fair_llm_call"))
 
 
@@ -113,6 +116,7 @@ def mitig(lang):
         C.figure_caption(t(lang, "fair_mitig_eqcap") +
                          f" &nbsp; MMD² = {mmd:.3f}")
         C.measure(_p(t(lang, "fair_mitig_p3")))
+        C.measure(_p(t(lang, "fair_mitig_p4")))
         C.key_idea(t(lang, "fair_mitig_call"))
 
 
@@ -135,6 +139,7 @@ def fap(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "fair_fap_eqcap"))
         C.measure(_p(t(lang, "fair_fap_p3")))
+        C.measure(_p(t(lang, "fair_fap_p4")))
         C.key_idea(t(lang, "fair_fap_call"))
 
 
@@ -153,6 +158,7 @@ def align(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "fair_align_eqcap"))
         C.measure(_p(t(lang, "fair_align_p3")))
+        C.measure(_p(t(lang, "fair_align_p4")))
         C.key_idea(t(lang, "fair_align_call"))
 
 

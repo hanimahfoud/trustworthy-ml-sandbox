@@ -816,6 +816,37 @@ EN.update(EN_DEPTH1)
 FA.update(FA_DEPTH1)
 AR.update(AR_DEPTH1)
 
+# Deepen Section II theory with a 4th paragraph per topic.
+from i18n_sec2_depth import EN_DEPTH2, FA_DEPTH2, AR_DEPTH2  # noqa: E402
+EN.update(EN_DEPTH2)
+FA.update(FA_DEPTH2)
+AR.update(AR_DEPTH2)
+
+# Deepen Section III theory with a 4th paragraph per topic.
+from i18n_sec3_depth import EN_DEPTH3, FA_DEPTH3, AR_DEPTH3  # noqa: E402
+EN.update(EN_DEPTH3)
+FA.update(FA_DEPTH3)
+AR.update(AR_DEPTH3)
+
+# Deepen Section IV theory with a 4th paragraph per topic.
+from i18n_sec4_depth import EN_DEPTH4, FA_DEPTH4, AR_DEPTH4  # noqa: E402
+EN.update(EN_DEPTH4)
+FA.update(FA_DEPTH4)
+AR.update(AR_DEPTH4)
+
+# Deepen Section V theory with a 4th paragraph for the five topics that
+# didn't already have one (prv_poison already carried a p4).
+from i18n_sec5_depth import EN_DEPTH5, FA_DEPTH5, AR_DEPTH5  # noqa: E402
+EN.update(EN_DEPTH5)
+FA.update(FA_DEPTH5)
+AR.update(AR_DEPTH5)
+
+# Deepen Section VI theory with a 4th paragraph per topic (final section).
+from i18n_sec6_depth import EN_DEPTH6, FA_DEPTH6, AR_DEPTH6  # noqa: E402
+EN.update(EN_DEPTH6)
+FA.update(FA_DEPTH6)
+AR.update(AR_DEPTH6)
+
 
 def t(lang: str, key: str) -> str:
     """Translate ``key`` into ``lang``, falling back to English then the key."""

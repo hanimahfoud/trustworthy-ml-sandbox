@@ -33,6 +33,7 @@ def gap(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "aln_gap_eqcap"))
         C.measure(_p(t(lang, "aln_gap_p3")))
+        C.measure(_p(t(lang, "aln_gap_p4")))
         C.key_idea(t(lang, "aln_gap_call"))
 
 
@@ -57,6 +58,7 @@ def rlhf(lang):
         C.measure(_p(t(lang, "aln_rlhf_p3")))
         st.latex(r"\max_\pi\; \mathbb{E}_{\pi}[r(x,y)] \;-\; "
                  r"\beta\,\mathrm{KL}\big(\pi \,\|\, \pi_{ref}\big)")
+        C.measure(_p(t(lang, "aln_rlhf_p4")))
         C.warn(t(lang, "aln_rlhf_call"))
 
 
@@ -83,6 +85,7 @@ def dpo(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "aln_dpo_eqcap"))
         C.measure(_p(t(lang, "aln_dpo_p3")))
+        C.measure(_p(t(lang, "aln_dpo_p4")))
         C.key_idea(t(lang, "aln_dpo_call"))
 
 
@@ -104,6 +107,7 @@ def variants(lang):
         C.figure_caption(t(lang, "aln_variants_eqcap") +
                          f" &nbsp; {r['n_correct']}/{len(cands)} correct")
         C.measure(_p(t(lang, "aln_variants_p3")))
+        C.measure(_p(t(lang, "aln_variants_p4")))
         C.key_idea(t(lang, "aln_variants_call"))
 
 
@@ -127,6 +131,7 @@ def owasp(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "aln_owasp_eqcap"))
         C.measure(_p(t(lang, "aln_owasp_p3")))
+        C.measure(_p(t(lang, "aln_owasp_p4")))
         C.key_idea(t(lang, "aln_owasp_call"))
 
 
@@ -146,6 +151,7 @@ def agency(lang):
         st.plotly_chart(fig, use_container_width=True, config=P.PLOTLY_CONFIG)
         C.figure_caption(t(lang, "aln_agency_eqcap"))
         C.measure(_p(t(lang, "aln_agency_p3")))
+        C.measure(_p(t(lang, "aln_agency_p4")))
         C.warn(t(lang, "aln_agency_call"))
 
 
