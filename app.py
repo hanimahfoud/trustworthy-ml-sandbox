@@ -1,16 +1,11 @@
 """
 app.py -- Trustworthy Machine Learning · interactive sandbox.
 
-State-based, mobile-first navigation:
-  * a LANDING view with a hero band and a grid of clickable section cards;
-  * clicking a card opens a "choose view" prompt (Theory / Practice);
-  * a SECTION view routes to the selected theory plate or interactive demo,
-    with Home / Previous / Next controls and a per-section page menu.
-
-Navigation lives in st.session_state (works seamlessly on mobile, where the
-sidebar is awkward). All compute lives in core/; all prose in i18n.py; nav keys
-in nav.py. The top of the main panel carries a compact control bar (language,
-theme, menu, site-map) so the app is fully usable without opening the sidebar.
+Entry point: builds the journal masthead and the sidebar "contents rail"
+(language + theme + section + Theory/Practice toggle + page navigation),
+injects the theme with the correct text direction, offers a printable PDF of
+the current section, and routes to the selected theory plate or interactive
+demo. All compute lives in core/; all prose in i18n.py; nav keys in nav.py.
 """
 from __future__ import annotations
 
@@ -38,7 +33,7 @@ st.set_page_config(
     page_title="Trustworthy ML",
     page_icon="◆",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 # --- render registries, per section ---------------------------------------- #
@@ -48,43 +43,59 @@ THEORY_RENDER = {"sec1": theory.SECTIONS, "sec2": theory_xai.SECTIONS_XAI,
                  "sec5": theory_privacy.SECTIONS_PRIVACY,
                  "sec6": theory_align.SECTIONS_ALIGN}
 PRACTICE_RENDER = {
-    "sec1": {"pr_bv": bias_variance.render, "pr_dann": domain_adaptation.render,
-             "pr_sam": sam_optimizer.render, "pr_simpson": simpsons_paradox.render,
-             "pr_cf": counterfactual.render},
-    "sec2": {"px_loan": xai_loan.render, "px_recourse": recourse_xai.render,
-             "px_cv": cv_scanner.render, "px_spurious": spurious.render},
-    "sec3": {"pf_scales": fair_scales.render, "pf_cda": fair_cda.render,
-             "pf_multiturn": fair_multiturn.render,
-             "pf_constitution": fair_constitution.render},
-    "sec4": {"prb_evasion": rob_evasion.render, "prb_tradeoff": rob_tradeoff.render,
-             "prb_smoothing": rob_smoothing.render,
-             "prb_jailbreak": rob_jailbreak.render},
-    "sec5": {"pp_backdoor": pp_backdoor.render, "pp_coin": pp_coin.render,
-             "pp_laplace": pp_laplace.render, "pp_leak": pp_leak.render},
-    "sec6": {"pa_hacking": pa_hacking.render, "pa_grpo": pa_grpo.render,
-             "pa_jailbreak": pa_jailbreak.render, "pa_agency": pa_agency.render},
+    "sec1": {
+        "pr_bv": bias_variance.render,
+        "pr_dann": domain_adaptation.render,
+        "pr_sam": sam_optimizer.render,
+        "pr_simpson": simpsons_paradox.render,
+        "pr_cf": counterfactual.render,
+    },
+    "sec2": {
+        "px_loan": xai_loan.render,
+        "px_recourse": recourse_xai.render,
+        "px_cv": cv_scanner.render,
+        "px_spurious": spurious.render,
+    },
+    "sec3": {
+        "pf_scales": fair_scales.render,
+        "pf_cda": fair_cda.render,
+        "pf_multiturn": fair_multiturn.render,
+        "pf_constitution": fair_constitution.render,
+    },
+    "sec4": {
+        "prb_evasion": rob_evasion.render,
+        "prb_tradeoff": rob_tradeoff.render,
+        "prb_smoothing": rob_smoothing.render,
+        "prb_jailbreak": rob_jailbreak.render,
+    },
+    "sec5": {
+        "pp_backdoor": pp_backdoor.render,
+        "pp_coin": pp_coin.render,
+        "pp_laplace": pp_laplace.render,
+        "pp_leak": pp_leak.render,
+    },
+    "sec6": {
+        "pa_hacking": pa_hacking.render,
+        "pa_grpo": pa_grpo.render,
+        "pa_jailbreak": pa_jailbreak.render,
+        "pa_agency": pa_agency.render,
+    },
 }
 
+MODE_KEYS = ["mode_theory", "mode_practice"]
 LANG_CODES = [c for c, _ in LANGS]
 NAME_OF = dict(LANGS)
 THEME_CODES = ["light", "dark"]
-SECTION_ICONS = {"sec1": "◷", "sec2": "◉", "sec3": "⚖",
-                 "sec4": "⛊", "sec5": "🔒", "sec6": "✦"}
+
+# icons for the six section cards (neutral / academic emoji)
+SECTION_ICONS = {
+    "sec1": "◷", "sec2": "◉", "sec3": "⚖", "sec4": "⛊", "sec5": "🔒", "sec6": "✦",
+}
 
 BOTPRESS_URL = (
     "https://cdn.botpress.cloud/webchat/v3.6/shareable.html?configUrl="
     "https://files.bpcontent.cloud/2026/07/01/08/20260701082723-ZJ4IWTNT.json"
 )
-
-# --- masthead subtitle / colophon per section (kept from the journal design) - #
-_MAST = {
-    "sec1": ("masthead_subtitle", "colophon_2"),
-    "sec2": ("masthead_subtitle_2", "colophon_2b"),
-    "sec3": ("masthead_subtitle_3", "colophon_3b"),
-    "sec4": ("masthead_subtitle_4", "colophon_4b"),
-    "sec5": ("masthead_subtitle_5", "colophon_5b"),
-    "sec6": ("masthead_subtitle_6", "colophon_6b"),
-}
 
 
 @st.cache_data(show_spinner=False)
@@ -92,167 +103,126 @@ def _pdf_bytes(lang: str, section: str) -> bytes:
     return pdf_export.build_pdf(lang, section)
 
 
-# --- navigation state -------------------------------------------------------- #
-ss = st.session_state
-ss.setdefault("view", "landing")     # "landing" | "section"
-ss.setdefault("section", "sec1")
-ss.setdefault("mode", "mode_theory")
-ss.setdefault("page_idx", 0)
-ss.setdefault("lang", "en")
-ss.setdefault("theme", "light")
+sb = st.sidebar
+name_slot = sb.empty()
 
+# --- language (first, to fix direction before theming) ---
+prelim = st.session_state.get("lang", "en")
+sb.markdown(f'<div class="rail-label">{t(prelim, "lang_label")}</div>',
+            unsafe_allow_html=True)
+lang = sb.radio("language", options=LANG_CODES, format_func=lambda c: NAME_OF[c],
+                index=LANG_CODES.index(prelim) if prelim in LANG_CODES else 0,
+                key="lang", label_visibility="collapsed")
 
-def go_landing():
-    ss.view = "landing"
-
-
-def open_section(sec: str, mode: str):
-    ss.section, ss.mode, ss.page_idx, ss.view = sec, mode, 0, "section"
-
-
-def _pages(sec: str, mode: str):
-    return nav.THEORY[sec] if mode == "mode_theory" else nav.PRACTICE[sec]
-
-
-# =============================================================== #
-#  TOP CONTROL BAR (language + theme + menu + site-map)            #
-#  Rendered on the main panel so the app works without the sidebar #
-# =============================================================== #
-lang = ss.lang
-# three compact columns: language | theme | site-map toggle
-cbar = st.columns([2, 2, 2])
-with cbar[0]:
-    lang = st.selectbox(t(lang, "lang_label"), LANG_CODES,
-                        index=LANG_CODES.index(ss.lang) if ss.lang in LANG_CODES else 0,
-                        format_func=lambda c: NAME_OF[c], key="lang")
-with cbar[1]:
-    theme = st.selectbox(t(lang, "theme_label"), THEME_CODES,
-                         index=THEME_CODES.index(ss.theme) if ss.theme in THEME_CODES else 0,
-                         format_func=lambda k: t(lang, "theme_" + k), key="theme")
-with cbar[2]:
-    show_map = st.toggle(t(lang, "roadmap_label"), value=False, key="show_roadmap")
+# --- theme ---
+sb.markdown(f'<div class="rail-label">{t(lang, "theme_label")}</div>',
+            unsafe_allow_html=True)
+theme = sb.radio("theme", options=THEME_CODES,
+                 format_func=lambda k: t(lang, "theme_" + k),
+                 key="theme", label_visibility="collapsed", horizontal=True)
 
 from theme import inject_theme  # noqa: E402
 inject_theme(theme, "rtl" if is_rtl(lang) else "ltr", lang)
 
-# floating assistant (bottom-right)
+with name_slot.container():
+    C.sidebar_nameplate(t(lang, "sidebar_name"), t(lang, "sidebar_sub"))
+
+# --- section (I / II) ---
+sb.markdown(f'<div class="rail-label">{t(lang, "section_label")}</div>',
+            unsafe_allow_html=True)
+section = sb.radio("section", options=nav.SECTIONS,
+                   format_func=lambda k: t(lang, k + "_title"),
+                   key="section", label_visibility="collapsed")
+
+# --- Theory / Practice ---
+sb.markdown(f'<div class="rail-label">{t(lang, "mode_label")}</div>',
+            unsafe_allow_html=True)
+mode = sb.radio("mode", options=MODE_KEYS, format_func=lambda k: t(lang, k),
+                key="mode", label_visibility="collapsed")
+
+# --- page navigation (separate state per section+mode) ---
+sb.markdown(f'<div class="rail-label">{t(lang, "nav_label")}</div>',
+            unsafe_allow_html=True)
+if mode == "mode_theory":
+    keys = nav.THEORY[section]
+    page = sb.radio("page", options=keys, format_func=lambda k: t(lang, k),
+                    key=f"{section}_theory_page", label_visibility="collapsed")
+else:
+    keys = nav.PRACTICE[section]
+    page = sb.radio("page", options=keys, format_func=lambda k: t(lang, k),
+                    key=f"{section}_practice_page", label_visibility="collapsed")
+
+# --- printable PDF of the current section ---
+sb.markdown(f'<div class="rail-label">PDF</div>', unsafe_allow_html=True)
+sb.download_button(
+    t(lang, "pdf_button"), data=_pdf_bytes(lang, section),
+    file_name=f"TrustworthyML_{section}_{lang}.pdf", mime="application/pdf",
+    use_container_width=True)
+
+# --- assistant (floating "Ask me" bubble, bottom-right) ---
 C.chatbot(BOTPRESS_URL, label=t(lang, "assistant_label"))
 
-# optional site-map tree (toggled, not always open)
+# =============================================================== #
+#  MAIN PANEL — hero, view toggles, section grid, and routing      #
+# =============================================================== #
+
+# Hero band: course name, byline (supervisor / author), summary.
+C.hero(
+    t(lang, "masthead_eyebrow"),
+    t(lang, "hero_title"),
+    t(lang, "hero_summary"),
+    byline=[
+        {"label": t(lang, "byline_supervisor"), "name": t(lang, "name_supervisor")},
+        {"label": t(lang, "byline_author"), "name": t(lang, "name_author")},
+    ],
+)
+
+# A "Site map" toggle lives just under the hero (mirrors the sidebar nav,
+# giving a one-glance overview of the whole structure).
+show_map = st.toggle(t(lang, "roadmap_label"), value=False, key="show_roadmap")
 if show_map:
-    sections_meta = []
+    columns = []
     for sec in nav.SECTIONS:
-        leaves = [t(lang, k) for k in nav.THEORY[sec][:2]]
-        sections_meta.append({
-            "title": t(lang, sec + "_title"),
-            "n_theory": len(nav.THEORY[sec]),
-            "n_practice": len(nav.PRACTICE[sec]),
-            "leaves": leaves,
-        })
-    C.roadmap_tree(t(lang, "hero_title"), sections_meta, is_rtl(lang))
+        items = [t(lang, k) for k in nav.THEORY[sec]] + \
+                [t(lang, k) for k in nav.PRACTICE[sec]]
+        columns.append({"head": t(lang, sec + "_title"), "items": items})
+    C.roadmap(columns)
 
+# Section-card grid: a visual overview of the six sections. It highlights the
+# section currently selected in the sidebar.
+cards = [
+    {"icon": SECTION_ICONS.get(sec, "◆"), "num": t(lang, sec + "_title"),
+     "title": t(lang, sec + "_title"), "desc": t(lang, "sc_desc_" + sec)}
+    for sec in nav.SECTIONS
+]
+C.section_grid(cards)
 
-# =============================================================== #
-#  LANDING VIEW  —  hero + clickable section cards                 #
-# =============================================================== #
-def render_landing():
-    C.hero(
-        t(lang, "masthead_eyebrow"), t(lang, "hero_title"), t(lang, "hero_summary"),
-        byline=[
-            {"label": t(lang, "byline_supervisor"), "name": t(lang, "name_supervisor")},
-            {"label": t(lang, "byline_author"), "name": t(lang, "name_author")},
-        ],
-    )
-    st.markdown(f'<p class="landing-prompt" style="text-align:center;color:var(--muted);'
-                f'font-family:var(--mono);font-size:.82rem;letter-spacing:.04em;'
-                f'margin:6px 0 14px 0">{t(lang, "landing_prompt")}</p>',
-                unsafe_allow_html=True)
-
-    # clickable cards in a 3-column grid (buttons styled as cards via CSS)
-    st.markdown('<div class="landing-grid">', unsafe_allow_html=True)
-    rows = [nav.SECTIONS[i:i + 3] for i in range(0, len(nav.SECTIONS), 3)]
-    for row in rows:
-        cols = st.columns(len(row))
-        for col, sec in zip(cols, row):
-            with col:
-                label = (f"{SECTION_ICONS.get(sec,'◆')}  {t(lang, sec + '_title')}\n\n"
-                         f"{t(lang, 'sc_desc_' + sec)}")
-                if st.button(label, key=f"card_{sec}", use_container_width=True):
-                    open_section(sec, "mode_theory")
-                    st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-# =============================================================== #
-#  SECTION VIEW  —  nav controls + page menu + routed content      #
-# =============================================================== #
-def render_section():
-    sec = ss.section
-    pages = _pages(sec, ss.mode)
-    if ss.page_idx >= len(pages):
-        ss.page_idx = 0
-    page = pages[ss.page_idx]
-
-    # -- control row: Home | Theory/Practice choice | (page select) --
-    st.markdown('<div class="nav-row">', unsafe_allow_html=True)
-    top = st.columns([1.2, 1, 1, 3])
-    with top[0]:
-        if st.button(t(lang, "nav_home"), key="btn_home", use_container_width=True):
-            go_landing(); st.rerun()
-    with top[1]:
-        if st.button(t(lang, "choose_theory"), key="btn_theory",
-                     use_container_width=True):
-            ss.mode, ss.page_idx = "mode_theory", 0; st.rerun()
-    with top[2]:
-        if st.button(t(lang, "choose_practice"), key="btn_practice",
-                     use_container_width=True):
-            ss.mode, ss.page_idx = "mode_practice", 0; st.rerun()
-    with top[3]:
-        # page menu for the current section+mode
-        labels = [t(lang, k) for k in pages]
-        sel = st.selectbox(t(lang, "nav_label"), list(range(len(pages))),
-                           index=ss.page_idx, format_func=lambda i: labels[i],
-                           key=f"pagesel_{sec}_{ss.mode}")
-        if sel != ss.page_idx:
-            ss.page_idx = sel; st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # -- per-section masthead --
-    sub_key, col_key = _MAST[sec]
-    C.masthead(
-        t(lang, "masthead_eyebrow"), t(lang, sec + "_title"),
-        t(lang, sub_key),
-        [t(lang, "colophon_1"), t(lang, col_key), t(lang, "colophon_3")],
-    )
-
-    # -- routed content --
-    if ss.mode == "mode_theory":
-        THEORY_RENDER[sec][page](lang)
-    else:
-        PRACTICE_RENDER[sec][page](lang)
-
-    # -- Previous / PDF / Next --
-    st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
-    st.markdown('<div class="nav-row">', unsafe_allow_html=True)
-    bot = st.columns([1.5, 3, 1.5])
-    with bot[0]:
-        if st.button(t(lang, "nav_prev"), key="btn_prev", use_container_width=True,
-                     disabled=(ss.page_idx == 0)):
-            ss.page_idx = max(0, ss.page_idx - 1); st.rerun()
-    with bot[1]:
-        st.download_button(
-            t(lang, "pdf_button"), data=_pdf_bytes(lang, sec),
-            file_name=f"TrustworthyML_{sec}_{lang}.pdf", mime="application/pdf",
-            use_container_width=True)
-    with bot[2]:
-        if st.button(t(lang, "nav_next"), key="btn_next", use_container_width=True,
-                     disabled=(ss.page_idx >= len(pages) - 1)):
-            ss.page_idx = min(len(pages) - 1, ss.page_idx + 1); st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-# --- route by view ---
-if ss.view == "landing":
-    render_landing()
+# Per-section masthead (subtitle + colophon) above the article content.
+if section == "sec1":
+    subtitle = t(lang, "masthead_subtitle")
+    colophon = [t(lang, "colophon_1"), t(lang, "colophon_2"), t(lang, "colophon_3")]
+elif section == "sec2":
+    subtitle = t(lang, "masthead_subtitle_2")
+    colophon = [t(lang, "colophon_1"), t(lang, "colophon_2b"), t(lang, "colophon_3")]
+elif section == "sec3":
+    subtitle = t(lang, "masthead_subtitle_3")
+    colophon = [t(lang, "colophon_1"), t(lang, "colophon_3b"), t(lang, "colophon_3")]
+elif section == "sec4":
+    subtitle = t(lang, "masthead_subtitle_4")
+    colophon = [t(lang, "colophon_1"), t(lang, "colophon_4b"), t(lang, "colophon_3")]
+elif section == "sec5":
+    subtitle = t(lang, "masthead_subtitle_5")
+    colophon = [t(lang, "colophon_1"), t(lang, "colophon_5b"), t(lang, "colophon_3")]
 else:
-    render_section()
+    subtitle = t(lang, "masthead_subtitle_6")
+    colophon = [t(lang, "colophon_1"), t(lang, "colophon_6b"), t(lang, "colophon_3")]
+
+C.masthead(
+    t(lang, "masthead_eyebrow"), t(lang, section + "_title"), subtitle, colophon,
+)
+
+# --- route to the selected theory plate or interactive demo ---
+if mode == "mode_theory":
+    THEORY_RENDER[section][page](lang)
+else:
+    PRACTICE_RENDER[section][page](lang)
