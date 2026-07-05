@@ -91,19 +91,61 @@ def section_grid(cards: list[dict]) -> None:
     st.markdown(f'<div class="section-grid">{cells}</div>', unsafe_allow_html=True)
 
 
-def roadmap(columns: list[dict]) -> None:
-    """A visual site-map / roadmap panel. Each column is a dict with keys
-    ``head`` (section title) and ``items`` (list of sub-page titles)."""
-    cols = ""
-    for col in columns:
-        items = "".join(
-            f'<div class="rm-item">{_esc(it)}</div>' for it in col.get("items", []))
-        cols += (f'<div class="roadmap-col"><div class="rm-head">'
-                 f'{_esc(col.get("head", ""))}</div>{items}</div>')
-    st.markdown(
-        f'<div class="roadmap-panel"><div class="section-grid">{cols}</div></div>',
-        unsafe_allow_html=True,
-    )
+def roadmap_tree(root_label: str, sections: list[dict], is_rtl: bool = False) -> None:
+    """Render the site map as a clean SVG tree: a root node branching to the six
+    section nodes, each listing its theory + practice page count. Scales
+    horizontally and respects the theme via CSS classes."""
+    n = len(sections)
+    col_w = 190
+    width = max(760, n * col_w)
+    root_x = width / 2
+    top_y = 40
+    sec_y = 150
+    box_w, box_h = 168, 96
+    gap = width / n
+
+    parts = [f'<svg viewBox="0 0 {width} 300" xmlns="http://www.w3.org/2000/svg" '
+             f'role="img" aria-label="site map">']
+
+    # root node
+    parts.append(
+        f'<rect class="rm-node-root" x="{root_x-110}" y="{top_y}" width="220" '
+        f'height="46" rx="10"/>'
+        f'<text class="rm-txt-root" x="{root_x}" y="{top_y+29}" '
+        f'text-anchor="middle" font-size="16">{_esc(root_label)}</text>')
+
+    for i, sec in enumerate(sections):
+        cx = gap * (i + 0.5)
+        bx = cx - box_w / 2
+        # edge from root to this section (smooth curve)
+        parts.append(
+            f'<path class="rm-edge" d="M {root_x} {top_y+46} '
+            f'C {root_x} {sec_y-30}, {cx} {top_y+70}, {cx} {sec_y}"/>')
+        # section box
+        parts.append(
+            f'<rect class="rm-node-sec" x="{bx}" y="{sec_y}" width="{box_w}" '
+            f'height="{box_h}" rx="10" stroke-width="1.5"/>')
+        # section title
+        title = sec.get("title", "")
+        parts.append(
+            f'<text class="rm-txt" x="{cx}" y="{sec_y+26}" text-anchor="middle" '
+            f'font-size="12.5" font-weight="700">{_esc(title)}</text>')
+        # counts line
+        parts.append(
+            f'<text class="rm-txt-accent" x="{cx}" y="{sec_y+50}" '
+            f'text-anchor="middle" font-size="10.5" letter-spacing="1">'
+            f'{sec.get("n_theory",0)} theory · {sec.get("n_practice",0)} practice</text>')
+        # a couple of sample leaf titles
+        leaves = sec.get("leaves", [])[:2]
+        for j, lf in enumerate(leaves):
+            parts.append(
+                f'<text class="rm-txt" x="{cx}" y="{sec_y+68+j*15}" '
+                f'text-anchor="middle" font-size="9.5" opacity="0.7">'
+                f'{_esc(lf[:22])}</text>')
+
+    parts.append('</svg>')
+    svg = "".join(parts)
+    st.markdown(f'<div class="roadmap-panel">{svg}</div>', unsafe_allow_html=True)
 
 
 def chatbot(url: str, label: str = "Ask me", height: int = 520) -> None:

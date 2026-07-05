@@ -18,6 +18,17 @@ EN_UI = {
     "roadmap_label": "Site map",
     "roadmap_title": "Site map — the full structure at a glance",
     "roadmap_hide": "Hide site map",
+    # state-based navigation
+    "nav_home": "⌂ Home",
+    "nav_prev": "← Previous",
+    "nav_next": "Next →",
+    "nav_menu": "☰ Menu",
+    "landing_prompt": "Choose a section to begin — each opens in Theory or Practice.",
+    "choose_view": "How would you like to explore this section?",
+    "choose_theory": "📖 Theory",
+    "choose_practice": "🧪 Practice",
+    "back_to_sections": "← All sections",
+    "card_cta": "Open section →",
     # six section-card descriptions (short)
     "sc_desc_sec1": "Bias–variance, VC dimension, domain adaptation, SAM, and the "
         "causal foundations of generalization.",
@@ -43,6 +54,16 @@ FA_UI = {
     "roadmap_label": "نقشهٔ سایت",
     "roadmap_title": "نقشهٔ سایت — کلِّ ساختار در یک نگاه",
     "roadmap_hide": "پنهان‌کردنِ نقشه",
+    "nav_home": "⌂ خانه",
+    "nav_prev": "→ قبلی",
+    "nav_next": "بعدی ←",
+    "nav_menu": "☰ منو",
+    "landing_prompt": "برای شروع بخشی را برگزینید — هرکدام در حالتِ نظری یا عملی باز می‌شود.",
+    "choose_view": "این بخش را چگونه می‌خواهید کاوش کنید؟",
+    "choose_theory": "📖 نظری",
+    "choose_practice": "🧪 عملی",
+    "back_to_sections": "→ همهٔ بخش‌ها",
+    "card_cta": "بازکردنِ بخش ←",
     "sc_desc_sec1": "بایاس–واریانس، بُعدِ VC، انطباقِ دامنه، SAM، و بنیادهای علّیِ "
         "تعمیم.",
     "sc_desc_sec2": "تفسیرِ جعبه‌سیاه با SHAP و LIME، جبرانِ علّی، و کشفِ همبستگیِ "
@@ -66,6 +87,16 @@ AR_UI = {
     "roadmap_label": "خريطة الموقع",
     "roadmap_title": "خريطة الموقع — البنية كاملةً بلمحة",
     "roadmap_hide": "إخفاء الخريطة",
+    "nav_home": "⌂ الرئيسيّة",
+    "nav_prev": "→ السابق",
+    "nav_next": "التالي ←",
+    "nav_menu": "☰ القائمة",
+    "landing_prompt": "اختر قسمًا للبدء — كلٌّ منها يُفتَح نظريًّا أو عمليًّا.",
+    "choose_view": "كيف تريد استكشاف هذا القسم؟",
+    "choose_theory": "📖 نظريّ",
+    "choose_practice": "🧪 عمليّ",
+    "back_to_sections": "→ كلّ الأقسام",
+    "card_cta": "افتح القسم ←",
     "sc_desc_sec1": "المفاضلة بين الانحياز والتباين، بُعد VC، تكيُّف المجال، SAM، "
         "والأسس السببيّة للتعميم.",
     "sc_desc_sec2": "تفسير الصناديق السوداء بـ SHAP وLIME، والجبر السببيّ، وكشف "
