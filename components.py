@@ -1,9 +1,15 @@
 """
 components.py -- small, composable UI helpers built on top of theme.py.
+
+These wrap the raw HTML/CSS classes defined in theme.py so the page modules can
+say ``readout_strip([...])`` instead of hand-writing markup. Everything emits
+through ``st.markdown(..., unsafe_allow_html=True)`` and stays purely
+presentational; no compute lives here.
 """
 from __future__ import annotations
 
 import html as _html
+
 import streamlit as st
 
 
@@ -11,8 +17,14 @@ def _esc(text) -> str:
     return _html.escape(str(text), quote=True)
 
 
+# --------------------------------------------------------------------------- #
+# Masthead (journal nameplate)                                                 #
+# --------------------------------------------------------------------------- #
 def masthead(eyebrow: str, title: str, subtitle: str, colophon: list[str],
              byline: list[dict] | None = None) -> None:
+    """Render the top nameplate: mono eyebrow, display title, italic subtitle,
+    an optional byline (e.g. supervisor / author), a gold double-rule, and a
+    mono colophon row. ``byline`` is a list of {"label": ..., "name": ...}."""
     items = "".join(f"<span>{_esc(c)}</span>" for c in colophon)
     byline_html = ""
     if byline:
@@ -30,6 +42,7 @@ def masthead(eyebrow: str, title: str, subtitle: str, colophon: list[str],
           <div class="subtitle">{_esc(subtitle)}</div>
           {byline_html}
           <hr class="rule"/>
+          <hr class="rule-thin"/>
           <div class="colophon">{items}</div>
         </div>
         """,
@@ -38,36 +51,53 @@ def masthead(eyebrow: str, title: str, subtitle: str, colophon: list[str],
 
 
 def hero_art() -> str:
+    """Return an inline SVG that evokes Trustworthy ML: a small neural network
+    whose output is guarded by a shield bearing a checkmark. Uses currentColor
+    and theme vars so it adapts to light/dark. Returned as a string to embed."""
     return (
-        '<svg class="hero-art" viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg" role="img">'
-        '<g stroke="var(--hero-art-edge)" stroke-width="1.8" opacity="0.65">'
+        '<svg class="hero-art" viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg" '
+        'role="img" aria-label="trustworthy machine learning">'
+        # edges (network)
+        '<g stroke="var(--hero-art-edge)" stroke-width="1.4" opacity="0.55">'
         '<line x1="34" y1="40" x2="96" y2="30"/><line x1="34" y1="40" x2="96" y2="75"/>'
         '<line x1="34" y1="110" x2="96" y2="75"/><line x1="34" y1="110" x2="96" y2="120"/>'
         '<line x1="34" y1="75" x2="96" y2="30"/><line x1="34" y1="75" x2="96" y2="120"/>'
         '<line x1="96" y1="30" x2="150" y2="52"/><line x1="96" y1="75" x2="150" y2="52"/>'
         '<line x1="96" y1="120" x2="150" y2="98"/><line x1="96" y1="75" x2="150" y2="98"/>'
         '</g>'
+        # nodes
         '<g fill="var(--hero-art-node)">'
         '<circle cx="34" cy="40" r="7"/><circle cx="34" cy="75" r="7"/>'
         '<circle cx="34" cy="110" r="7"/><circle cx="96" cy="30" r="7"/>'
         '<circle cx="96" cy="75" r="7"/><circle cx="96" cy="120" r="7"/>'
         '<circle cx="150" cy="52" r="7"/><circle cx="150" cy="98" r="7"/>'
         '</g>'
-        '<path d="M198 34 L226 44 L226 78 C226 100 212 112 198 120 C184 112 170 100 170 78 L170 44 Z" '
+        # shield (trust) with checkmark
+        '<path d="M198 34 L226 44 L226 78 C226 100 212 112 198 120 '
+        'C184 112 170 100 170 78 L170 44 Z" '
         'fill="var(--hero-art-shield)" stroke="var(--hero-art-shieldline)" stroke-width="2"/>'
-        '<path d="M186 76 L195 86 L212 62" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>'
-        '<line x1="150" y1="52" x2="172" y2="60" stroke="var(--hero-art-edge)" stroke-width="1.8" opacity="0.65"/>'
-        '<line x1="150" y1="98" x2="172" y2="92" stroke="var(--hero-art-edge)" stroke-width="1.8" opacity="0.65"/>'
+        '<path d="M186 76 L195 86 L212 62" fill="none" stroke="#fff" '
+        'stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>'
+        # connector from network to shield
+        '<line x1="150" y1="52" x2="172" y2="60" stroke="var(--hero-art-edge)" '
+        'stroke-width="1.4" opacity="0.55"/>'
+        '<line x1="150" y1="98" x2="172" y2="92" stroke="var(--hero-art-edge)" '
+        'stroke-width="1.4" opacity="0.55"/>'
         '</svg>'
     )
 
 
 def footer(text: str) -> None:
-    st.markdown(f'<div class="site-footer">{_esc(text)}</div>', unsafe_allow_html=True)
+    """A simple, elegant copyright footer."""
+    st.markdown(f'<div class="site-footer">{_esc(text)}</div>',
+                unsafe_allow_html=True)
 
 
 def hero(eyebrow: str, title: str, summary: str, practice_note: str = "",
          byline: list[dict] | None = None) -> None:
+    """A centered hero band under the navbar: course name, byline
+    (supervisor / author), course summary, and a short note on what choosing
+    Theory vs Practice means."""
     byline_html = ""
     if byline:
         cells = "".join(
@@ -76,7 +106,8 @@ def hero(eyebrow: str, title: str, summary: str, practice_note: str = "",
             for b in byline
         )
         byline_html = f'<div class="hero-byline">{cells}</div>'
-    note_html = (f'<div class="hero-practice-note">{_esc(practice_note)}</div>' if practice_note else "")
+    note_html = (f'<div class="hero-practice-note">{_esc(practice_note)}</div>'
+                if practice_note else "")
     st.markdown(
         f"""
         <div class="hero hero-blue">
@@ -93,6 +124,9 @@ def hero(eyebrow: str, title: str, summary: str, practice_note: str = "",
 
 
 def section_grid(cards: list[dict]) -> None:
+    """A responsive grid of section cards. Each card is a dict with keys
+    ``icon``, ``num``, ``title``, ``desc``. Purely visual overview; navigation
+    stays in the sidebar/toggles."""
     cells = "".join(
         f'<div class="section-card">'
         f'<span class="sc-icon">{_esc(c.get("icon", "◆"))}</span>'
@@ -106,6 +140,8 @@ def section_grid(cards: list[dict]) -> None:
 
 
 def info_panel(title: str, body: str, rows: list | None = None) -> None:
+    """A framed information panel (used for About / Contact overlays). Optional
+    ``rows`` is a list of (label, value) tuples rendered as a definition list."""
     rows_html = ""
     if rows:
         cells = "".join(
@@ -120,6 +156,11 @@ def info_panel(title: str, body: str, rows: list | None = None) -> None:
 
 
 def roadmap_tree(root_label: str, sections: list[dict], is_rtl: bool = False) -> None:
+    """Render the site map as a large, clear SVG tree: a root node branching to
+    the six section nodes, each listing its theory + practice counts and its
+    first pages. Scales to full width. The root box width is computed from the
+    label length so long titles (e.g. "Trustworthy Machine Learning") are
+    never clipped."""
     n = len(sections)
     col_w = 260
     width = max(1080, n * col_w)
@@ -127,39 +168,100 @@ def roadmap_tree(root_label: str, sections: list[dict], is_rtl: bool = False) ->
     root_x = width / 2
     top_y = 30
     root_h = 64
+    # widen the root box to fit its label (approx. .58 * font-size per glyph)
     root_font = 22
     root_w = max(320, len(root_label) * root_font * 0.60 + 60)
     sec_y = 190
     box_w, box_h = 226, 148
     gap = width / n
 
-    parts = [f'<svg viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet">']
+    parts = [f'<svg viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg" '
+             f'role="img" aria-label="site map" preserveAspectRatio="xMidYMid meet">']
+
+    # root node (width fits the label; never clipped)
     parts.append(
-        f'<rect class="rm-node-root" x="{root_x-root_w/2}" y="{top_y}" width="{root_w}" height="{root_h}" rx="14"/>'
-        f'<text class="rm-txt-root" x="{root_x}" y="{top_y+40}" text-anchor="middle" font-size="{root_font}">{_esc(root_label)}</text>')
+        f'<rect class="rm-node-root" x="{root_x-root_w/2}" y="{top_y}" '
+        f'width="{root_w}" height="{root_h}" rx="14"/>'
+        f'<text class="rm-txt-root" x="{root_x}" y="{top_y+40}" '
+        f'text-anchor="middle" font-size="{root_font}">{_esc(root_label)}</text>')
 
     for i, sec in enumerate(sections):
         cx = gap * (i + 0.5)
         bx = cx - box_w / 2
-        parts.append(f'<path class="rm-edge" d="M {root_x} {top_y+root_h} C {root_x} {sec_y-46}, {cx} {top_y+100}, {cx} {sec_y}"/>')
-        parts.append(f'<rect class="rm-node-sec" x="{bx}" y="{sec_y}" width="{box_w}" height="{box_h}" rx="14" stroke-width="2"/>')
-        parts.append(f'<rect class="rm-node-accent" x="{bx}" y="{sec_y}" width="{box_w}" height="7" rx="3.5"/>')
+        parts.append(
+            f'<path class="rm-edge" d="M {root_x} {top_y+root_h} '
+            f'C {root_x} {sec_y-46}, {cx} {top_y+100}, {cx} {sec_y}"/>')
+        parts.append(
+            f'<rect class="rm-node-sec" x="{bx}" y="{sec_y}" width="{box_w}" '
+            f'height="{box_h}" rx="14" stroke-width="2"/>')
+        parts.append(
+            f'<rect class="rm-node-accent" x="{bx}" y="{sec_y}" width="{box_w}" '
+            f'height="7" rx="3.5"/>')
         title = sec.get("title", "")
-        parts.append(f'<text class="rm-txt" x="{cx}" y="{sec_y+40}" text-anchor="middle" font-size="18" font-weight="700">{_esc(title)}</text>')
-        parts.append(f'<text class="rm-txt-accent" x="{cx}" y="{sec_y+66}" text-anchor="middle" font-size="14" letter-spacing="0.5">{sec.get("n_theory",0)} theory · {sec.get("n_practice",0)} practice</text>')
+        parts.append(
+            f'<text class="rm-txt" x="{cx}" y="{sec_y+40}" text-anchor="middle" '
+            f'font-size="18" font-weight="700">{_esc(title)}</text>')
+        parts.append(
+            f'<text class="rm-txt-accent" x="{cx}" y="{sec_y+66}" '
+            f'text-anchor="middle" font-size="14" letter-spacing="0.5">'
+            f'{sec.get("n_theory",0)} theory · {sec.get("n_practice",0)} practice</text>')
         for j, lf in enumerate(sec.get("leaves", [])[:3]):
-            parts.append(f'<text class="rm-txt-leaf" x="{cx}" y="{sec_y+94+j*20}" text-anchor="middle" font-size="14">▸ {_esc(lf[:28])}</text>')
+            parts.append(
+                f'<text class="rm-txt-leaf" x="{cx}" y="{sec_y+94+j*20}" '
+                f'text-anchor="middle" font-size="14">'
+                f'▸ {_esc(lf[:28])}</text>')
+
     parts.append('</svg>')
-    st.markdown(f'<div class="roadmap-panel">{"".join(parts)}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="roadmap-panel">{"".join(parts)}</div>',
+                unsafe_allow_html=True)
+
+
+def sidebar_toggle_button(label: str) -> None:
+    """A real, clickable 'open/close sections' button. Streamlit has no public
+    Python API to toggle the sidebar, so this renders a tiny HTML button (via
+    components.html, which -- unlike st.markdown -- actually executes <script>
+    tags) that finds Streamlit's own native sidebar-open control in the parent
+    document and clicks it on the user's behalf. Works on mobile and desktop."""
+    import streamlit.components.v1 as components
+    html = f"""
+    <div id="tml-sidebar-btn-wrap" style="width:100%;">
+      <button id="tml-sidebar-btn" style="
+          width:100%; min-height:42px; margin-top:21px;
+          border-radius:8px; border:1px solid #6E1620;
+          background:#8A1C2B; color:#fff; cursor:pointer;
+          font-family: Georgia, 'Playfair Display', serif; font-weight:700;
+          font-size:.92rem; box-shadow:0 3px 10px rgba(0,0,0,.25);">
+        {_esc(label)}
+      </button>
+    </div>
+    <script>
+      const btn = document.getElementById('tml-sidebar-btn');
+      btn.addEventListener('click', function() {{
+        try {{
+          const doc = window.parent.document;
+          let ctrl = doc.querySelector('[data-testid="collapsedControl"] button')
+                  || doc.querySelector('[data-testid="collapsedControl"]')
+                  || doc.querySelector('[data-testid="stSidebarCollapseButton"] button');
+          if (ctrl) {{ ctrl.click(); }}
+        }} catch (e) {{ /* no-op */ }}
+      }});
+    </script>
+    """
+    components.html(html, height=64)
 
 
 def chatbot(url: str, label: str = "Ask me", height: int = 520) -> None:
+    """Floating bottom-right assistant. A pure-CSS <details> bubble labelled
+    "Ask me" that expands to an iframe of the web-chat -- no JavaScript needed,
+    so it works inside Streamlit's markdown sandbox."""
     st.markdown(
         f"""
         <details class="assistant-fab">
           <summary>
             <span class="fab-icon" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                   stroke-linejoin="round">
                 <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z"/>
               </svg>
             </span>
@@ -174,45 +276,95 @@ def chatbot(url: str, label: str = "Ask me", height: int = 520) -> None:
     )
 
 
+# --------------------------------------------------------------------------- #
+# Sidebar pieces                                                               #
+# --------------------------------------------------------------------------- #
 def sidebar_nameplate(name: str, sub: str) -> None:
-    st.markdown(f'<div class="sidebar-nameplate">{_esc(name)}</div><div class="sidebar-sub">{_esc(sub)}</div>', unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="sidebar-nameplate">{_esc(name)}</div>'
+        f'<div class="sidebar-sub">{_esc(sub)}</div>',
+        unsafe_allow_html=True,
+    )
+
 
 def rail_label(text: str) -> None:
     st.markdown(f'<div class="rail-label">{_esc(text)}</div>', unsafe_allow_html=True)
 
+
+# --------------------------------------------------------------------------- #
+# Section + plate headers                                                      #
+# --------------------------------------------------------------------------- #
 def eyebrow(text: str) -> None:
     st.markdown(f'<div class="eyebrow">{_esc(text)}</div>', unsafe_allow_html=True)
+
 
 def section_title(text: str) -> None:
     st.markdown(f"## {text}")
 
+
 def plate_header(number: str, title: str) -> None:
-    st.markdown(f'<div class="plate-eyebrow">{_esc(number)}</div><div class="plate-title">{_esc(title)}</div>', unsafe_allow_html=True)
+    """Mono plate-number eyebrow + display plate title. Call inside a
+    ``with st.container(border=True):`` block."""
+    st.markdown(
+        f'<div class="plate-eyebrow">{_esc(number)}</div>'
+        f'<div class="plate-title">{_esc(title)}</div>',
+        unsafe_allow_html=True,
+    )
+
 
 def figure_caption(html_text: str) -> None:
-    st.markdown(f'<div class="figure-caption">{html_text}</div>', unsafe_allow_html=True)
+    """Mono 'Figure N.' style caption. ``html_text`` may contain <b>...</b>."""
+    st.markdown(f'<div class="figure-caption">{html_text}</div>',
+                unsafe_allow_html=True)
 
+
+# --------------------------------------------------------------------------- #
+# Prose with a comfortable reading measure                                     #
+# --------------------------------------------------------------------------- #
 def measure(html_text: str) -> None:
+    """Render a block of (already-HTML) prose constrained to ~760px."""
     st.markdown(f'<div class="measure">{html_text}</div>', unsafe_allow_html=True)
 
+
+# --------------------------------------------------------------------------- #
+# Callouts                                                                     #
+# --------------------------------------------------------------------------- #
 def key_idea(html_text: str) -> None:
     st.markdown(f'<div class="keyidea">{html_text}</div>', unsafe_allow_html=True)
+
 
 def warn(html_text: str) -> None:
     st.markdown(f'<div class="warn">{html_text}</div>', unsafe_allow_html=True)
 
-def demo_intro(what: str, why: str, expect: str, labels=("What this does", "Why it matters", "What to look for")) -> None:
+
+def demo_intro(what: str, why: str, expect: str,
+               labels=("What this does", "Why it matters",
+                       "What to look for")) -> None:
+    """An explainer panel shown above a practice demo: what it does, why it
+    matters, and what the reader should watch for. All strings are plain text."""
     l1, l2, l3 = labels
     st.markdown(
         '<div class="demo-intro">'
-        f'<div class="di-row"><span class="di-k">{_esc(l1)}</span><span class="di-v">{_esc(what)}</span></div>'
-        f'<div class="di-row"><span class="di-k">{_esc(l2)}</span><span class="di-v">{_esc(why)}</span></div>'
-        f'<div class="di-row"><span class="di-k">{_esc(l3)}</span><span class="di-v">{_esc(expect)}</span></div>'
+        f'<div class="di-row"><span class="di-k">{_esc(l1)}</span>'
+        f'<span class="di-v">{_esc(what)}</span></div>'
+        f'<div class="di-row"><span class="di-k">{_esc(l2)}</span>'
+        f'<span class="di-v">{_esc(why)}</span></div>'
+        f'<div class="di-row"><span class="di-k">{_esc(l3)}</span>'
+        f'<span class="di-v">{_esc(expect)}</span></div>'
         '</div>',
         unsafe_allow_html=True,
     )
 
+
+# --------------------------------------------------------------------------- #
+# Instrument readout strip                                                     #
+# --------------------------------------------------------------------------- #
 def readout_strip(items: list[dict]) -> None:
+    """
+    Render a row of mono "instrument readouts". Each item is a dict:
+        {"k": label, "v": value, "u": unit (optional), "color": "crimson"|"teal"|None}
+    Values and labels are shown verbatim (already formatted by the caller).
+    """
     cells = []
     for it in items:
         color = it.get("color")
@@ -225,7 +377,9 @@ def readout_strip(items: list[dict]) -> None:
             f'<div class="{vclass}">{_esc(it.get("v", ""))} {unit_html}</div>'
             "</div>"
         )
-    st.markdown(f'<div class="readout-strip">{"".join(cells)}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="readout-strip">{"".join(cells)}</div>',
+                unsafe_allow_html=True)
+
 
 def spacer(px: int = 8) -> None:
     st.markdown(f'<div style="height:{int(px)}px"></div>', unsafe_allow_html=True)
