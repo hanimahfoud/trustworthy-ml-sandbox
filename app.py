@@ -102,22 +102,12 @@ ss.setdefault("overlay", None)          # None | "about" | "contact"
 
 
 # =============================================================== #
-#  SIDEBAR — the contents rail (Part → Section → Page → PDF)       #
+#  SIDEBAR — the contents rail (Part → Section → Page)             #
+#  Opens on mobile via the ☰ control; language/theme live up top.  #
 # =============================================================== #
 sb = st.sidebar
-
-# language first, so we can fix text direction before theming
-prelim = ss.get("lang", "en")
-sb.markdown(f'<div class="rail-label">{t(prelim, "lang_label")}</div>',
-            unsafe_allow_html=True)
-lang = sb.radio("language", LANG_CODES, format_func=lambda c: NAME_OF[c],
-                index=LANG_CODES.index(prelim) if prelim in LANG_CODES else 0,
-                key="lang", label_visibility="collapsed")
-
-sb.markdown(f'<div class="rail-label">{t(lang, "theme_label")}</div>',
-            unsafe_allow_html=True)
-theme = sb.radio("theme", THEME_CODES, format_func=lambda k: t(lang, "theme_" + k),
-                 key="theme", label_visibility="collapsed", horizontal=True)
+lang = ss.get("lang", "en")
+theme = ss.get("theme", "light")
 
 from theme import inject_theme  # noqa: E402
 inject_theme(theme, "rtl" if is_rtl(lang) else "ltr", lang)
@@ -128,7 +118,7 @@ C.sidebar_nameplate(t(lang, "sidebar_name"), t(lang, "sidebar_sub"))
 sb.markdown(f'<div class="rail-label">{t(lang, "mode_label")}</div>',
             unsafe_allow_html=True)
 mode = sb.radio("mode", MODE_KEYS, format_func=lambda k: t(lang, k),
-                index=MODE_KEYS.index(ss.mode), key="mode",
+                index=MODE_KEYS.index(ss.mode), key="mode_radio",
                 label_visibility="collapsed")
 if mode != ss.mode:
     ss.mode = mode
@@ -159,13 +149,6 @@ sel = sb.radio("page", list(range(len(pages))), index=ss.page_idx,
 if sel != ss.page_idx:
     ss.page_idx = sel
 
-# Download PDF
-sb.markdown('<div class="rail-label">PDF</div>', unsafe_allow_html=True)
-sb.download_button(
-    t(lang, "pdf_button"), data=_pdf_bytes(lang, ss.section),
-    file_name=f"TrustworthyML_{ss.section}_{lang}.pdf", mime="application/pdf",
-    use_container_width=True)
-
 page = pages[ss.page_idx]
 
 # floating assistant
@@ -173,29 +156,60 @@ C.chatbot(BOTPRESS_URL, label=t(lang, "assistant_label"))
 
 
 # =============================================================== #
-#  TOP CONTROL BAR (main panel): mobile hint · site-map · About    #
+#  TOP CONTROL BAR (main panel): 6 controls, tidy row              #
+#  language · theme · PDF · About · Contact · Site map             #
 # =============================================================== #
 st.markdown(
-    f'<div class="topbar-hint">☰ {t(lang, "nav_menu")}</div>',
+    f'<div class="topbar-hint">{t(lang, "open_sections")} — '
+    f'{t(lang, "nav_menu")}</div>',
     unsafe_allow_html=True)
 
-tb = st.columns([1.4, 1.4, 1.4, 3])
+tb = st.columns(6)
 with tb[0]:
-    show_map = st.toggle(t(lang, "roadmap_label"), value=False, key="show_roadmap")
+    lang2 = st.selectbox(t(lang, "lang_label"), LANG_CODES,
+                         index=LANG_CODES.index(lang),
+                         format_func=lambda c: NAME_OF[c], key="lang_top",
+                         label_visibility="collapsed")
+    if lang2 != lang:
+        ss.lang = lang2; st.rerun()
 with tb[1]:
+    theme2 = st.selectbox(t(lang, "theme_label"), THEME_CODES,
+                          index=THEME_CODES.index(theme),
+                          format_func=lambda k: t(lang, "theme_" + k),
+                          key="theme_top", label_visibility="collapsed")
+    if theme2 != theme:
+        ss.theme = theme2; st.rerun()
+with tb[2]:
+    st.download_button(
+        t(lang, "pdf_button"), data=_pdf_bytes(lang, ss.section),
+        file_name=f"TrustworthyML_{ss.section}_{lang}.pdf", mime="application/pdf",
+        use_container_width=True, key="pdf_top")
+with tb[3]:
     if st.button(t(lang, "nav_about"), key="btn_about", use_container_width=True):
         ss.overlay = None if ss.overlay == "about" else "about"; st.rerun()
-with tb[2]:
+with tb[4]:
     if st.button(t(lang, "nav_contact"), key="btn_contact", use_container_width=True):
         ss.overlay = None if ss.overlay == "contact" else "contact"; st.rerun()
+with tb[5]:
+    if st.button(t(lang, "roadmap_label"), key="btn_map", use_container_width=True):
+        ss.overlay = None if ss.overlay == "map" else "map"; st.rerun()
 
-# optional site-map tree
-if show_map:
+# Site-map overlay (large, clear, clickable navigation)
+if ss.overlay == "map":
     meta = [{"title": t(lang, s + "_title"),
              "n_theory": len(nav.THEORY[s]), "n_practice": len(nav.PRACTICE[s]),
-             "leaves": [t(lang, k) for k in nav.THEORY[s][:2]]}
+             "leaves": [t(lang, k) for k in nav.THEORY[s][:3]]}
             for s in nav.SECTIONS]
     C.roadmap_tree(t(lang, "hero_title"), meta, is_rtl(lang))
+    # clickable navigation row: jump to any section from the map
+    st.markdown('<div class="nav-row">', unsafe_allow_html=True)
+    mcols = st.columns(len(nav.SECTIONS))
+    for mc, s in zip(mcols, nav.SECTIONS):
+        with mc:
+            if st.button(f"{SECTION_ICONS.get(s,'◆')} {t(lang, s + '_title')}",
+                         key=f"map_{s}", use_container_width=True):
+                ss.section = s; ss.page_idx = 0; ss.overlay = None; st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # About / Contact overlay panels
 if ss.overlay == "about":
@@ -258,16 +272,5 @@ if ss.mode == "mode_theory":
 else:
     PRACTICE_RENDER[ss.section][page](lang)
 
-# --- Previous / Next under the content ---
-st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
-st.markdown('<div class="nav-row">', unsafe_allow_html=True)
-nrow = st.columns([1.5, 3, 1.5])
-with nrow[0]:
-    if st.button(t(lang, "nav_prev"), key="btn_prev", use_container_width=True,
-                 disabled=(ss.page_idx == 0)):
-        ss.page_idx = max(0, ss.page_idx - 1); st.rerun()
-with nrow[2]:
-    if st.button(t(lang, "nav_next"), key="btn_next", use_container_width=True,
-                 disabled=(ss.page_idx >= len(pages) - 1)):
-        ss.page_idx = min(len(pages) - 1, ss.page_idx + 1); st.rerun()
-st.markdown('</div>', unsafe_allow_html=True)
+# --- footer (copyright) ---
+C.footer(t(lang, "footer_text"))

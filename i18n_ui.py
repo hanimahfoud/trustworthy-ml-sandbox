@@ -23,6 +23,9 @@ EN_UI = {
     "nav_prev": "← Previous",
     "nav_next": "Next →",
     "nav_menu": "☰ Menu",
+    "open_sections": "☰ Choose section",
+    "footer_text": "© 2026 ExploreTML · Trustworthy Machine Learning Laboratory · "
+        "Iran University of Science and Technology (IUST). All rights reserved.",
     "landing_prompt": "Choose a section to begin — each opens in Theory or Practice.",
     "choose_view": "How would you like to explore this section?",
     "choose_theory": "📖 Theory",
@@ -77,6 +80,9 @@ FA_UI = {
     "nav_prev": "→ قبلی",
     "nav_next": "بعدی ←",
     "nav_menu": "☰ منو",
+    "open_sections": "☰ انتخابِ بخش",
+    "footer_text": "© ۲۰۲۶ ExploreTML · آزمایشگاهِ یادگیری ماشینِ قابل‌اعتماد · "
+        "دانشگاه علم و صنعت ایران (IUST). همهٔ حقوق محفوظ است.",
     "landing_prompt": "برای شروع بخشی را برگزینید — هرکدام در حالتِ نظری یا عملی باز می‌شود.",
     "choose_view": "این بخش را چگونه می‌خواهید کاوش کنید؟",
     "choose_theory": "📖 نظری",
@@ -126,6 +132,9 @@ AR_UI = {
     "nav_prev": "→ السابق",
     "nav_next": "التالي ←",
     "nav_menu": "☰ القائمة",
+    "open_sections": "☰ اختر القسم",
+    "footer_text": "© ٢٠٢٦ ExploreTML · مختبر تعلُّم الآلة الموثوق · "
+        "جامعة العلوم والتكنولوجيا الإيرانيّة (IUST). جميع الحقوق محفوظة.",
     "landing_prompt": "اختر قسمًا للبدء — كلٌّ منها يُفتَح نظريًّا أو عمليًّا.",
     "choose_view": "كيف تريد استكشاف هذا القسم؟",
     "choose_theory": "📖 نظريّ",

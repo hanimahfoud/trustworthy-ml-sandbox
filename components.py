@@ -50,6 +50,49 @@ def masthead(eyebrow: str, title: str, subtitle: str, colophon: list[str],
     )
 
 
+def hero_art() -> str:
+    """Return an inline SVG that evokes Trustworthy ML: a small neural network
+    whose output is guarded by a shield bearing a checkmark. Uses currentColor
+    and theme vars so it adapts to light/dark. Returned as a string to embed."""
+    return (
+        '<svg class="hero-art" viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg" '
+        'role="img" aria-label="trustworthy machine learning">'
+        # edges (network)
+        '<g stroke="var(--hero-art-edge)" stroke-width="1.4" opacity="0.55">'
+        '<line x1="34" y1="40" x2="96" y2="30"/><line x1="34" y1="40" x2="96" y2="75"/>'
+        '<line x1="34" y1="110" x2="96" y2="75"/><line x1="34" y1="110" x2="96" y2="120"/>'
+        '<line x1="34" y1="75" x2="96" y2="30"/><line x1="34" y1="75" x2="96" y2="120"/>'
+        '<line x1="96" y1="30" x2="150" y2="52"/><line x1="96" y1="75" x2="150" y2="52"/>'
+        '<line x1="96" y1="120" x2="150" y2="98"/><line x1="96" y1="75" x2="150" y2="98"/>'
+        '</g>'
+        # nodes
+        '<g fill="var(--hero-art-node)">'
+        '<circle cx="34" cy="40" r="7"/><circle cx="34" cy="75" r="7"/>'
+        '<circle cx="34" cy="110" r="7"/><circle cx="96" cy="30" r="7"/>'
+        '<circle cx="96" cy="75" r="7"/><circle cx="96" cy="120" r="7"/>'
+        '<circle cx="150" cy="52" r="7"/><circle cx="150" cy="98" r="7"/>'
+        '</g>'
+        # shield (trust) with checkmark
+        '<path d="M198 34 L226 44 L226 78 C226 100 212 112 198 120 '
+        'C184 112 170 100 170 78 L170 44 Z" '
+        'fill="var(--hero-art-shield)" stroke="var(--hero-art-shieldline)" stroke-width="2"/>'
+        '<path d="M186 76 L195 86 L212 62" fill="none" stroke="#fff" '
+        'stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>'
+        # connector from network to shield
+        '<line x1="150" y1="52" x2="172" y2="60" stroke="var(--hero-art-edge)" '
+        'stroke-width="1.4" opacity="0.55"/>'
+        '<line x1="150" y1="98" x2="172" y2="92" stroke="var(--hero-art-edge)" '
+        'stroke-width="1.4" opacity="0.55"/>'
+        '</svg>'
+    )
+
+
+def footer(text: str) -> None:
+    """A simple, elegant copyright footer."""
+    st.markdown(f'<div class="site-footer">{_esc(text)}</div>',
+                unsafe_allow_html=True)
+
+
 def hero(eyebrow: str, title: str, summary: str,
          byline: list[dict] | None = None) -> None:
     """A centered hero band under the navbar: course name, byline
@@ -64,7 +107,8 @@ def hero(eyebrow: str, title: str, summary: str,
         byline_html = f'<div class="hero-byline">{cells}</div>'
     st.markdown(
         f"""
-        <div class="hero">
+        <div class="hero hero-blue">
+          <div class="hero-art-wrap">{hero_art()}</div>
           <div class="hero-eyebrow">{_esc(eyebrow)}</div>
           <div class="hero-title">{_esc(title)}</div>
           {byline_html}
@@ -108,60 +152,60 @@ def info_panel(title: str, body: str, rows: list | None = None) -> None:
 
 
 def roadmap_tree(root_label: str, sections: list[dict], is_rtl: bool = False) -> None:
-    """Render the site map as a clean SVG tree: a root node branching to the six
-    section nodes, each listing its theory + practice page count. Scales
-    horizontally and respects the theme via CSS classes."""
+    """Render the site map as a large, clear SVG tree: a root node branching to
+    the six section nodes, each listing its theory + practice counts and its
+    first pages. Scales to full width."""
     n = len(sections)
-    col_w = 190
-    width = max(760, n * col_w)
+    col_w = 250
+    width = max(1000, n * col_w)
+    height = 340
     root_x = width / 2
-    top_y = 40
-    sec_y = 150
-    box_w, box_h = 168, 96
+    top_y = 30
+    root_h = 60
+    sec_y = 170
+    box_w, box_h = 210, 132
     gap = width / n
 
-    parts = [f'<svg viewBox="0 0 {width} 300" xmlns="http://www.w3.org/2000/svg" '
-             f'role="img" aria-label="site map">']
+    parts = [f'<svg viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg" '
+             f'role="img" aria-label="site map" preserveAspectRatio="xMidYMid meet">']
 
     # root node
     parts.append(
-        f'<rect class="rm-node-root" x="{root_x-110}" y="{top_y}" width="220" '
-        f'height="46" rx="10"/>'
-        f'<text class="rm-txt-root" x="{root_x}" y="{top_y+29}" '
-        f'text-anchor="middle" font-size="16">{_esc(root_label)}</text>')
+        f'<rect class="rm-node-root" x="{root_x-150}" y="{top_y}" width="300" '
+        f'height="{root_h}" rx="12"/>'
+        f'<text class="rm-txt-root" x="{root_x}" y="{top_y+38}" '
+        f'text-anchor="middle" font-size="21">{_esc(root_label)}</text>')
 
     for i, sec in enumerate(sections):
         cx = gap * (i + 0.5)
         bx = cx - box_w / 2
-        # edge from root to this section (smooth curve)
         parts.append(
-            f'<path class="rm-edge" d="M {root_x} {top_y+46} '
-            f'C {root_x} {sec_y-30}, {cx} {top_y+70}, {cx} {sec_y}"/>')
-        # section box
+            f'<path class="rm-edge" d="M {root_x} {top_y+root_h} '
+            f'C {root_x} {sec_y-40}, {cx} {top_y+90}, {cx} {sec_y}"/>')
         parts.append(
             f'<rect class="rm-node-sec" x="{bx}" y="{sec_y}" width="{box_w}" '
-            f'height="{box_h}" rx="10" stroke-width="1.5"/>')
-        # section title
+            f'height="{box_h}" rx="12" stroke-width="2"/>')
+        # top accent bar on each section box
+        parts.append(
+            f'<rect class="rm-node-accent" x="{bx}" y="{sec_y}" width="{box_w}" '
+            f'height="6" rx="3"/>')
         title = sec.get("title", "")
         parts.append(
-            f'<text class="rm-txt" x="{cx}" y="{sec_y+26}" text-anchor="middle" '
-            f'font-size="12.5" font-weight="700">{_esc(title)}</text>')
-        # counts line
+            f'<text class="rm-txt" x="{cx}" y="{sec_y+38}" text-anchor="middle" '
+            f'font-size="17" font-weight="700">{_esc(title)}</text>')
         parts.append(
-            f'<text class="rm-txt-accent" x="{cx}" y="{sec_y+50}" '
-            f'text-anchor="middle" font-size="10.5" letter-spacing="1">'
+            f'<text class="rm-txt-accent" x="{cx}" y="{sec_y+62}" '
+            f'text-anchor="middle" font-size="13" letter-spacing="1">'
             f'{sec.get("n_theory",0)} theory · {sec.get("n_practice",0)} practice</text>')
-        # a couple of sample leaf titles
-        leaves = sec.get("leaves", [])[:2]
-        for j, lf in enumerate(leaves):
+        for j, lf in enumerate(sec.get("leaves", [])[:3]):
             parts.append(
-                f'<text class="rm-txt" x="{cx}" y="{sec_y+68+j*15}" '
-                f'text-anchor="middle" font-size="9.5" opacity="0.7">'
-                f'{_esc(lf[:22])}</text>')
+                f'<text class="rm-txt" x="{cx}" y="{sec_y+86+j*17}" '
+                f'text-anchor="middle" font-size="12" opacity="0.72">'
+                f'▸ {_esc(lf[:26])}</text>')
 
     parts.append('</svg>')
-    svg = "".join(parts)
-    st.markdown(f'<div class="roadmap-panel">{svg}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="roadmap-panel">{"".join(parts)}</div>',
+                unsafe_allow_html=True)
 
 
 def chatbot(url: str, label: str = "Ask me", height: int = 520) -> None:

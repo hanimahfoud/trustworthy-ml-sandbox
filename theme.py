@@ -351,39 +351,61 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 }
 
 /* ============================================================= */
-/*  HERO SECTION  —  course title, author, supervisor, summary   */
+/*  HERO SECTION  —  blue band, course title, byline, summary    */
 /* ============================================================= */
 .hero {
-  text-align: center; padding: 38px 22px 30px 22px; margin: 0 0 14px 0;
-  background: var(--surface);
-  border: 1px solid var(--border); border-radius: 14px;
-  box-shadow: 0 8px 30px rgba(14,42,71,.08);
+  text-align: center; padding: 34px 22px 30px 22px; margin: 0 0 16px 0;
+  border-radius: 16px; position: relative; overflow: hidden;
 }
+.hero.hero-blue {
+  background: linear-gradient(140deg, #0A1F38 0%, #123152 55%, #0C2340 100%);
+  box-shadow: 0 14px 40px rgba(10,31,56,.28);
+  --hero-art-node: #E8B84B; --hero-art-edge: #7F9BC0;
+  --hero-art-shield: #8A1C2B; --hero-art-shieldline: #E8B84B;
+}
+.hero.hero-blue .hero-eyebrow { color: #E8B84B; }
+.hero.hero-blue .hero-title { color: #FFFFFF; }
+.hero.hero-blue .hero-summary {
+  color: #E6ECF3; background: rgba(255,255,255,.06);
+  border-left: 3px solid #E8B84B;
+}
+.hero.hero-blue .hero-byline .cell {
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
+}
+.hero.hero-blue .hero-byline .lab { color: #E8B84B; }
+.hero.hero-blue .hero-byline b { color: #FFFFFF; }
+.hero-art-wrap { display: flex; justify-content: center; margin-bottom: 14px; }
+.hero-art { width: 200px; height: auto; }
 .hero .hero-eyebrow {
   font-family: var(--mono); font-size: .82rem; letter-spacing: .30em;
-  text-transform: uppercase; color: var(--accent); margin-bottom: 16px;
+  text-transform: uppercase; margin-bottom: 12px;
 }
 .hero .hero-title {
-  font-family: var(--serif); font-weight: 800; font-size: 3.2rem; line-height: 1.12;
-  color: var(--text); margin: 0 0 22px 0; letter-spacing: -.015em;
+  font-family: var(--serif); font-weight: 800; font-size: 3rem; line-height: 1.12;
+  margin: 0 0 20px 0; letter-spacing: -.015em;
 }
 .hero .hero-byline {
-  display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
-  margin: 16px 0 20px 0;
+  display: flex; gap: 18px; justify-content: center; flex-wrap: wrap;
+  margin: 16px 0 18px 0;
 }
 .hero .hero-byline .cell {
-  text-align: center; background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 10px; padding: 12px 24px; min-width: 220px;
+  text-align: center; border-radius: 10px; padding: 12px 24px; min-width: 220px;
 }
 .hero .hero-byline .lab {
   display: block; font-family: var(--mono); font-size: .68rem; letter-spacing: .18em;
-  text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
+  text-transform: uppercase; margin-bottom: 6px;
 }
-.hero .hero-byline b { font-family: var(--serif); font-size: 1.22rem; color: var(--text); font-weight: 700; }
+.hero .hero-byline b { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; }
 .hero .hero-summary {
-  max-width: 760px; margin: 18px auto 0 auto; font-family: var(--serif); font-size: 1.12rem;
-  line-height: 1.65; color: var(--text); background: var(--surface2);
-  border-left: 3px solid var(--accent); border-radius: 8px; padding: 16px 22px; text-align: start;
+  max-width: 760px; margin: 18px auto 0 auto; font-family: var(--serif); font-size: 1.1rem;
+  line-height: 1.65; border-radius: 8px; padding: 16px 22px; text-align: start;
+}
+
+/* ---- Footer ---- */
+.site-footer {
+  text-align: center; font-family: var(--mono); font-size: .72rem; letter-spacing: .06em;
+  color: var(--muted); border-top: 1px solid var(--border);
+  margin-top: 40px; padding: 22px 12px 8px 12px; line-height: 1.7;
 }
 
 /* ============================================================= */
@@ -452,6 +474,7 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 .rm-node-box { fill: var(--surface); stroke: var(--border); }
 .rm-node-root { fill: var(--accent); }
 .rm-node-sec { fill: var(--surface); stroke: var(--accent); }
+.rm-node-accent { fill: var(--accent); }
 .rm-edge { stroke: var(--border); stroke-width: 1.5; fill: none; }
 .rm-txt { font-family: var(--mono); fill: var(--text); }
 .rm-txt-root { font-family: var(--serif); fill: #fff; font-weight: 700; }
