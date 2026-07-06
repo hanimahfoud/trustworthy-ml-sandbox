@@ -3,8 +3,8 @@ app.py -- Trustworthy Machine Learning · interactive sandbox.
 
 Layout (per the author's wireframe):
   * a left SIDEBAR "contents rail": Part (Theory/Practice) → Section (I–VI) →
-    Page → Download PDF.  It starts expanded and is fully usable on mobile
-    (a "☰ Menu" hint plus Streamlit's native sidebar toggle).
+    Page → Download PDF.  It starts expanded on desktop and closed on mobile
+    (initial_sidebar_state="auto"); the styled toggle pill reopens it.
   * a top CONTROL BAR on the main panel: language · theme · site-map · About ·
     Contact — so those controls are reachable even with the sidebar closed.
   * a framed HERO box: course name + summary + author + supervisor.
@@ -35,11 +35,15 @@ from modules import pp_backdoor, pp_coin, pp_laplace, pp_leak
 from modules import pa_hacking, pa_grpo, pa_jailbreak, pa_agency
 from modules import pdf_export
 
+# "auto" keeps the contents rail expanded on desktop but starts it CLOSED on
+# phones, so the page content is visible immediately; the styled toggle pill
+# (see theme.py) reopens it. "expanded" was covering the whole screen on
+# mobile, which made the site feel broken on first load.
 st.set_page_config(
     page_title="Trustworthy ML",
     page_icon="◆",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 
 # --- render registries, per section ---------------------------------------- #
@@ -102,6 +106,21 @@ ss.setdefault("overlay", None)          # None | "about" | "contact" | "map"
 ss.setdefault("lang", "en")
 ss.setdefault("theme", "dark")
 
+# Guard against stale widget-state recovery: when the language changes, every
+# radio/selectbox whose *formatted* options are translated gets a new widget
+# identity, and on the following interaction Streamlit can hand back the old
+# option LABEL (a str) instead of the option value. Coerce anything invalid
+# back to a safe default BEFORE the widgets are created, or the script
+# crashes (e.g. `ss.page_idx >= len(pages)` with page_idx == "The Bias–...").
+if ss.lang not in LANG_CODES:
+    ss.lang = "en"
+if ss.theme not in THEME_CODES:
+    ss.theme = "dark"
+if ss.mode not in MODE_KEYS:
+    ss.mode = "mode_theory"
+if ss.section not in nav.SECTIONS:
+    ss.section = "sec1"
+
 
 def _go_section(sec: str, mode: str | None = None):
     """Callback: jump to a section (from a card or the site-map), optionally
@@ -137,7 +156,10 @@ theme = ss.theme
 from theme import inject_theme  # noqa: E402
 inject_theme(theme, "rtl" if is_rtl(lang) else "ltr", lang)
 
-C.sidebar_nameplate(t(lang, "sidebar_name"), t(lang, ss.section + "_title"))
+# render INSIDE the sidebar (the helper emits via st.markdown; without this
+# context it lands as stray text at the top of the main page)
+with sb:
+    C.sidebar_nameplate(t(lang, "sidebar_name"), t(lang, ss.section + "_title"))
 
 # track previous section/mode to know when to reset the page index
 _prev_section = ss.get("_prev_section", ss.section)
@@ -166,7 +188,7 @@ ss["_prev_mode"] = ss.mode
 # ss.page_idx; clip it to range *before* creating the widget.
 pages = nav.THEORY[ss.section] if ss.mode == "mode_theory" \
     else nav.PRACTICE[ss.section]
-if ss.page_idx >= len(pages):
+if not isinstance(ss.page_idx, int) or not (0 <= ss.page_idx < len(pages)):
     ss.page_idx = 0
 sb.markdown(f'<div class="rail-label">{t(lang, "nav_label")}</div>',
             unsafe_allow_html=True)
@@ -185,44 +207,52 @@ C.chatbot(BOTPRESS_URL, label=t(lang, "assistant_label"))
 #  choose-section (opens sidebar) · language · theme · PDF ·       #
 #  About · Contact · Site map                                      #
 # =============================================================== #
-st.markdown('<div class="topbar-row">', unsafe_allow_html=True)
-tb = st.columns(7)
-with tb[0]:
-    st.button(t(lang, "open_sections"), key="btn_open_sections",
-              use_container_width=True, on_click=_toggle_overlay, args=("sections",))
-with tb[1]:
-    st.selectbox(f"🌐 {t(lang, 'lang_label')}", LANG_CODES,
-                 format_func=lambda c: NAME_OF[c], key="lang")
-with tb[2]:
-    st.selectbox(f"🌓 {t(lang, 'theme_label')}", THEME_CODES,
-                 format_func=lambda k: t(lang, "theme_" + k), key="theme")
-with tb[3]:
-    st.download_button(
-        f"⬇ {t(lang, 'pdf_button')}", data=_pdf_bytes(lang, ss.section),
-        file_name=f"TrustworthyML_{ss.section}_{lang}.pdf", mime="application/pdf",
-        use_container_width=True, key="pdf_top")
-with tb[4]:
-    st.button(f"ⓘ {t(lang, 'nav_about')}", key="btn_about",
-              use_container_width=True, on_click=_toggle_overlay, args=("about",))
-with tb[5]:
-    st.button(f"✉ {t(lang, 'nav_contact')}", key="btn_contact",
-              use_container_width=True, on_click=_toggle_overlay, args=("contact",))
-with tb[6]:
-    st.button(f"🗺 {t(lang, 'roadmap_label')}", key="btn_map",
-              use_container_width=True, on_click=_toggle_overlay, args=("map",))
-st.markdown('</div>', unsafe_allow_html=True)
+# st.container(key=...) puts a real ``st-key-topbar`` class on the wrapping
+# DOM node, so theme.py can style everything inside it reliably (a raw
+# ``st.markdown('<div ...>')`` is auto-closed by the browser and never
+# actually wraps the widgets that follow it).
+with st.container(key="topbar"):
+    tb = st.columns(7)
+    with tb[0]:
+        st.button(t(lang, "open_sections"), key="btn_open_sections",
+                  use_container_width=True,
+                  on_click=_toggle_overlay, args=("sections",))
+    with tb[1]:
+        st.button(f"🗺 {t(lang, 'roadmap_label')}", key="btn_map",
+                  use_container_width=True,
+                  on_click=_toggle_overlay, args=("map",))
+    with tb[2]:
+        st.button(f"ⓘ {t(lang, 'nav_about')}", key="btn_about",
+                  use_container_width=True,
+                  on_click=_toggle_overlay, args=("about",))
+    with tb[3]:
+        st.button(f"✉ {t(lang, 'nav_contact')}", key="btn_contact",
+                  use_container_width=True,
+                  on_click=_toggle_overlay, args=("contact",))
+    with tb[4]:
+        st.download_button(
+            f"⬇ {t(lang, 'pdf_button')}", data=_pdf_bytes(lang, ss.section),
+            file_name=f"TrustworthyML_{ss.section}_{lang}.pdf",
+            mime="application/pdf", use_container_width=True, key="pdf_top")
+    with tb[5]:
+        st.selectbox(t(lang, "lang_label"), LANG_CODES,
+                     format_func=lambda c: f"🌐 {NAME_OF[c]}", key="lang",
+                     label_visibility="collapsed")
+    with tb[6]:
+        st.selectbox(t(lang, "theme_label"), THEME_CODES,
+                     format_func=lambda k: f"🌓 {t(lang, 'theme_' + k)}",
+                     key="theme", label_visibility="collapsed")
 
 # Simple sections-list overlay -- a compact, guaranteed-reliable set of
 # section buttons (distinct from the visual tree in the Site-map overlay).
 if ss.overlay == "sections":
-    st.markdown('<div class="nav-row">', unsafe_allow_html=True)
-    scols = st.columns(3)
-    for i, s in enumerate(nav.SECTIONS):
-        with scols[i % 3]:
-            st.button(f"{SECTION_ICONS.get(s,'◆')} {t(lang, s + '_title')}",
-                      key=f"pick_{s}", use_container_width=True,
-                      on_click=_go_section, args=(s,))
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.container(key="nav-sections"):
+        scols = st.columns(3)
+        for i, s in enumerate(nav.SECTIONS):
+            with scols[i % 3]:
+                st.button(f"{SECTION_ICONS.get(s,'◆')} {t(lang, s + '_title')}",
+                          key=f"pick_{s}", use_container_width=True,
+                          on_click=_go_section, args=(s,))
 
 # Site-map overlay (large, clear, clickable navigation)
 if ss.overlay == "map":
@@ -231,14 +261,13 @@ if ss.overlay == "map":
              "leaves": [t(lang, k) for k in nav.THEORY[s][:3]]}
             for s in nav.SECTIONS]
     C.roadmap_tree(t(lang, "hero_title"), meta, is_rtl(lang))
-    st.markdown('<div class="nav-row">', unsafe_allow_html=True)
-    mcols = st.columns(len(nav.SECTIONS))
-    for mc, s in zip(mcols, nav.SECTIONS):
-        with mc:
-            st.button(f"{SECTION_ICONS.get(s,'◆')} {t(lang, s + '_title')}",
-                      key=f"map_{s}", use_container_width=True,
-                      on_click=_go_section, args=(s,))
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.container(key="nav-map"):
+        mcols = st.columns(len(nav.SECTIONS))
+        for mc, s in zip(mcols, nav.SECTIONS):
+            with mc:
+                st.button(f"{SECTION_ICONS.get(s,'◆')} {t(lang, s + '_title')}",
+                          key=f"map_{s}", use_container_width=True,
+                          on_click=_go_section, args=(s,))
 
 # About / Contact overlay panels
 if ss.overlay == "about":
@@ -271,30 +300,30 @@ st.markdown(f'<p class="landing-prompt" style="text-align:center;color:var(--mut
             f'font-family:var(--mono);font-size:.82rem;letter-spacing:.04em;'
             f'margin:4px 0 12px 0">{t(lang, "landing_prompt")}</p>',
             unsafe_allow_html=True)
-st.markdown('<div class="landing-grid">', unsafe_allow_html=True)
-for row_start in range(0, len(nav.SECTIONS), 3):
-    row = nav.SECTIONS[row_start:row_start + 3]
-    cols = st.columns(len(row))
-    for col, sec in zip(cols, row):
-        with col:
-            active = "  ●" if sec == ss.section else ""
-            label = (f"{SECTION_ICONS.get(sec,'◆')}  {t(lang, sec + '_title')}{active}\n\n"
-                     f"{t(lang, 'sc_desc_' + sec)}")
-            st.button(label, key=f"card_{sec}", use_container_width=True,
-                      on_click=_go_section, args=(sec,))
-            # mini Theory / Practice buttons -- jump straight into a mode
-            st.markdown('<div class="card-mode-row">', unsafe_allow_html=True)
-            mc1, mc2 = st.columns(2)
-            with mc1:
-                st.button(t(lang, "choose_theory"), key=f"card_th_{sec}",
-                          use_container_width=True,
-                          on_click=_go_section, args=(sec, "mode_theory"))
-            with mc2:
-                st.button(t(lang, "choose_practice"), key=f"card_pr_{sec}",
-                          use_container_width=True,
-                          on_click=_go_section, args=(sec, "mode_practice"))
-            st.markdown('</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
+with st.container(key="landing-grid"):
+    for row_start in range(0, len(nav.SECTIONS), 3):
+        row = nav.SECTIONS[row_start:row_start + 3]
+        cols = st.columns(len(row))
+        for col, sec in zip(cols, row):
+            with col:
+                active = "  ●" if sec == ss.section else ""
+                label = (f"{SECTION_ICONS.get(sec,'◆')}  "
+                         f"{t(lang, sec + '_title')}{active}\n\n"
+                         f"{t(lang, 'sc_desc_' + sec)}")
+                st.button(label, key=f"card_{sec}", use_container_width=True,
+                          on_click=_go_section, args=(sec,))
+                # mini Theory / Practice buttons -- jump straight into a mode
+                with st.container(key=f"modes-{sec}"):
+                    mc1, mc2 = st.columns(2)
+                    with mc1:
+                        st.button(t(lang, "choose_theory"), key=f"card_th_{sec}",
+                                  use_container_width=True,
+                                  on_click=_go_section, args=(sec, "mode_theory"))
+                    with mc2:
+                        st.button(t(lang, "choose_practice"), key=f"card_pr_{sec}",
+                                  use_container_width=True,
+                                  on_click=_go_section,
+                                  args=(sec, "mode_practice"))
 
 # =============================================================== #
 #  ROUTED CONTENT — per-section masthead + the selected page       #

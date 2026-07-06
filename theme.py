@@ -108,17 +108,56 @@ def _base_css() -> str:
   background: transparent !important; box-shadow: none !important;
   height: 2.6rem !important; min-height: 2.6rem !important;
 }
-[data-testid="stToolbar"], #MainMenu, footer, [data-testid="stDecoration"] {
+/* Hide Streamlit chrome — but NOT the whole stToolbar: on current Streamlit
+   the sidebar-open button ("stExpandSidebarButton") lives INSIDE the toolbar,
+   and display:none on it made the sidebar impossible to reopen on mobile.
+   Hide only the toolbar's own widgets instead. */
+#MainMenu, footer, [data-testid="stDecoration"],
+[data-testid="stToolbarActions"], [data-testid="stMainMenu"],
+[data-testid="stAppDeployButton"], [data-testid="stStatusWidget"] {
   display: none !important;
 }
-/* The native sidebar-open arrow, styled as an unmissable pill button */
-[data-testid="collapsedControl"] {
+[data-testid="stToolbar"] { background: transparent !important; }
+/* The sidebar-open button inside the toolbar, as the same unmissable pill */
+[data-testid="stExpandSidebarButton"] {
+  display: inline-flex !important; visibility: visible !important; opacity: 1 !important;
+  background: var(--accent) !important; color: #fff !important;
+  border: none !important; border-radius: 10px !important;
+  padding: 6px !important; box-shadow: 0 6px 18px rgba(0,0,0,.28) !important;
+}
+[data-testid="stExpandSidebarButton"] svg {
+  fill: #fff !important; color: #fff !important;
+  width: 22px !important; height: 22px !important;
+}
+/* The native sidebar-open arrow, styled as an unmissable pill button.
+   Streamlit renamed the test-id from "collapsedControl" to
+   "stSidebarCollapsedControl" in newer releases — target BOTH, otherwise the
+   toggle is invisible on phones and the sidebar can never be reopened. */
+[data-testid="stSidebarCollapsedControl"], [data-testid="collapsedControl"] {
   display: flex !important; visibility: visible !important; opacity: 1 !important;
   background: var(--accent) !important; border-radius: 10px !important;
   box-shadow: 0 6px 18px rgba(0,0,0,.28) !important; z-index: 999999 !important;
   padding: 4px !important; margin-top: 4px !important;
 }
-[data-testid="collapsedControl"] svg { fill: #fff !important; width: 22px !important; height: 22px !important; }
+[data-testid="stSidebarCollapsedControl"] button,
+[data-testid="collapsedControl"] button {
+  background: transparent !important; border: none !important; color: #fff !important;
+}
+[data-testid="stSidebarCollapsedControl"] svg, [data-testid="collapsedControl"] svg {
+  fill: #fff !important; color: #fff !important;
+  width: 22px !important; height: 22px !important;
+}
+/* The close («) control INSIDE the open sidebar: Streamlit only reveals it on
+   hover, which does not exist on touch screens — keep it always visible so
+   the drawer can be closed on mobile. */
+[data-testid="stSidebarCollapseButton"] {
+  display: flex !important; visibility: visible !important; opacity: 1 !important;
+}
+[data-testid="stSidebarCollapseButton"] button {
+  background: var(--surface2) !important; border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+}
+[data-testid="stSidebarCollapseButton"] svg { color: var(--text) !important; fill: var(--text) !important; }
 .block-container, [data-testid="block-container"] {
   padding-top: 1rem; padding-bottom: 4rem; max-width: 1180px;
 }
@@ -132,7 +171,9 @@ html, body, [data-testid="stAppViewContainer"], .stMarkdown, p, li, span, div {
 }
 h1, h2, h3, h4 { font-family: var(--display); color: var(--text); letter-spacing: .2px; }
 h1 { font-weight: 800; }
-h2 { font-weight: 700; font-size: 1.6rem; margin-top: .2rem; }
+/* a hairline under second-level headings — classic journal typography */
+h2 { font-weight: 700; font-size: 1.6rem; margin-top: .2rem;
+     border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
 h3 { font-weight: 600; font-size: 1.24rem; }
 a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--link-border); }
 .measure { max-width: 760px; }
@@ -219,15 +260,28 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 [data-testid="stSidebar"] .sidebar-nameplate { font-family: var(--display); font-weight: 700; font-size: 1.05rem; color: var(--text); line-height: 1.2; }
 [data-testid="stSidebar"] .sidebar-sub { font-family: var(--mono); font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
 [data-testid="stSidebar"] hr { border-color: var(--border); }
-[data-testid="stSidebar"] { min-width: 340px !important; width: 340px !important; }
-[data-testid="stSidebar"] > div { width: 340px !important; }
+/* Fixed width ONLY while the sidebar is open — an unconditional width kept
+   the drawer visually stuck open after tapping close on mobile. */
+[data-testid="stSidebar"][aria-expanded="true"] { min-width: 340px !important; width: 340px !important; }
+[data-testid="stSidebar"][aria-expanded="true"] > div { width: 340px !important; }
 [data-testid="stSidebar"] .rail-label { font-family: var(--mono); font-size: .66rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin: 10px 0 4px 0; }
 [data-testid="stSidebar"] [data-testid="stRadio"] label p {
   font-size: .92rem !important; line-height: 1.35 !important;
 }
+/* Contents-rail entries as quiet list rows with an accent bar on the active
+   one — reads like a book's table of contents. */
+[data-testid="stSidebar"] [data-testid="stRadio"] > div { gap: 2px; }
+[data-testid="stSidebar"] [data-testid="stRadio"] label {
+  width: 100%; margin: 0; padding: 6px 10px; border-radius: 8px;
+  transition: background .12s ease;
+}
+[data-testid="stSidebar"] [data-testid="stRadio"] label:hover { background: var(--surface2); }
+[data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) {
+  background: var(--surface2); box-shadow: inset 3px 0 0 var(--accent);
+}
 
 /* Buttons */
-.stButton > button { font-family: var(--mono); font-size: .82rem; letter-spacing: .02em; border: 1px solid var(--border); background: var(--btn); color: var(--text); border-radius: 4px; text-align: left; padding: 8px 12px; transition: none; }
+.stButton > button { font-family: var(--mono); font-size: .82rem; letter-spacing: .02em; border: 1px solid var(--border); background: var(--btn); color: var(--text); border-radius: 6px; text-align: left; padding: 8px 12px; transition: none; }
 .stButton > button:hover { border-color: var(--text); background: var(--btn-hover); color: var(--text); }
 .stButton > button:focus { box-shadow: none; color: var(--text); }
 /* Download button (PDF) -- must match the theme, never a dark box */
@@ -307,7 +361,10 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 
 /* ---- Mobile responsiveness (mobile-first refinements) ---- */
 @media (max-width: 640px) {
-  [data-testid="stSidebar"], [data-testid="stSidebar"] > div {
+  /* the open drawer takes ~88vw; width is scoped to the OPEN state so the
+     close animation can still slide it away */
+  [data-testid="stSidebar"][aria-expanded="true"],
+  [data-testid="stSidebar"][aria-expanded="true"] > div {
     min-width: 88vw !important; width: 88vw !important; max-width: 360px !important;
   }
   .block-container, [data-testid="block-container"] { padding: 1.1rem .7rem 3rem .7rem; }
@@ -321,14 +378,37 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   .assistant-fab > summary { padding: 10px 14px; font-size: .74rem; }
   /* section-card grid collapses to a single column on phones */
   .section-grid { grid-template-columns: 1fr !important; }
-  .landing-grid [data-testid="column"] { width: 100% !important; flex: 1 1 100% !important; }
   .hero { padding: 24px 14px 20px 14px; }
   .hero .hero-title { font-size: 2.1rem !important; }
   .hero .hero-summary { font-size: 1rem !important; }
   .hero .hero-byline .cell { min-width: 100%; }
-  /* stack Streamlit columns full-width on phones */
+  /* stack Streamlit columns full-width on phones (both the old "column" and
+     the new "stColumn" test-ids, so this works on every Streamlit release) */
   [data-testid="stHorizontalBlock"] { flex-direction: column !important; }
-  [data-testid="column"] { width: 100% !important; flex: 1 1 100% !important; }
+  [data-testid="column"], [data-testid="stColumn"] {
+    width: 100% !important; flex: 1 1 100% !important;
+  }
+  /* ...EXCEPT the top toolbar: it wraps into a tidy 2-per-row grid, with the
+     primary "Sections" button on its own full-width first row */
+  .st-key-topbar [data-testid="stHorizontalBlock"] {
+    flex-direction: row !important; flex-wrap: wrap !important; gap: 8px !important;
+  }
+  .st-key-topbar [data-testid="column"], .st-key-topbar [data-testid="stColumn"] {
+    width: auto !important; flex: 1 1 44% !important; min-width: 44% !important;
+  }
+  .st-key-topbar [data-testid="column"]:first-child,
+  .st-key-topbar [data-testid="stColumn"]:first-child {
+    flex: 1 1 100% !important;
+  }
+  /* ...and the Theory/Practice pair under each card stays side by side */
+  [class*="st-key-modes-"] [data-testid="stHorizontalBlock"] {
+    flex-direction: row !important;
+  }
+  [class*="st-key-modes-"] [data-testid="column"],
+  [class*="st-key-modes-"] [data-testid="stColumn"] {
+    /* min-width beats Streamlit's own calc(100% - 24px) column stacking */
+    width: 50% !important; flex: 1 1 50% !important; min-width: 50% !important;
+  }
 }
 @media (min-width: 641px) and (max-width: 1024px) {
   .section-grid { grid-template-columns: repeat(2, 1fr) !important; }
@@ -352,10 +432,13 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   }
   /* hide everything that isn't the article */
   [data-testid="stSidebar"], [data-testid="collapsedControl"],
+  [data-testid="stSidebarCollapsedControl"],
   .assistant-fab, .assistant-panel, header, footer,
   [data-testid="stToolbar"], [data-testid="stDecoration"],
   .stButton, [data-testid="stDownloadButton"], .site-nav, .view-toggle,
-  .section-grid, .roadmap-panel { display: none !important; }
+  .section-grid, .roadmap-panel,
+  .st-key-topbar, .st-key-landing-grid, [class*="st-key-modes-"],
+  [class*="st-key-nav-"] { display: none !important; }
   /* give the content the full page with sane margins */
   .block-container, [data-testid="block-container"] {
     max-width: 100% !important; padding: 0 !important; margin: 0 !important;
@@ -380,6 +463,11 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 .hero {
   text-align: center; padding: 34px 22px 30px 22px; margin: 0 0 16px 0;
   border-radius: 16px; position: relative; overflow: hidden;
+}
+/* thin gold-to-crimson rule across the top — echoes the masthead ribbon */
+.hero::before {
+  content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+  background: linear-gradient(90deg, #E8B84B, #8A1C2B); z-index: 1;
 }
 .hero.hero-blue {
   background: linear-gradient(140deg, #0A1F38 0%, #123152 55%, #0C2340 100%);
@@ -465,51 +553,59 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 }
 .section-card .sc-desc { font-size: .88rem; color: var(--muted); line-height: 1.5; }
 
-/* ---- Clickable section cards: style Streamlit buttons in the landing grid --- */
-.landing-grid [data-testid="stButton"] > button,
-.landing-grid .stButton > button {
+/* ---- Clickable section cards: style Streamlit buttons in the landing grid.
+   The wrapper class comes from st.container(key="landing-grid") in app.py. --- */
+.st-key-landing-grid [data-testid="stButton"] > button,
+.st-key-landing-grid .stButton > button {
   width: 100%; height: 188px; text-align: start; white-space: pre-line;
   background: var(--surface); border: 1px solid var(--border); border-bottom: none;
   border-radius: 12px 12px 0 0; border-top: 3px solid var(--accent);
   padding: 18px 18px; font-family: var(--serif); color: var(--text);
   box-shadow: 0 4px 14px rgba(14,42,71,.06);
   display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;
-  overflow: hidden; transition: box-shadow .15s ease, border-color .15s ease;
+  overflow: hidden; transition: box-shadow .15s ease, border-color .15s ease,
+    transform .15s ease;
 }
-.landing-grid [data-testid="stButton"] > button:hover,
-.landing-grid .stButton > button:hover {
+.st-key-landing-grid [data-testid="stButton"] > button:hover,
+.st-key-landing-grid .stButton > button:hover {
   box-shadow: 0 10px 26px rgba(14,42,71,.14);
-  border-color: var(--accent); color: var(--text);
+  border-color: var(--accent); color: var(--text); transform: translateY(-2px);
 }
 /* Mini Theory/Practice footer -- visually fused to the card above (no gap,
-   matching border, rounded only on the two bottom outer corners) */
-.card-mode-row { margin-top: 0; }
-.card-mode-row [data-testid="stHorizontalBlock"] { gap: 0 !important; }
-.card-mode-row [data-testid="stButton"] > button {
+   matching border, rounded only on the two bottom outer corners). Each row is
+   st.container(key="modes-<sec>") → class st-key-modes-<sec>. */
+[class*="st-key-modes-"] { margin-top: 0; }
+[class*="st-key-modes-"] [data-testid="stHorizontalBlock"] { gap: 0 !important; }
+[class*="st-key-modes-"] [data-testid="stButton"] > button {
   height: 38px !important; width: 100% !important; font-size: .78rem !important;
   font-weight: 600 !important; border-radius: 0 !important;
   border: 1px solid var(--border) !important; border-top: 1px solid var(--border) !important;
   background: var(--surface2) !important; color: var(--text) !important;
-  box-shadow: none !important;
+  box-shadow: none !important; transform: none !important;
+  align-items: center !important; justify-content: center !important;
+  padding: 0 8px !important; text-align: center !important;
 }
-.card-mode-row [data-testid="column"]:first-child [data-testid="stButton"] > button {
+[class*="st-key-modes-"] [data-testid="stColumn"]:first-child [data-testid="stButton"] > button,
+[class*="st-key-modes-"] [data-testid="column"]:first-child [data-testid="stButton"] > button {
   border-bottom-left-radius: 10px !important;
 }
-.card-mode-row [data-testid="column"]:last-child [data-testid="stButton"] > button {
+[class*="st-key-modes-"] [data-testid="stColumn"]:last-child [data-testid="stButton"] > button,
+[class*="st-key-modes-"] [data-testid="column"]:last-child [data-testid="stButton"] > button {
   border-bottom-right-radius: 10px !important; border-left: none !important;
 }
-.card-mode-row [data-testid="stButton"] > button:hover {
+[class*="st-key-modes-"] [data-testid="stButton"] > button:hover {
   border-color: var(--accent) !important; background: var(--surface) !important;
   color: var(--accent) !important;
 }
 
-/* ---- Navigation buttons (Home / Prev / Next, choose Theory/Practice) ---- */
-.nav-row [data-testid="stButton"] > button {
+/* ---- Navigation button rows (quick section list, site-map jump list) ----
+   Wrappers come from st.container(key="nav-sections"/"nav-map"). */
+[class*="st-key-nav-"] [data-testid="stButton"] > button {
   font-family: var(--mono); font-size: .8rem; letter-spacing: .04em;
   border-radius: 8px; border: 1px solid var(--border); background: var(--surface2);
-  color: var(--text); padding: 9px 14px; transition: all .15s ease;
+  color: var(--text); padding: 9px 14px; transition: all .15s ease; width: 100%;
 }
-.nav-row [data-testid="stButton"] > button:hover {
+[class*="st-key-nav-"] [data-testid="stButton"] > button:hover {
   border-color: var(--accent); background: var(--surface); color: var(--text);
 }
 
@@ -536,42 +632,47 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   font-family: var(--mono); font-size: .68rem; letter-spacing: .12em;
   color: var(--muted); margin: 0 0 6px 2px; text-transform: uppercase;
 }
-/* Uniform sizing for all 6 top-bar controls (selectboxes, buttons, download) */
-.topbar-row [data-testid="stSelectbox"] label,
-.topbar-row [data-testid="stWidgetLabel"] p {
-  font-family: var(--mono) !important; font-size: .66rem !important;
-  letter-spacing: .08em !important; text-transform: uppercase !important;
-  color: var(--accent) !important; margin-bottom: 3px !important;
+/* The top bar is a real framed toolbar: one bordered strip that holds all
+   seven controls at a uniform 44px height. The wrapping node carries the
+   ``st-key-topbar`` class (from st.container(key="topbar") in app.py). */
+.st-key-topbar {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 10px 12px; margin: 2px 0 20px 0;
+  box-shadow: 0 6px 20px rgba(12,35,64,.07);
 }
-.topbar-row [data-baseweb="select"] > div {
-  min-height: 42px !important; border-radius: 8px !important;
-  border: 1px solid var(--border) !important; background: var(--surface) !important;
+.st-key-topbar [data-testid="stHorizontalBlock"] { gap: 8px; align-items: center; }
+.st-key-topbar [data-baseweb="select"] > div {
+  min-height: 44px !important; border-radius: 8px !important;
+  border: 1px solid var(--border) !important; background: var(--surface2) !important;
+  font-family: var(--serif) !important; font-size: .88rem !important;
 }
-.topbar-row [data-testid="stButton"] > button,
-.topbar-row [data-testid="stDownloadButton"] > button {
-  min-height: 42px !important; height: 42px !important; width: 100%;
+.st-key-topbar [data-testid="stButton"] > button,
+.st-key-topbar [data-testid="stDownloadButton"] > button {
+  min-height: 44px !important; height: 44px !important; width: 100%;
   border-radius: 8px !important; border: 1px solid var(--border) !important;
-  background: var(--surface) !important; color: var(--text) !important;
+  background: var(--surface2) !important; color: var(--text) !important;
   font-family: var(--serif) !important; font-weight: 600 !important; font-size: .88rem !important;
-  box-shadow: 0 3px 10px rgba(12,35,64,.06) !important; margin-top: 21px !important;
-  transition: all .15s ease !important;
+  box-shadow: none !important; margin: 0 !important;
+  transition: all .15s ease !important; justify-content: center !important;
   white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important;
-  padding: 0 10px !important;
+  padding: 0 10px !important; text-align: center !important;
 }
-.topbar-row [data-testid="stButton"] > button:hover,
-.topbar-row [data-testid="stDownloadButton"] > button:hover {
-  border-color: var(--accent) !important; box-shadow: 0 8px 20px rgba(12,35,64,.14) !important;
+.st-key-topbar [data-testid="stButton"] > button p { font-size: .88rem !important; }
+.st-key-topbar [data-testid="stButton"] > button:hover,
+.st-key-topbar [data-testid="stDownloadButton"] > button:hover {
+  border-color: var(--accent) !important; background: var(--surface) !important;
+  box-shadow: 0 6px 16px rgba(12,35,64,.12) !important;
   transform: translateY(-1px);
 }
 /* The "Sections" control is the odd one out on purpose: same size as the
    other six, distinct accent color so it reads as the primary action. */
-.topbar-row [data-testid="stHorizontalBlock"] > [data-testid="column"]:first-child
-  [data-testid="stButton"] > button {
+.st-key-topbar .st-key-btn_open_sections [data-testid="stButton"] > button,
+.st-key-topbar .st-key-btn_open_sections button {
   background: var(--accent) !important; color: #fff !important;
   border-color: var(--accent) !important; font-weight: 700 !important;
 }
-.topbar-row [data-testid="stHorizontalBlock"] > [data-testid="column"]:first-child
-  [data-testid="stButton"] > button:hover {
+.st-key-topbar .st-key-btn_open_sections button p { color: #fff !important; }
+.st-key-topbar .st-key-btn_open_sections button:hover {
   filter: brightness(1.08);
   box-shadow: 0 8px 22px rgba(138,28,43,.35) !important;
 }
@@ -616,7 +717,21 @@ h1, h2, h3, h4, .masthead .title, .plate-title { font-family: var(--rtl-display)
 .stButton > button { text-align: right; }
 .section-card::before { left: auto; right: 0; }
 .section-card { text-align: right; }
-.landing-grid [data-testid="stButton"] > button { text-align: right; }
+.st-key-landing-grid [data-testid="stButton"] > button { text-align: right; }
+/* fused Theory/Practice footer: swap the outer rounded corners + shared edge */
+[class*="st-key-modes-"] [data-testid="stColumn"]:first-child [data-testid="stButton"] > button,
+[class*="st-key-modes-"] [data-testid="column"]:first-child [data-testid="stButton"] > button {
+  border-bottom-left-radius: 0 !important; border-bottom-right-radius: 10px !important;
+}
+[class*="st-key-modes-"] [data-testid="stColumn"]:last-child [data-testid="stButton"] > button,
+[class*="st-key-modes-"] [data-testid="column"]:last-child [data-testid="stButton"] > button {
+  border-bottom-right-radius: 0 !important; border-bottom-left-radius: 10px !important;
+  border-left: 1px solid var(--border) !important; border-right: none !important;
+}
+/* active contents-rail entry: accent bar sits on the right in RTL */
+[data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) {
+  box-shadow: inset -3px 0 0 var(--accent);
+}
 .info-panel { border-left: 1px solid var(--border); border-right: 3px solid var(--accent); }
 /* Numerals and mono readouts stay LTR for legibility */
 .readout, .colophon, .figure-caption { direction: ltr; }
