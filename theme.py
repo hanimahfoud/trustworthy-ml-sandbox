@@ -118,12 +118,14 @@ def _base_css() -> str:
   display: none !important;
 }
 [data-testid="stToolbar"] { background: transparent !important; }
-/* The sidebar-open button inside the toolbar, as the same unmissable pill */
+/* The sidebar-open button inside the toolbar, as the same unmissable pill
+   (with the same radiating beacon as the legacy control above) */
 [data-testid="stExpandSidebarButton"] {
   display: inline-flex !important; visibility: visible !important; opacity: 1 !important;
   background: var(--accent) !important; color: #fff !important;
   border: none !important; border-radius: 10px !important;
-  padding: 6px !important; box-shadow: 0 6px 18px rgba(0,0,0,.28) !important;
+  padding: 6px !important; box-shadow: 0 6px 18px rgba(0,0,0,.28);
+  animation: beacon-ring 2.2s ease-out infinite;
 }
 [data-testid="stExpandSidebarButton"] svg {
   fill: #fff !important; color: #fff !important;
@@ -136,8 +138,19 @@ def _base_css() -> str:
 [data-testid="stSidebarCollapsedControl"], [data-testid="collapsedControl"] {
   display: flex !important; visibility: visible !important; opacity: 1 !important;
   background: var(--accent) !important; border-radius: 10px !important;
-  box-shadow: 0 6px 18px rgba(0,0,0,.28) !important; z-index: 999999 !important;
+  /* box-shadow deliberately NOT !important: the beacon animation animates it,
+     and animated keyframes cannot override an !important declaration */
+  box-shadow: 0 6px 18px rgba(0,0,0,.28); z-index: 999999 !important;
   padding: 4px !important; margin-top: 4px !important;
+  animation: beacon-ring 2.2s ease-out infinite;
+}
+/* Radiating "look here" beacon on the sidebar-open pill: an expanding ring +
+   a gentle pulse, so nobody misses that the contents rail can be opened.
+   (Globally disabled for prefers-reduced-motion further down.) */
+@keyframes beacon-ring {
+  0%   { box-shadow: 0 6px 18px rgba(0,0,0,.28), 0 0 0 0 rgba(217,83,105,.60); }
+  60%  { box-shadow: 0 6px 18px rgba(0,0,0,.28), 0 0 0 13px rgba(217,83,105,0); }
+  100% { box-shadow: 0 6px 18px rgba(0,0,0,.28), 0 0 0 0 rgba(217,83,105,0); }
 }
 [data-testid="stSidebarCollapsedControl"] button,
 [data-testid="collapsedControl"] button {
@@ -279,6 +292,32 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 [data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) {
   background: var(--surface2); box-shadow: inset 3px 0 0 var(--accent);
 }
+/* Sidebar language picker: three compact pills under the nameplate; the
+   active language is rendered as a "primary" button (accent-filled). */
+.st-key-sidebar-lang { margin: 4px 0 2px 0; }
+.st-key-sidebar-lang [data-testid="stHorizontalBlock"] { gap: 6px !important; }
+.st-key-sidebar-lang [data-testid="stButton"] > button {
+  height: 34px !important; min-height: 34px !important; width: 100%;
+  border-radius: 999px !important; font-size: .78rem !important;
+  justify-content: center !important; text-align: center !important;
+  padding: 0 6px !important; letter-spacing: 0 !important;
+  border: 1px solid var(--border) !important; background: var(--surface2) !important;
+  color: var(--text) !important; box-shadow: none !important;
+}
+.st-key-sidebar-lang [data-testid="stButton"] > button:hover {
+  border-color: var(--accent) !important; color: var(--accent) !important;
+}
+.st-key-sidebar-lang button[kind="primary"],
+.st-key-sidebar-lang [data-testid="stBaseButton-primary"] {
+  background: var(--accent) !important; color: #fff !important;
+  border-color: var(--accent) !important; font-weight: 700 !important;
+}
+.st-key-sidebar-lang button[kind="primary"] p,
+.st-key-sidebar-lang [data-testid="stBaseButton-primary"] p { color: #fff !important; }
+.st-key-sidebar-lang button[kind="primary"]:hover,
+.st-key-sidebar-lang [data-testid="stBaseButton-primary"]:hover {
+  color: #fff !important; filter: brightness(1.08);
+}
 
 /* Buttons */
 .stButton > button { font-family: var(--mono); font-size: .82rem; letter-spacing: .02em; border: 1px solid var(--border); background: var(--btn); color: var(--text); border-radius: 6px; text-align: left; padding: 8px 12px; transition: none; }
@@ -337,6 +376,11 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   transform: translateY(-2px);
   box-shadow: 0 12px 30px rgba(18,49,82,.45), 0 3px 8px rgba(0,0,0,.20);
 }
+/* the label sits on a dark-blue gradient in EVERY theme; the global
+   typography rule paints inner spans with var(--text), which is near-black
+   in the light theme and made "Ask me" unreadable — force white */
+.assistant-fab > summary, .assistant-fab > summary span,
+.assistant-fab > summary .fab-label { color: #fff !important; }
 .assistant-fab > summary::-webkit-details-marker { display: none; }
 .assistant-fab > summary::marker { content: ""; }
 .fab-icon { display: inline-flex; align-items: center; }
@@ -400,6 +444,18 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   .st-key-topbar [data-testid="stColumn"]:first-child {
     flex: 1 1 100% !important;
   }
+  /* ...and the sidebar language pills stay in one row inside the drawer */
+  .st-key-sidebar-lang [data-testid="stHorizontalBlock"] {
+    flex-direction: row !important; gap: 6px !important;
+  }
+  .st-key-sidebar-lang [data-testid="column"],
+  .st-key-sidebar-lang [data-testid="stColumn"] {
+    /* basis 30% + grow leaves room for the 2×6px gaps, so all three pills
+       share one row instead of wrapping */
+    width: auto !important; flex: 1 1 30% !important; min-width: 0 !important;
+  }
+  .dedication { margin: 2px 4px 16px 4px; }
+  .dedication .ded-text { font-size: .92rem; }
   /* ...and the Theory/Practice pair under each card stays side by side */
   [class*="st-key-modes-"] [data-testid="stHorizontalBlock"] {
     flex-direction: row !important;
@@ -693,6 +749,39 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   text-transform: uppercase; color: var(--accent);
 }
 .info-panel .ip-v { flex: 1; font-family: var(--serif); color: var(--text); font-weight: 600; }
+.info-panel .ip-links { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.info-panel .ip-link {
+  display: inline-flex; align-items: center; font-family: var(--mono);
+  font-size: .8rem; padding: 9px 18px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface2);
+  color: var(--text); border-bottom: 1px solid var(--border);
+  text-decoration: none !important; transition: all .15s ease;
+}
+.info-panel .ip-link:hover {
+  border-color: var(--good); color: var(--good);
+  box-shadow: 0 5px 14px rgba(12,35,64,.12); transform: translateY(-1px);
+}
+.info-panel .ip-note {
+  margin-top: 14px; padding-top: 10px; border-top: 1px dashed var(--border);
+  font-family: var(--serif); font-style: italic; font-size: .94rem;
+  color: var(--muted); line-height: 1.6;
+}
+
+/* ---- Dedication strip (acknowledgment under the hero) ---- */
+.dedication {
+  max-width: 820px; margin: 4px auto 22px auto; padding: 14px 18px 16px 18px;
+  text-align: center; border-top: 1px solid var(--gold);
+  border-bottom: 1px solid var(--gold); position: relative;
+}
+.dedication .ded-eyebrow {
+  font-family: var(--mono); font-size: .66rem; letter-spacing: .3em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 2px;
+}
+.dedication .ded-ornament { color: var(--gold); font-size: 1.05rem; line-height: 1.4; }
+.dedication .ded-text {
+  font-family: var(--serif); font-style: italic; font-size: 1rem;
+  line-height: 1.75; color: var(--text-body); margin-top: 4px; text-align: center;
+}
 """
 
 

@@ -54,6 +54,23 @@ EN_UI = {
     "contact_supervisor": "Supervisor",
     "contact_institution": "Institution",
     "contact_inst_val": "Iran University of Science and Technology (IUST)",
+    "contact_phone": "Author's phone",
+    "contact_phone_val": "09309456655 · +98 930 945 6655",
+    "contact_apps": "Available on",
+    "contact_apps_val": "Eitaa · Bale · WhatsApp · Telegram",
+    "contact_email": "Email",
+    "contact_whatsapp_btn": "💬 Message me on WhatsApp",
+    "contact_email_btn": "✉ Send an email",
+    "contact_support_note": "If anything goes wrong while using the site, please "
+        "do not hesitate to call or message me directly — I will be glad to help.",
+    # acknowledgment (dedication under the hero + About panel)
+    "ack_title": "Acknowledgment",
+    "ack_body": "With sincere gratitude to the supervisor, Prof. Dr. Behrouz "
+        "Minaei-Bidgoli — the lectures and material of his Trustworthy Machine "
+        "Learning course at IUST are the source and foundation of everything "
+        "presented on this platform.",
+    # sidebar language picker
+    "lang_pick": "Choose language",
     # six section-card descriptions (short)
     "sc_desc_sec1": "Bias–variance, VC dimension, domain adaptation, SAM, and the "
         "causal foundations of generalization.",
@@ -111,6 +128,20 @@ FA_UI = {
     "contact_supervisor": "استادِ راهنما",
     "contact_institution": "دانشگاه",
     "contact_inst_val": "دانشگاه علم و صنعت ایران (IUST)",
+    "contact_phone": "تلفنِ مؤلف",
+    "contact_phone_val": "09309456655 · +98 930 945 6655",
+    "contact_apps": "در دسترس در",
+    "contact_apps_val": "ایتا · بله · واتساپ · تلگرام",
+    "contact_email": "ایمیل",
+    "contact_whatsapp_btn": "💬 پیام در واتساپ",
+    "contact_email_btn": "✉ ارسالِ ایمیل",
+    "contact_support_note": "اگر هنگامِ کار با سایت به مشکلی برخوردید، لطفاً "
+        "مستقیماً با من تماس بگیرید یا پیام بدهید — با کمالِ میل کمک می‌کنم.",
+    "ack_title": "سپاسگزاری",
+    "ack_body": "با سپاسِ فراوان از استادِ راهنما، پروفسور بهروز مینائی-بیدگلی — "
+        "درس‌گفتارها و مطالبِ درسِ یادگیری ماشینِ قابل‌اعتمادِ ایشان در دانشگاه علم "
+        "و صنعت ایران، سرچشمه و بنیادِ همهٔ آنچه در این سکو ارائه شده است.",
+    "lang_pick": "زبان را برگزینید",
     "sc_desc_sec1": "بایاس–واریانس، بُعدِ VC، انطباقِ دامنه، SAM، و بنیادهای علّیِ "
         "تعمیم.",
     "sc_desc_sec2": "تفسیرِ جعبه‌سیاه با SHAP و LIME، جبرانِ علّی، و کشفِ همبستگیِ "
@@ -166,6 +197,20 @@ AR_UI = {
     "contact_supervisor": "المشرف",
     "contact_institution": "الجامعة",
     "contact_inst_val": "جامعة العلوم والتكنولوجيا الإيرانيّة (IUST)",
+    "contact_phone": "هاتف المؤلّف",
+    "contact_phone_val": "09309456655 · +98 930 945 6655",
+    "contact_apps": "متوفّر عبر",
+    "contact_apps_val": "إيتا · بله · واتساب · تلغرام",
+    "contact_email": "البريد الإلكترونيّ",
+    "contact_whatsapp_btn": "💬 راسلني على واتساب",
+    "contact_email_btn": "✉ أرسل بريدًا إلكترونيًّا",
+    "contact_support_note": "في حال واجهتك أيّة مشكلة أثناء استخدام الموقع، لا "
+        "تتردّد في الاتصال بي أو مراسلتي مباشرةً — يسعدني تقديم المساعدة.",
+    "ack_title": "شكر وتقدير",
+    "ack_body": "بخالص الشكر والتقدير للأستاذ المشرف البروفيسور بهروز "
+        "مينائي-بيدجلي — فمحاضراتُ مادّته «تعلُّم الآلة الموثوق» في جامعة العلوم "
+        "والتكنولوجيا الإيرانيّة كانت المصدرَ والأساسَ لكلِّ ما تقدّمه هذه المنصّة.",
+    "lang_pick": "اختر اللغة",
     "sc_desc_sec1": "المفاضلة بين الانحياز والتباين، بُعد VC، تكيُّف المجال، SAM، "
         "والأسس السببيّة للتعميم.",
     "sc_desc_sec2": "تفسير الصناديق السوداء بـ SHAP وLIME، والجبر السببيّ، وكشف "

@@ -139,18 +139,45 @@ def section_grid(cards: list[dict]) -> None:
     st.markdown(f'<div class="section-grid">{cells}</div>', unsafe_allow_html=True)
 
 
-def info_panel(title: str, body: str, rows: list | None = None) -> None:
-    """A framed information panel (used for About / Contact overlays). Optional
-    ``rows`` is a list of (label, value) tuples rendered as a definition list."""
+def info_panel(title: str, body: str, rows: list | None = None,
+               links: list | None = None, note: str | None = None) -> None:
+    """A framed information panel (used for About / Contact overlays).
+
+    ``rows``  -- list of (label, value) tuples rendered as a definition list;
+                 values get dir="auto" so phone numbers / emails stay LTR in RTL.
+    ``links`` -- list of (label, url) tuples rendered as pill link-buttons.
+    ``note``  -- an italic footnote under a hairline (e.g. support notice).
+    """
     rows_html = ""
     if rows:
         cells = "".join(
             f'<div class="ip-row"><span class="ip-k">{_esc(k)}</span>'
-            f'<span class="ip-v">{_esc(v)}</span></div>' for k, v in rows)
+            f'<span class="ip-v" dir="auto">{_esc(v)}</span></div>' for k, v in rows)
         rows_html = f'<div class="ip-rows">{cells}</div>'
+    links_html = ""
+    if links:
+        anchors = "".join(
+            f'<a class="ip-link" href="{_esc(u)}" target="_blank" '
+            f'rel="noopener noreferrer">{_esc(lbl)}</a>' for lbl, u in links)
+        links_html = f'<div class="ip-links">{anchors}</div>'
+    note_html = f'<div class="ip-note">{_esc(note)}</div>' if note else ""
     st.markdown(
         f'<div class="info-panel"><div class="ip-title">{_esc(title)}</div>'
-        f'<div class="ip-body">{_esc(body)}</div>{rows_html}</div>',
+        f'<div class="ip-body">{_esc(body)}</div>{rows_html}{links_html}{note_html}</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def dedication(eyebrow: str, text: str) -> None:
+    """A book-style dedication strip: a small mono eyebrow, a fleuron ornament,
+    and a centered italic sentence between gold hairlines. Used under the hero
+    for the acknowledgment to the course supervisor."""
+    st.markdown(
+        f'<div class="dedication">'
+        f'<div class="ded-eyebrow">{_esc(eyebrow)}</div>'
+        f'<div class="ded-ornament" aria-hidden="true">❦</div>'
+        f'<div class="ded-text">{_esc(text)}</div>'
+        f'</div>',
         unsafe_allow_html=True,
     )
 
