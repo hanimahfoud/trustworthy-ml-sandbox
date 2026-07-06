@@ -475,8 +475,12 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   }
   [class*="st-key-modes-"] [data-testid="column"],
   [class*="st-key-modes-"] [data-testid="stColumn"] {
-    /* min-width beats Streamlit's own calc(100% - 24px) column stacking */
-    width: 50% !important; flex: 1 1 50% !important; min-width: 50% !important;
+    /* min-width beats Streamlit's own calc(100% - 24px) column stacking;
+       three buttons (Theory / Practice / Exam) share the row */
+    width: 33.33% !important; flex: 1 1 33.33% !important; min-width: 0 !important;
+  }
+  [class*="st-key-modes-"] [data-testid="stButton"] > button {
+    font-size: .7rem !important; padding: 0 4px !important;
   }
 }
 @media (min-width: 641px) and (max-width: 1024px) {
@@ -660,7 +664,13 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 }
 [class*="st-key-modes-"] [data-testid="stColumn"]:last-child [data-testid="stButton"] > button,
 [class*="st-key-modes-"] [data-testid="column"]:last-child [data-testid="stButton"] > button {
-  border-bottom-right-radius: 10px !important; border-left: none !important;
+  border-bottom-right-radius: 10px !important;
+}
+/* the fused footer holds 3 buttons now (Theory / Practice / Exam): every
+   button after the first drops its leading border so they share edges */
+[class*="st-key-modes-"] [data-testid="stColumn"]:not(:first-child) [data-testid="stButton"] > button,
+[class*="st-key-modes-"] [data-testid="column"]:not(:first-child) [data-testid="stButton"] > button {
+  border-left: none !important;
 }
 [class*="st-key-modes-"] [data-testid="stButton"] > button:hover {
   border-color: var(--accent) !important; background: var(--surface) !important;
@@ -814,6 +824,40 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   background: var(--surface2) !important; padding-inline-start: 16px !important;
   box-shadow: 0 0 12px rgba(53,169,156,.20) !important;
 }
+/* the exam leaf at the bottom of each branch card: a gold dashed pill */
+[class*="st-key-rmq-"] [data-testid="stButton"] > button {
+  width: 100%; min-height: 34px !important; margin-top: 6px;
+  justify-content: center !important; text-align: center !important;
+  font-family: var(--mono) !important; font-size: .74rem !important;
+  background: transparent !important; color: var(--text) !important;
+  border: 1px dashed var(--gold) !important; border-radius: 8px !important;
+  box-shadow: none !important; transition: all .15s ease !important;
+}
+[class*="st-key-rmq-"] [data-testid="stButton"] > button:hover {
+  background: rgba(201,162,74,.12) !important; border-style: solid !important;
+  box-shadow: 0 0 14px rgba(201,162,74,.30) !important;
+}
+
+/* ---- Exam mode: form submit + numeric inputs ---- */
+[data-testid="stFormSubmitButton"] > button {
+  width: 100%; min-height: 46px !important;
+  background: var(--accent) !important; color: #fff !important;
+  border: 1px solid var(--accent) !important; border-radius: 8px !important;
+  font-family: var(--serif) !important; font-weight: 700 !important;
+  font-size: .95rem !important; justify-content: center !important;
+  transition: all .15s ease !important;
+}
+[data-testid="stFormSubmitButton"] > button p { color: #fff !important; }
+[data-testid="stFormSubmitButton"] > button:hover {
+  filter: brightness(1.08); box-shadow: 0 8px 22px rgba(138,28,43,.35) !important;
+}
+[data-testid="stNumberInput"] input {
+  background: var(--surface2) !important; color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+[data-testid="stNumberInput"] button {
+  background: var(--surface2) !important; color: var(--text) !important;
+}
 
 /* ---- Top-bar mobile hint + About/Contact info panels ---- */
 .topbar-hint {
@@ -939,7 +983,8 @@ h1, h2, h3, h4, .masthead .title, .plate-title { font-family: var(--rtl-display)
 .section-card::before { left: auto; right: 0; }
 .section-card { text-align: right; }
 .st-key-landing-grid [data-testid="stButton"] > button { text-align: right; }
-/* fused Theory/Practice footer: swap the outer rounded corners + shared edge */
+/* fused Theory/Practice/Exam footer: swap the outer rounded corners and move
+   the shared edge to the other side */
 [class*="st-key-modes-"] [data-testid="stColumn"]:first-child [data-testid="stButton"] > button,
 [class*="st-key-modes-"] [data-testid="column"]:first-child [data-testid="stButton"] > button {
   border-bottom-left-radius: 0 !important; border-bottom-right-radius: 10px !important;
@@ -947,6 +992,9 @@ h1, h2, h3, h4, .masthead .title, .plate-title { font-family: var(--rtl-display)
 [class*="st-key-modes-"] [data-testid="stColumn"]:last-child [data-testid="stButton"] > button,
 [class*="st-key-modes-"] [data-testid="column"]:last-child [data-testid="stButton"] > button {
   border-bottom-right-radius: 0 !important; border-bottom-left-radius: 10px !important;
+}
+[class*="st-key-modes-"] [data-testid="stColumn"]:not(:first-child) [data-testid="stButton"] > button,
+[class*="st-key-modes-"] [data-testid="column"]:not(:first-child) [data-testid="stButton"] > button {
   border-left: 1px solid var(--border) !important; border-right: none !important;
 }
 /* active contents-rail entry: accent bar sits on the right in RTL */

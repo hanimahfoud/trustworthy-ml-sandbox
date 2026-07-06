@@ -847,6 +847,12 @@ EN.update(EN_DEPTH6)
 FA.update(FA_DEPTH6)
 AR.update(AR_DEPTH6)
 
+# Exam mode: quiz chrome + the per-section question banks.
+from i18n_quiz import EN_QUIZ, FA_QUIZ, AR_QUIZ  # noqa: E402
+EN.update(EN_QUIZ)
+FA.update(FA_QUIZ)
+AR.update(AR_QUIZ)
+
 
 def t(lang: str, key: str) -> str:
     """Translate ``key`` into ``lang``, falling back to English then the key."""

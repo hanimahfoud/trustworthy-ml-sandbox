@@ -33,7 +33,7 @@ from modules import fair_scales, fair_cda, fair_multiturn, fair_constitution
 from modules import rob_evasion, rob_tradeoff, rob_smoothing, rob_jailbreak
 from modules import pp_backdoor, pp_coin, pp_laplace, pp_leak
 from modules import pa_hacking, pa_grpo, pa_jailbreak, pa_agency
-from modules import pdf_export
+from modules import pdf_export, quiz
 
 # "auto" keeps the contents rail expanded on desktop but starts it CLOSED on
 # phones, so the page content is visible immediately; the styled toggle pill
@@ -70,7 +70,7 @@ PRACTICE_RENDER = {
              "pa_jailbreak": pa_jailbreak.render, "pa_agency": pa_agency.render},
 }
 
-MODE_KEYS = ["mode_theory", "mode_practice"]
+MODE_KEYS = ["mode_theory", "mode_practice", "mode_quiz"]
 LANG_CODES = [c for c, _ in LANGS]
 NAME_OF = dict(LANGS)
 THEME_CODES = ["light", "dark"]
@@ -218,8 +218,8 @@ ss["_prev_mode"] = ss.mode
 
 # Page menu (per section + mode) -- widget key == "page_idx", so it IS
 # ss.page_idx; clip it to range *before* creating the widget.
-pages = nav.THEORY[ss.section] if ss.mode == "mode_theory" \
-    else nav.PRACTICE[ss.section]
+pages = {"mode_theory": nav.THEORY, "mode_practice": nav.PRACTICE,
+         "mode_quiz": nav.QUIZ}[ss.mode][ss.section]
 if not isinstance(ss.page_idx, int) or not (0 <= ss.page_idx < len(pages)):
     ss.page_idx = 0
 sb.markdown(f'<div class="rail-label">{t(lang, "nav_label")}</div>',
@@ -313,6 +313,11 @@ if ss.overlay == "map":
                                       use_container_width=True,
                                       on_click=_go_page,
                                       args=(s, "mode_practice", i))
+                    with st.container(key=f"rmq-{s}"):
+                        st.button(f"{t(lang, 'choose_quiz')} · "
+                                  f"{t(lang, 'quiz_page')}",
+                                  key=f"rmq_{s}", use_container_width=True,
+                                  on_click=_go_page, args=(s, "mode_quiz", 0))
     with st.container(key="nav-map"):
         mcols = st.columns(len(nav.SECTIONS))
         for mc, s in zip(mcols, nav.SECTIONS):
@@ -371,14 +376,17 @@ with st.container(key="landing-grid"):
         for col, sec in zip(cols, row):
             with col:
                 active = "  ●" if sec == ss.section else ""
+                # gold medal on sections whose exam has been passed
+                badge = "  🏅" if ss.get("qz_best", {}).get(sec, 0) >= quiz.PASS \
+                    else ""
                 label = (f"{SECTION_ICONS.get(sec,'◆')}  "
-                         f"{t(lang, sec + '_title')}{active}\n\n"
+                         f"{t(lang, sec + '_title')}{active}{badge}\n\n"
                          f"{t(lang, 'sc_desc_' + sec)}")
                 st.button(label, key=f"card_{sec}", use_container_width=True,
                           on_click=_go_section, args=(sec,))
-                # mini Theory / Practice buttons -- jump straight into a mode
+                # mini Theory / Practice / Exam buttons -- jump into a mode
                 with st.container(key=f"modes-{sec}"):
-                    mc1, mc2 = st.columns(2)
+                    mc1, mc2, mc3 = st.columns(3)
                     with mc1:
                         st.button(t(lang, "choose_theory"), key=f"card_th_{sec}",
                                   use_container_width=True,
@@ -388,6 +396,11 @@ with st.container(key="landing-grid"):
                                   use_container_width=True,
                                   on_click=_go_section,
                                   args=(sec, "mode_practice"))
+                    with mc3:
+                        st.button(t(lang, "choose_quiz"), key=f"card_qz_{sec}",
+                                  use_container_width=True,
+                                  on_click=_go_section,
+                                  args=(sec, "mode_quiz"))
 
 # =============================================================== #
 #  ROUTED CONTENT — per-section masthead + the selected page       #
@@ -399,7 +412,9 @@ C.masthead(
     [t(lang, "colophon_1"), t(lang, col_key), t(lang, "colophon_3")],
 )
 
-if ss.mode == "mode_theory":
+if ss.mode == "mode_quiz":
+    quiz.render(lang, ss.section)
+elif ss.mode == "mode_theory":
     THEORY_RENDER[ss.section][page](lang)
 else:
     PRACTICE_RENDER[ss.section][page](lang)
