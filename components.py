@@ -182,64 +182,24 @@ def dedication(eyebrow: str, text: str) -> None:
     )
 
 
-def roadmap_tree(root_label: str, sections: list[dict], is_rtl: bool = False) -> None:
-    """Render the site map as a large, clear SVG tree: a root node branching to
-    the six section nodes, each listing its theory + practice counts and its
-    first pages. Scales to full width. The root box width is computed from the
-    label length so long titles (e.g. "Trustworthy Machine Learning") are
-    never clipped."""
-    n = len(sections)
-    col_w = 260
-    width = max(1080, n * col_w)
-    height = 380
-    root_x = width / 2
-    top_y = 30
-    root_h = 64
-    # widen the root box to fit its label (approx. .58 * font-size per glyph)
-    root_font = 22
-    root_w = max(320, len(root_label) * root_font * 0.60 + 60)
-    sec_y = 190
-    box_w, box_h = 226, 148
-    gap = width / n
+def sitemap_head(eyebrow: str, root_label: str) -> None:
+    """The glowing head of the interactive site-map tree: a mono eyebrow, the
+    pulsing root node, a vertical stem and a shimmering rail from which the
+    six section branch-cards (real Streamlit buttons) hang."""
+    st.markdown(
+        f'<div class="rm-head">'
+        f'<div class="rm-eyebrow">{_esc(eyebrow)}</div>'
+        f'<div class="rm-root">✦ {_esc(root_label)}</div>'
+        f'<div class="rm-stem"></div>'
+        f'<div class="rm-rail"></div>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
 
-    parts = [f'<svg viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg" '
-             f'role="img" aria-label="site map" preserveAspectRatio="xMidYMid meet">']
 
-    # root node (width fits the label; never clipped)
-    parts.append(
-        f'<rect class="rm-node-root" x="{root_x-root_w/2}" y="{top_y}" '
-        f'width="{root_w}" height="{root_h}" rx="14"/>'
-        f'<text class="rm-txt-root" x="{root_x}" y="{top_y+40}" '
-        f'text-anchor="middle" font-size="{root_font}">{_esc(root_label)}</text>')
-
-    for i, sec in enumerate(sections):
-        cx = gap * (i + 0.5)
-        bx = cx - box_w / 2
-        parts.append(
-            f'<path class="rm-edge" d="M {root_x} {top_y+root_h} '
-            f'C {root_x} {sec_y-46}, {cx} {top_y+100}, {cx} {sec_y}"/>')
-        parts.append(
-            f'<rect class="rm-node-sec" x="{bx}" y="{sec_y}" width="{box_w}" '
-            f'height="{box_h}" rx="14" stroke-width="2"/>')
-        parts.append(
-            f'<rect class="rm-node-accent" x="{bx}" y="{sec_y}" width="{box_w}" '
-            f'height="7" rx="3.5"/>')
-        title = sec.get("title", "")
-        parts.append(
-            f'<text class="rm-txt" x="{cx}" y="{sec_y+40}" text-anchor="middle" '
-            f'font-size="18" font-weight="700">{_esc(title)}</text>')
-        parts.append(
-            f'<text class="rm-txt-accent" x="{cx}" y="{sec_y+66}" '
-            f'text-anchor="middle" font-size="14" letter-spacing="0.5">'
-            f'{sec.get("n_theory",0)} theory · {sec.get("n_practice",0)} practice</text>')
-        for j, lf in enumerate(sec.get("leaves", [])[:3]):
-            parts.append(
-                f'<text class="rm-txt-leaf" x="{cx}" y="{sec_y+94+j*20}" '
-                f'text-anchor="middle" font-size="14">'
-                f'▸ {_esc(lf[:28])}</text>')
-
-    parts.append('</svg>')
-    st.markdown(f'<div class="roadmap-panel">{"".join(parts)}</div>',
+def sitemap_group(label: str) -> None:
+    """A small 'Theory' / 'Practice' branch label inside a site-map card."""
+    st.markdown(f'<div class="rm-group">{_esc(label)}</div>',
                 unsafe_allow_html=True)
 
 

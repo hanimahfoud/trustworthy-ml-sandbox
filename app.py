@@ -151,6 +151,20 @@ def _set_page(delta_or_value, absolute=False):
         st.session_state["page_idx"] + delta_or_value
 
 
+def _go_page(sec: str, mode: str, idx: int):
+    """Callback for the site-map leaves: jump straight to one specific page
+    (section + Theory/Practice mode + page index) and close the overlay.
+    The _prev_* trackers must be updated too, otherwise the sidebar's
+    "section/mode changed" guard sees a change and resets page_idx to 0,
+    clobbering the page the user actually clicked."""
+    st.session_state["section"] = sec
+    st.session_state["mode"] = mode
+    st.session_state["page_idx"] = idx
+    st.session_state["_prev_section"] = sec
+    st.session_state["_prev_mode"] = mode
+    st.session_state["overlay"] = None
+
+
 # =============================================================== #
 #  SIDEBAR — the contents rail (Part → Section → Page)             #
 #  Opens on mobile via Streamlit's native ›› arrow (styled below); #
@@ -272,13 +286,33 @@ if ss.overlay == "sections":
                           key=f"pick_{s}", use_container_width=True,
                           on_click=_go_section, args=(s,))
 
-# Site-map overlay (large, clear, clickable navigation)
+# Site-map overlay: a glowing interactive tree. The root fans out into six
+# branch-cards, one per section, each listing EVERY theory and practice page
+# as a real button that jumps straight to that page.
 if ss.overlay == "map":
-    meta = [{"title": t(lang, s + "_title"),
-             "n_theory": len(nav.THEORY[s]), "n_practice": len(nav.PRACTICE[s]),
-             "leaves": [t(lang, k) for k in nav.THEORY[s][:3]]}
-            for s in nav.SECTIONS]
-    C.roadmap_tree(t(lang, "hero_title"), meta, is_rtl(lang))
+    with st.container(key="sitemap"):
+        C.sitemap_head(t(lang, "roadmap_title"), t(lang, "hero_title"))
+        for row_start in range(0, len(nav.SECTIONS), 3):
+            mcols = st.columns(3)
+            for mc, s in zip(mcols, nav.SECTIONS[row_start:row_start + 3]):
+                with mc, st.container(key=f"rm-{s}"):
+                    st.button(f"{SECTION_ICONS.get(s,'◆')} {t(lang, s + '_title')}",
+                              key=f"rmh_{s}", use_container_width=True,
+                              on_click=_go_section, args=(s,))
+                    C.sitemap_group(t(lang, "choose_theory"))
+                    with st.container(key=f"rmt-{s}"):
+                        for i, k in enumerate(nav.THEORY[s]):
+                            st.button(t(lang, k), key=f"rmt_{s}_{i}",
+                                      use_container_width=True,
+                                      on_click=_go_page,
+                                      args=(s, "mode_theory", i))
+                    C.sitemap_group(t(lang, "choose_practice"))
+                    with st.container(key=f"rmp-{s}"):
+                        for i, k in enumerate(nav.PRACTICE[s]):
+                            st.button(t(lang, k), key=f"rmp_{s}_{i}",
+                                      use_container_width=True,
+                                      on_click=_go_page,
+                                      args=(s, "mode_practice", i))
     with st.container(key="nav-map"):
         mcols = st.columns(len(nav.SECTIONS))
         for mc, s in zip(mcols, nav.SECTIONS):
