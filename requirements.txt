@@ -1,5 +1,7 @@
 # Trustworthy ML sandbox — runtime dependencies (CPU-only, no torch)
-streamlit>=1.31,<2
+# >=1.41: st.container(key=...) / st-key-* CSS classes power the top toolbar,
+# landing-card grid and mobile layout (see theme.py)
+streamlit>=1.41,<2
 numpy>=1.26
 scipy>=1.11
 scikit-learn>=1.3
