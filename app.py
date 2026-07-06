@@ -139,6 +139,13 @@ def _toggle_overlay(name: str):
     st.session_state["overlay"] = None if st.session_state.get("overlay") == name else name
 
 
+def _set_lang(code: str):
+    """Callback for the sidebar language pills: 'lang' is also the top-bar
+    selectbox's widget key, and assigning it in a callback (before that widget
+    is recreated on the rerun) keeps the two controls in sync."""
+    st.session_state["lang"] = code
+
+
 def _set_page(delta_or_value, absolute=False):
     st.session_state["page_idx"] = delta_or_value if absolute else \
         st.session_state["page_idx"] + delta_or_value
@@ -160,6 +167,17 @@ inject_theme(theme, "rtl" if is_rtl(lang) else "ltr", lang)
 # context it lands as stray text at the top of the main page)
 with sb:
     C.sidebar_nameplate(t(lang, "sidebar_name"), t(lang, ss.section + "_title"))
+    # language picker: three pills right under the nameplate, mirroring the
+    # top-bar selectbox (the active language is the "primary" button)
+    with st.container(key="sidebar-lang"):
+        st.markdown(f'<div class="rail-label">🌐 {t(lang, "lang_pick")}</div>',
+                    unsafe_allow_html=True)
+        lcols = st.columns(len(LANGS))
+        for lcol, (code, name) in zip(lcols, LANGS):
+            with lcol:
+                st.button(name, key=f"sblang_{code}", use_container_width=True,
+                          type="primary" if code == lang else "secondary",
+                          on_click=_set_lang, args=(code,))
 
 # track previous section/mode to know when to reset the page index
 _prev_section = ss.get("_prev_section", ss.section)
@@ -272,13 +290,22 @@ if ss.overlay == "map":
 # About / Contact overlay panels
 if ss.overlay == "about":
     C.info_panel(t(lang, "about_title"), t(lang, "about_body"))
+    C.info_panel(t(lang, "ack_title"), t(lang, "ack_body"))
 elif ss.overlay == "contact":
     rows = [
         (t(lang, "contact_author"), t(lang, "name_author")),
         (t(lang, "contact_supervisor"), t(lang, "name_supervisor")),
         (t(lang, "contact_institution"), t(lang, "contact_inst_val")),
+        (t(lang, "contact_phone"), t(lang, "contact_phone_val")),
+        (t(lang, "contact_apps"), t(lang, "contact_apps_val")),
+        (t(lang, "contact_email"), "hani_mahfoud@comp.iust.ac.ir"),
     ]
-    C.info_panel(t(lang, "contact_title"), t(lang, "contact_body"), rows=rows)
+    links = [
+        (t(lang, "contact_whatsapp_btn"), "https://wa.me/989309456655"),
+        (t(lang, "contact_email_btn"), "mailto:hani_mahfoud@comp.iust.ac.ir"),
+    ]
+    C.info_panel(t(lang, "contact_title"), t(lang, "contact_body"),
+                 rows=rows, links=links, note=t(lang, "contact_support_note"))
 
 
 # =============================================================== #
@@ -292,6 +319,9 @@ C.hero(
         {"label": t(lang, "byline_author"), "name": t(lang, "name_author")},
     ],
 )
+
+# acknowledgment to the supervisor — a book-style dedication under the hero
+C.dedication(t(lang, "ack_title"), t(lang, "ack_body"))
 
 # =============================================================== #
 #  SECTION CARDS — click a card to jump to that section            #
