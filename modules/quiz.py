@@ -57,6 +57,62 @@ BANK = {
         {"id": "s2n1", "type": "num", "gen": "shap_missing", "page": ("mode_theory", 2)},
         {"id": "s2n2", "type": "num", "gen": "lime_local", "page": ("mode_theory", 2)},
     ],
+    "sec3": [
+        {"id": "s3q1", "type": "mcq", "page": ("mode_theory", 0)},
+        {"id": "s3q2", "type": "mcq", "page": ("mode_theory", 1)},
+        {"id": "s3q3", "type": "mcq", "page": ("mode_theory", 1)},
+        {"id": "s3q4", "type": "mcq", "page": ("mode_theory", 1)},
+        {"id": "s3q5", "type": "mcq", "page": ("mode_theory", 2)},
+        {"id": "s3q6", "type": "mcq", "page": ("mode_theory", 3)},
+        {"id": "s3q7", "type": "mcq", "page": ("mode_theory", 4)},
+        {"id": "s3q8", "type": "mcq", "page": ("mode_theory", 3)},
+        {"id": "s3t1", "type": "tf", "ans": False, "page": ("mode_theory", 1)},
+        {"id": "s3t2", "type": "tf", "ans": True, "page": ("mode_theory", 0)},
+        {"id": "s3n1", "type": "num", "gen": "dp_gap", "page": ("mode_theory", 1)},
+        {"id": "s3n2", "type": "num", "gen": "tpr", "page": ("mode_theory", 1)},
+    ],
+    "sec4": [
+        {"id": "s4q1", "type": "mcq", "page": ("mode_theory", 0)},
+        {"id": "s4q2", "type": "mcq", "page": ("mode_theory", 2)},
+        {"id": "s4q3", "type": "mcq", "page": ("mode_theory", 2)},
+        {"id": "s4q4", "type": "mcq", "page": ("mode_theory", 1)},
+        {"id": "s4q5", "type": "mcq", "page": ("mode_theory", 3)},
+        {"id": "s4q6", "type": "mcq", "page": ("mode_theory", 4)},
+        {"id": "s4q7", "type": "mcq", "page": ("mode_theory", 5)},
+        {"id": "s4q8", "type": "mcq", "page": ("mode_theory", 3)},
+        {"id": "s4t1", "type": "tf", "ans": True, "page": ("mode_theory", 0)},
+        {"id": "s4t2", "type": "tf", "ans": False, "page": ("mode_theory", 4)},
+        {"id": "s4n1", "type": "num", "gen": "fgsm_pixel", "page": ("mode_theory", 2)},
+        {"id": "s4n2", "type": "num", "gen": "rob_drop", "page": ("mode_theory", 3)},
+    ],
+    "sec5": [
+        {"id": "s5q1", "type": "mcq", "page": ("mode_theory", 0)},
+        {"id": "s5q2", "type": "mcq", "page": ("mode_theory", 1)},
+        {"id": "s5q3", "type": "mcq", "page": ("mode_theory", 2)},
+        {"id": "s5q4", "type": "mcq", "page": ("mode_theory", 2)},
+        {"id": "s5q5", "type": "mcq", "page": ("mode_theory", 3)},
+        {"id": "s5q6", "type": "mcq", "page": ("mode_theory", 4)},
+        {"id": "s5q7", "type": "mcq", "page": ("mode_theory", 5)},
+        {"id": "s5q8", "type": "mcq", "page": ("mode_theory", 3)},
+        {"id": "s5t1", "type": "tf", "ans": False, "page": ("mode_theory", 4)},
+        {"id": "s5t2", "type": "tf", "ans": True, "page": ("mode_theory", 2)},
+        {"id": "s5n1", "type": "num", "gen": "laplace_scale", "page": ("mode_theory", 3)},
+        {"id": "s5n2", "type": "num", "gen": "dp_compose", "page": ("mode_theory", 2)},
+    ],
+    "sec6": [
+        {"id": "s6q1", "type": "mcq", "page": ("mode_theory", 0)},
+        {"id": "s6q2", "type": "mcq", "page": ("mode_theory", 1)},
+        {"id": "s6q3", "type": "mcq", "page": ("mode_theory", 1)},
+        {"id": "s6q4", "type": "mcq", "page": ("mode_theory", 2)},
+        {"id": "s6q5", "type": "mcq", "page": ("mode_theory", 3)},
+        {"id": "s6q6", "type": "mcq", "page": ("mode_theory", 4)},
+        {"id": "s6q7", "type": "mcq", "page": ("mode_theory", 5)},
+        {"id": "s6q8", "type": "mcq", "page": ("mode_theory", 1)},
+        {"id": "s6t1", "type": "tf", "ans": False, "page": ("mode_theory", 2)},
+        {"id": "s6t2", "type": "tf", "ans": True, "page": ("mode_theory", 4)},
+        {"id": "s6n1", "type": "num", "gen": "expected_reward", "page": ("mode_theory", 1)},
+        {"id": "s6n2", "type": "num", "gen": "grpo_adv", "page": ("mode_theory", 3)},
+    ],
 }
 
 
@@ -100,8 +156,63 @@ def _gen_lime_local(rng: random.Random):
             "z1": str(z1), "z2": str(z2)}, ans
 
 
+def _gen_dp_gap(rng: random.Random):
+    a = rng.choice([0.52, 0.58, 0.62, 0.68, 0.74])
+    b = rng.choice([0.30, 0.36, 0.42, 0.48])
+    return {"a": f"{a:.2f}", "b": f"{b:.2f}"}, abs(a - b)
+
+
+def _gen_tpr(rng: random.Random):
+    tp = rng.choice([30, 40, 45, 60, 80])
+    fn = rng.choice([10, 20, 40])
+    return {"tp": str(tp), "fn": str(fn)}, tp / (tp + fn)
+
+
+def _gen_fgsm_pixel(rng: random.Random):
+    x = rng.choice([0.20, 0.35, 0.50, 0.65])
+    eps = rng.choice([0.01, 0.02, 0.03, 0.05])
+    return {"x": f"{x:.2f}", "eps": f"{eps:.2f}"}, x + eps
+
+
+def _gen_rob_drop(rng: random.Random):
+    a = rng.choice([0.90, 0.92, 0.94, 0.96])
+    r = rng.choice([0.48, 0.55, 0.62, 0.70])
+    return {"a": f"{a:.2f}", "r": f"{r:.2f}"}, a - r
+
+
+def _gen_laplace_scale(rng: random.Random):
+    d = rng.choice([1, 2])
+    eps = rng.choice([0.25, 0.5, 0.8, 1.0, 2.0])
+    return {"d": str(d), "eps": f"{eps:.2f}"}, d / eps
+
+
+def _gen_dp_compose(rng: random.Random):
+    k = rng.choice([3, 4, 5, 8, 10])
+    e0 = rng.choice([0.1, 0.2, 0.25, 0.5])
+    return {"k": str(k), "e0": f"{e0:.2f}"}, k * e0
+
+
+def _gen_expected_reward(rng: random.Random):
+    p = rng.choice([0.6, 0.7, 0.8, 0.9])
+    ra = rng.choice([0.8, 1.0])
+    rb = rng.choice([0.0, 0.1, 0.2])
+    return {"p": f"{p:.1f}", "ra": f"{ra:.1f}", "rb": f"{rb:.1f}"}, \
+        p * ra + (1 - p) * rb
+
+
+def _gen_grpo_adv(rng: random.Random):
+    rs = [rng.choice([0.2, 0.3, 0.5, 0.7, 0.9]) for _ in range(4)]
+    mean = sum(rs) / 4
+    return {"r1": f"{rs[0]:.1f}", "r2": f"{rs[1]:.1f}", "r3": f"{rs[2]:.1f}",
+            "r4": f"{rs[3]:.1f}", "mean": f"{mean:.3f}"}, rs[0] - mean
+
+
 GENS = {"bv_total": _gen_bv_total, "var_ensemble": _gen_var_ensemble,
-        "shap_missing": _gen_shap_missing, "lime_local": _gen_lime_local}
+        "shap_missing": _gen_shap_missing, "lime_local": _gen_lime_local,
+        "dp_gap": _gen_dp_gap, "tpr": _gen_tpr,
+        "fgsm_pixel": _gen_fgsm_pixel, "rob_drop": _gen_rob_drop,
+        "laplace_scale": _gen_laplace_scale, "dp_compose": _gen_dp_compose,
+        "expected_reward": _gen_expected_reward, "grpo_adv": _gen_grpo_adv}
 
 
 # --------------------------------------------------------------------------- #

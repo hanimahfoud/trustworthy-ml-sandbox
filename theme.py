@@ -657,6 +657,15 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   box-shadow: none !important; transform: none !important;
   align-items: center !important; justify-content: center !important;
   padding: 0 8px !important; text-align: center !important;
+  white-space: nowrap !important; overflow: hidden !important;
+}
+/* keep "emoji + word" on ONE line: Streamlit wraps the label's markdown in
+   nested containers that were letting the emoji break onto its own row */
+[class*="st-key-modes-"] [data-testid="stButton"] > button [data-testid="stMarkdownContainer"],
+[class*="st-key-modes-"] [data-testid="stButton"] > button p {
+  white-space: nowrap !important; display: inline-flex !important;
+  align-items: center !important; gap: 4px !important;
+  overflow: hidden !important; text-overflow: ellipsis !important;
 }
 [class*="st-key-modes-"] [data-testid="stColumn"]:first-child [data-testid="stButton"] > button,
 [class*="st-key-modes-"] [data-testid="column"]:first-child [data-testid="stButton"] > button {
