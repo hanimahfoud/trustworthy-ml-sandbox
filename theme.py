@@ -456,6 +456,19 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   }
   .dedication { margin: 2px 4px 16px 4px; }
   .dedication .ded-text { font-size: .92rem; }
+  /* site-map on phones: compact glowing root, tighter rail, stacked cards */
+  .rm-root { font-size: .95rem; padding: 10px 18px; }
+  .rm-rail { margin: 0 2% 14px 2%; }
+  .st-key-sitemap { padding: 16px 10px 4px 10px; }
+  [class*="st-key-rm-sec"] { margin-bottom: 12px; }
+  /* bottom section pills: keep the fixed height, two per row */
+  [class*="st-key-nav-"] [data-testid="stHorizontalBlock"] {
+    flex-direction: row !important; flex-wrap: wrap !important; gap: 8px !important;
+  }
+  [class*="st-key-nav-"] [data-testid="column"],
+  [class*="st-key-nav-"] [data-testid="stColumn"] {
+    width: auto !important; flex: 1 1 44% !important; min-width: 44% !important;
+  }
   /* ...and the Theory/Practice pair under each card stays side by side */
   [class*="st-key-modes-"] [data-testid="stHorizontalBlock"] {
     flex-direction: row !important;
@@ -492,7 +505,7 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
   .assistant-fab, .assistant-panel, header, footer,
   [data-testid="stToolbar"], [data-testid="stDecoration"],
   .stButton, [data-testid="stDownloadButton"], .site-nav, .view-toggle,
-  .section-grid, .roadmap-panel,
+  .section-grid, .st-key-sitemap,
   .st-key-topbar, .st-key-landing-grid, [class*="st-key-modes-"],
   [class*="st-key-nav-"] { display: none !important; }
   /* give the content the full page with sane margins */
@@ -655,33 +668,152 @@ a { color: var(--good); text-decoration: none; border-bottom: 1px solid var(--li
 }
 
 /* ---- Navigation button rows (quick section list, site-map jump list) ----
-   Wrappers come from st.container(key="nav-sections"/"nav-map"). */
+   Wrappers come from st.container(key="nav-sections"/"nav-map").
+   Every pill has the SAME fixed height with centered, single-line text, so
+   the row reads as one even keyboard of section keys. */
 [class*="st-key-nav-"] [data-testid="stButton"] > button {
-  font-family: var(--mono); font-size: .8rem; letter-spacing: .04em;
+  font-family: var(--mono); font-size: .78rem; letter-spacing: .02em;
   border-radius: 8px; border: 1px solid var(--border); background: var(--surface2);
-  color: var(--text); padding: 9px 14px; transition: all .15s ease; width: 100%;
+  color: var(--text); transition: all .15s ease; width: 100%;
+  height: 54px !important; min-height: 54px !important;
+  justify-content: center !important; text-align: center !important;
+  padding: 0 8px !important;
+  white-space: nowrap !important; overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+[class*="st-key-nav-"] [data-testid="stButton"] > button p {
+  font-size: .78rem !important; white-space: nowrap !important;
+  overflow: hidden !important; text-overflow: ellipsis !important;
 }
 [class*="st-key-nav-"] [data-testid="stButton"] > button:hover {
   border-color: var(--accent); background: var(--surface); color: var(--text);
+  box-shadow: 0 0 12px rgba(210,88,107,.18);
 }
 
 /* ============================================================= */
-/*  ROADMAP / SITE-MAP  —  as an SVG tree inside a panel          */
+/*  SITE-MAP — a glowing interactive tree. Root node + shimmering */
+/*  rail (components.sitemap_head), then six branch-cards         */
+/*  (st.container(key="rm-<sec>")) whose every leaf is a real     */
+/*  Streamlit button that navigates to that page.                 */
 /* ============================================================= */
-.roadmap-panel {
-  background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
-  padding: 18px 20px; margin: 8px 0 18px 0; overflow-x: auto;
+.st-key-sitemap {
+  position: relative; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 14px;
+  padding: 22px 16px 8px 16px; margin: 8px 0 18px 0; overflow: hidden;
 }
-.roadmap-panel svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-.rm-node-box { fill: var(--surface); stroke: var(--border); }
-.rm-node-root { fill: var(--accent); }
-.rm-node-sec { fill: var(--surface); stroke: var(--accent); }
-.rm-node-accent { fill: var(--accent); }
-.rm-edge { stroke: var(--border); stroke-width: 1.5; fill: none; }
-.rm-txt { font-family: var(--mono); fill: var(--text); }
-.rm-txt-leaf { font-family: var(--mono); fill: var(--text-body); opacity: 0.85; }
-.rm-txt-root { font-family: var(--serif); fill: #fff; font-weight: 700; }
-.rm-txt-accent { font-family: var(--mono); fill: var(--accent); }
+/* soft animated aurora drifting behind the tree */
+.st-key-sitemap::before {
+  content: ""; position: absolute; inset: -40%; pointer-events: none;
+  background:
+    radial-gradient(closest-side, rgba(201,162,74,.13), transparent 65%),
+    radial-gradient(closest-side, rgba(210,88,107,.10), transparent 60%);
+  background-repeat: no-repeat;
+  background-position: 15% 0%, 85% 100%;
+  animation: rm-aurora 9s ease-in-out infinite alternate;
+}
+@keyframes rm-aurora {
+  0%   { background-position: 15% 0%, 85% 100%; }
+  100% { background-position: 40% 35%, 55% 55%; }
+}
+.rm-head { text-align: center; position: relative; }
+.rm-eyebrow {
+  font-family: var(--mono); font-size: .68rem; letter-spacing: .26em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
+}
+.rm-root {
+  display: inline-block; padding: 12px 32px; border-radius: 999px;
+  background: linear-gradient(135deg, #0A1F38, #16345A);
+  border: 1px solid var(--gold); color: #fff;
+  font-family: var(--display); font-weight: 700; font-size: 1.15rem;
+  animation: rm-glow 2.6s ease-in-out infinite;
+}
+@keyframes rm-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(201,162,74,.25), 0 0 0 0 rgba(201,162,74,.30); }
+  50%      { box-shadow: 0 0 26px rgba(201,162,74,.55), 0 0 0 8px rgba(201,162,74,0); }
+}
+.rm-stem {
+  width: 2px; height: 22px; margin: 0 auto;
+  background: linear-gradient(180deg, var(--gold), var(--accent));
+}
+.rm-rail {
+  height: 2px; margin: 0 5% 18px 5%;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--accent), var(--gold), transparent);
+  background-size: 200% 100%;
+  animation: rm-shimmer 3.2s linear infinite;
+}
+@keyframes rm-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+/* the six branch-cards, rising in one after another */
+[class*="st-key-rm-sec"] {
+  position: relative; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px 12px 10px 12px; margin-bottom: 16px;
+  gap: 6px !important;
+  animation: rm-rise .55s cubic-bezier(.2,.7,.3,1) both;
+  transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+}
+[class*="st-key-rm-sec"]::before {
+  content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+  border-radius: 12px 12px 0 0;
+  background: linear-gradient(90deg, var(--gold), var(--accent));
+}
+[class*="st-key-rm-sec"]:hover {
+  border-color: var(--gold); transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(201,162,74,.20);
+}
+@keyframes rm-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.st-key-rm-sec1 { animation-delay: .02s; } .st-key-rm-sec2 { animation-delay: .08s; }
+.st-key-rm-sec3 { animation-delay: .14s; } .st-key-rm-sec4 { animation-delay: .20s; }
+.st-key-rm-sec5 { animation-delay: .26s; } .st-key-rm-sec6 { animation-delay: .32s; }
+
+/* branch header: a deep-navy gold-rimmed button that opens the section */
+[class*="st-key-rmh_"] button {
+  width: 100%; min-height: 42px !important;
+  justify-content: center !important; text-align: center !important;
+  font-family: var(--serif) !important; font-weight: 700 !important; font-size: .92rem !important;
+  background: linear-gradient(135deg, #0A1F38, #16345A) !important; color: #fff !important;
+  border: 1px solid rgba(201,162,74,.55) !important; border-radius: 8px !important;
+  box-shadow: none; transition: all .2s ease !important;
+}
+[class*="st-key-rmh_"] button p { color: #fff !important; font-size: .92rem !important; }
+[class*="st-key-rmh_"] button:hover {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 18px rgba(201,162,74,.40);
+  transform: translateY(-1px);
+}
+/* 'Theory' / 'Practice' branch label with a hairline tail */
+.rm-group {
+  font-family: var(--mono); font-size: .64rem; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--muted); margin: 8px 0 2px 0;
+  display: flex; align-items: center; gap: 8px;
+}
+.rm-group::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+/* the leaves: quiet list rows on a branch line; theory glows crimson,
+   practice glows teal */
+[class*="st-key-rmt-"], [class*="st-key-rmp-"] { gap: 2px !important; }
+[class*="st-key-rmt-"] [data-testid="stButton"] > button,
+[class*="st-key-rmp-"] [data-testid="stButton"] > button {
+  width: 100%; min-height: 30px !important; padding: 3px 10px !important;
+  font-family: var(--serif) !important; font-size: .82rem !important;
+  text-align: start !important; justify-content: flex-start !important;
+  background: transparent !important; border: none !important;
+  border-inline-start: 2px solid var(--border) !important;
+  border-radius: 0 8px 8px 0 !important; color: var(--text-body) !important;
+  box-shadow: none !important; transition: all .15s ease !important;
+}
+[class*="st-key-rmt-"] [data-testid="stButton"] > button p,
+[class*="st-key-rmp-"] [data-testid="stButton"] > button p {
+  font-size: .82rem !important; text-align: start !important; width: 100%;
+}
+[class*="st-key-rmt-"] [data-testid="stButton"] > button:hover {
+  border-inline-start-color: var(--accent) !important; color: var(--accent) !important;
+  background: var(--surface2) !important; padding-inline-start: 16px !important;
+  box-shadow: 0 0 12px rgba(210,88,107,.18) !important;
+}
+[class*="st-key-rmp-"] [data-testid="stButton"] > button:hover {
+  border-inline-start-color: var(--good) !important; color: var(--good) !important;
+  background: var(--surface2) !important; padding-inline-start: 16px !important;
+  box-shadow: 0 0 12px rgba(53,169,156,.20) !important;
+}
 
 /* ---- Top-bar mobile hint + About/Contact info panels ---- */
 .topbar-hint {
