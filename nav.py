@@ -29,3 +29,8 @@ PRACTICE = {
     "sec5": ["pp_backdoor", "pp_coin", "pp_laplace", "pp_leak"],
     "sec6": ["pa_hacking", "pa_grpo", "pa_jailbreak", "pa_agency"],
 }
+
+# Exam mode: one page per section (the section's comprehensive exam). The
+# question banks live in modules/quiz.py; sections without a bank yet render
+# a "under preparation" panel.
+QUIZ = {s: ["quiz_page"] for s in SECTIONS}
