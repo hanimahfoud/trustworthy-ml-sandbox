@@ -71,6 +71,24 @@ EN_UI = {
         "presented on this platform.",
     # sidebar language picker
     "lang_pick": "Choose language",
+    # PDF cover page: a wisdom quote matched to each section's subject
+    "pdf_cover_doc": "Course Reader — Theory & Practice",
+    "pdf_quote_sec1": "All models are wrong, but some are useful.",
+    "pdf_quote_by_sec1": "George E. P. Box",
+    "pdf_quote_sec2": "What I cannot create, I do not understand.",
+    "pdf_quote_by_sec2": "Richard Feynman",
+    "pdf_quote_sec3": "Injustice anywhere is a threat to justice everywhere.",
+    "pdf_quote_by_sec3": "Martin Luther King Jr.",
+    "pdf_quote_sec4": "Know the enemy and know yourself, and in a hundred "
+        "battles you will never be in peril.",
+    "pdf_quote_by_sec4": "Sun Tzu — The Art of War",
+    "pdf_quote_sec5": "Arguing that you don't care about privacy because you "
+        "have nothing to hide is no different than saying you don't care about "
+        "free speech because you have nothing to say.",
+    "pdf_quote_by_sec5": "Edward Snowden",
+    "pdf_quote_sec6": "We had better be quite sure that the purpose put into "
+        "the machine is the purpose which we really desire.",
+    "pdf_quote_by_sec6": "Norbert Wiener",
     # six section-card descriptions (short)
     "sc_desc_sec1": "Bias–variance, VC dimension, domain adaptation, SAM, and the "
         "causal foundations of generalization.",
@@ -142,6 +160,23 @@ FA_UI = {
         "درس‌گفتارها و مطالبِ درسِ یادگیری ماشینِ قابل‌اعتمادِ ایشان در دانشگاه علم "
         "و صنعت ایران، سرچشمه و بنیادِ همهٔ آنچه در این سکو ارائه شده است.",
     "lang_pick": "زبان را برگزینید",
+    "pdf_cover_doc": "جزوهٔ درس — نظری و عملی",
+    "pdf_quote_sec1": "همهٔ مدل‌ها غلط‌اند، اما بعضی سودمندند.",
+    "pdf_quote_by_sec1": "جورج باکس",
+    "pdf_quote_sec2": "آنچه را نمی‌توانم بسازم، نمی‌فهمم.",
+    "pdf_quote_by_sec2": "ریچارد فاینمن",
+    "pdf_quote_sec3": "بی‌عدالتی در هر جا، تهدیدی است برای عدالت در همه‌جا.",
+    "pdf_quote_by_sec3": "مارتین لوتر کینگ",
+    "pdf_quote_sec4": "دشمن را بشناس و خود را بشناس؛ در صد نبرد هرگز در خطر "
+        "نخواهی بود.",
+    "pdf_quote_by_sec4": "سون تزو — هنر جنگ",
+    "pdf_quote_sec5": "اینکه بگویی حریم خصوصی برایت مهم نیست چون چیزی برای "
+        "پنهان‌کردن نداری، مثل این است که بگویی آزادی بیان برایت مهم نیست چون "
+        "حرفی برای گفتن نداری.",
+    "pdf_quote_by_sec5": "ادوارد اسنودن",
+    "pdf_quote_sec6": "بهتر است کاملاً مطمئن شویم هدفی که در ماشین می‌گذاریم "
+        "همان هدفی است که به‌راستی می‌خواهیم.",
+    "pdf_quote_by_sec6": "نوربرت وینر",
     "sc_desc_sec1": "بایاس–واریانس، بُعدِ VC، انطباقِ دامنه، SAM، و بنیادهای علّیِ "
         "تعمیم.",
     "sc_desc_sec2": "تفسیرِ جعبه‌سیاه با SHAP و LIME، جبرانِ علّی، و کشفِ همبستگیِ "
@@ -211,6 +246,22 @@ AR_UI = {
         "مينائي-بيدجلي — فمحاضراتُ مادّته «تعلُّم الآلة الموثوق» في جامعة العلوم "
         "والتكنولوجيا الإيرانيّة كانت المصدرَ والأساسَ لكلِّ ما تقدّمه هذه المنصّة.",
     "lang_pick": "اختر اللغة",
+    "pdf_cover_doc": "كتيّب المادّة — النظريّ والعمليّ",
+    "pdf_quote_sec1": "كلُّ النماذج خاطئة، لكنّ بعضها نافع.",
+    "pdf_quote_by_sec1": "جورج بوكس",
+    "pdf_quote_sec2": "ما لا أستطيع بناءه، لا أفهمه.",
+    "pdf_quote_by_sec2": "ريتشارد فاينمان",
+    "pdf_quote_sec3": "الظلم في أيّ مكانٍ تهديدٌ للعدل في كلّ مكان.",
+    "pdf_quote_by_sec3": "مارتن لوثر كينغ الابن",
+    "pdf_quote_sec4": "اعرف عدوّك واعرف نفسك، تَخُض مئة معركةٍ دون أن تكون في "
+        "خطر.",
+    "pdf_quote_by_sec4": "صن تزو — فنّ الحرب",
+    "pdf_quote_sec5": "قولُك إنّك لا تكترث للخصوصيّة لأنْ لا شيء عندك تخفيه، "
+        "كقولِك إنّك لا تكترث لحرّيّة التعبير لأنْ لا شيء عندك تقوله.",
+    "pdf_quote_by_sec5": "إدوارد سنودن",
+    "pdf_quote_sec6": "حريٌّ بنا أن نتيقّن أنّ الغاية التي نضعها في الآلة هي "
+        "الغاية التي نريدها حقًّا.",
+    "pdf_quote_by_sec6": "نوربرت فينر",
     "sc_desc_sec1": "المفاضلة بين الانحياز والتباين، بُعد VC، تكيُّف المجال، SAM، "
         "والأسس السببيّة للتعميم.",
     "sc_desc_sec2": "تفسير الصناديق السوداء بـ SHAP وLIME، والجبر السببيّ، وكشف "

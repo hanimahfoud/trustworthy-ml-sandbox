@@ -52,6 +52,8 @@ _TRANSLIT = {
     "λ": "lambda", "ρ": "rho", "α": "alpha", "β": "beta", "σ": "sigma",
     "μ": "mu", "ε": "epsilon", "φ": "phi", "∣": "|", "≈": "~=", "→": "->",
     "∈": "in", "×": "x", "²": "2",
+    "Φ": "Phi", "π": "pi", "δ": "delta", "Δ": "Delta", "γ": "gamma",
+    "∝": "~", "←": "<-", "₁": "1", "₂": "2", "⁰": "0", "⁻": "-",
 }
 
 
@@ -110,10 +112,87 @@ class _Doc(FPDF):
             self.multi_cell(0, line_h, cleaned, align="L")
         self.ln(gap)
 
+    def _cline(self, text, size=11, style="", gap=1.5, color=(32, 48, 63),
+               max_w=None):
+        """Centered text (cover page): wraps in logical order to ``max_w`` mm,
+        shapes each finished line for RTL, and centers every line."""
+        self.set_font("Vazir", style, size)
+        self.set_text_color(*color)
+        cleaned = _clean(text)
+        line_h = size * 0.62
+        avail = max_w or (self.w - self.l_margin - self.r_margin)
+        for ln in self._wrap_logical(cleaned, avail):
+            out = get_display(arabic_reshaper.reshape(ln)) if self.rtl else ln
+            self.cell(0, line_h, out, align="C", new_x="LMARGIN", new_y="NEXT")
+        self.ln(gap)
+
+    def _hairline(self, w=64, color=(168, 132, 44), gap=4.0):
+        """A short centered horizontal rule (the cover's gold hairlines)."""
+        x0 = (self.w - w) / 2
+        y = self.get_y()
+        self.set_draw_color(*color)
+        self.set_line_width(0.35)
+        self.line(x0, y, x0 + w, y)
+        self.ln(gap)
+
+    def cover(self, section: str) -> None:
+        """Title cover: gold/crimson ribbons, course + section titles, byline,
+        and — matched to the section's subject — a wisdom quote with its
+        author between gold hairlines."""
+        lang = self.lang
+        self.set_auto_page_break(False)
+        self.add_page()
+
+        # top and bottom ribbons (gold over crimson, echoing the site header)
+        self.set_fill_color(168, 132, 44)
+        self.rect(0, 0, self.w, 2.4, "F")
+        self.set_fill_color(138, 28, 43)
+        self.rect(0, 2.4, self.w, 1.2, "F")
+        self.set_fill_color(138, 28, 43)
+        self.rect(0, self.h - 3.6, self.w, 1.2, "F")
+        self.set_fill_color(168, 132, 44)
+        self.rect(0, self.h - 2.4, self.w, 2.4, "F")
+
+        # nameplate block
+        self.set_y(52)
+        self._cline(t(lang, "masthead_eyebrow"), size=10.5, gap=6,
+                    color=(168, 132, 44))
+        self._cline(t(lang, "hero_title"), size=27, style="B", gap=5,
+                    color=(14, 42, 71), max_w=160)
+        self._hairline(w=84, gap=7)
+        self._cline(t(lang, section + "_title"), size=17, style="B", gap=3,
+                    color=(138, 28, 43))
+        self._cline(t(lang, "pdf_cover_doc"), size=10.5, gap=14,
+                    color=(90, 107, 123))
+
+        self._cline(f'{t(lang, "byline_supervisor")}: '
+                    f'{t(lang, "name_supervisor")}', size=11, style="B",
+                    gap=1.5, color=(32, 48, 63))
+        self._cline(f'{t(lang, "byline_author")}: {t(lang, "name_author")}',
+                    size=11, style="B", gap=1.5, color=(32, 48, 63))
+        self._cline(t(lang, "contact_inst_val"), size=9.5, gap=0,
+                    color=(90, 107, 123))
+
+        # the wisdom quote, low on the page like a book epigraph
+        self.set_y(196)
+        self._hairline(w=56, gap=6)
+        self._cline(f'"{t(lang, "pdf_quote_" + section)}"', size=12.5, gap=4,
+                    color=(60, 76, 92), max_w=142)
+        self._cline(f'- {t(lang, "pdf_quote_by_" + section)} -', size=10,
+                    style="B", gap=2, color=(168, 132, 44))
+        self._hairline(w=56, gap=0)
+
+        # colophon at the foot of the cover
+        self.set_y(272)
+        self._cline(f'{t(lang, "colophon_1")}  ·  {t(lang, "colophon_3")}',
+                    size=8.5, gap=0, color=(150, 150, 150))
+        self.set_auto_page_break(True, margin=18)
+
 
 def build_pdf(lang: str, section: str) -> bytes:
     _ensure_fonts()
     doc = _Doc(lang)
+    doc.cover(section)          # title page + subject-matched wisdom quote
     doc.add_page()
 
     doc._line(t(lang, "masthead_title"), size=20, style="B", gap=2,
